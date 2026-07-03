@@ -1,0 +1,13 @@
+# Build artifacts (except docs/ for GitHub Pages)
+_output/
+
+# Quarto working files
+.quarto/
+
+# macOS
+.DS_Store
+
+# Editor temp files
+*.swp
+*.swo
+*~

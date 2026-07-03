@@ -1,0 +1,269 @@
+/* Minimal blog-style CSS for HTML output.
+   Pure CSS, no framework dependencies. */
+
+/* Reset */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 18px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fafafa;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2em 1em;
+}
+
+/* Typography */
+p {
+    margin: 0 0 1em 0;
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4 {
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+        sans-serif;
+    color: #111;
+    line-height: 1.3;
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 1.75em;
+    margin: 1.5em 0 0.4em 0;
+    letter-spacing: -0.02em;
+}
+
+h2 {
+    font-size: 1.35em;
+    margin: 1.6em 0 0.4em 0;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.2em;
+}
+
+h3 {
+    font-size: 1.1em;
+    margin: 1.3em 0 0.3em 0;
+}
+
+/* Title block */
+header h1 {
+    font-size: 2em;
+    text-align: center;
+    margin: 0.5em 0 0.2em 0;
+    border: none;
+}
+
+.subtitle {
+    font-size: 1.1em;
+    text-align: center;
+    color: #555;
+    font-style: italic;
+    margin-bottom: 0.3em;
+}
+
+.author,
+.date {
+    text-align: center;
+    color: #777;
+    font-size: 0.85em;
+    margin: 0.15em 0;
+}
+
+/* Abstract section (first section after title) */
+section.level1 > section:first-of-type {
+    background: #f0f3f5;
+    border-left: 4px solid #2c3e50;
+    padding: 1em 1.2em;
+    margin: 1.5em 0;
+    font-size: 0.93em;
+    border-radius: 2px;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.2em 0;
+    font-size: 0.82em;
+    display: block;
+    overflow-x: auto;
+}
+
+th {
+    background: #2c3e50;
+    color: #fff;
+    padding: 0.5em 0.6em;
+    text-align: left;
+    font-weight: 600;
+}
+
+td {
+    padding: 0.4em 0.6em;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+    background: #f5f6f8;
+}
+
+/* Code */
+code {
+    background: #eee;
+    padding: 0.15em 0.35em;
+    border-radius: 3px;
+    font-family: "SF Mono", "Fira Code", Consolas, "Liberation Mono", monospace;
+    font-size: 0.82em;
+}
+
+pre {
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-left: 3px solid #2c3e50;
+    padding: 0.8em 1em;
+    overflow-x: auto;
+    margin: 1em 0;
+    font-size: 0.82em;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* Blockquotes (for GrapheneOS claims) */
+blockquote {
+    border-left: 4px solid #c0392b;
+    background: #fdf2f2;
+    padding: 0.5em 1em;
+    margin: 1em 0;
+    color: #444;
+}
+
+/* Links */
+a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Horizontal rules */
+hr {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 2.5em 0;
+}
+
+/* Lists */
+ul,
+ol {
+    margin: 0.5em 0 1em 1.5em;
+}
+
+li {
+    margin: 0.3em 0;
+}
+
+/* TOC */
+#TOC {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 0.8em 1.2em;
+    margin: 1em 0 1.5em 0;
+    font-size: 0.85em;
+}
+
+#TOC ul {
+    list-style: none;
+    margin: 0.3em 0;
+    padding-left: 1.2em;
+}
+
+#TOC > ul {
+    padding-left: 0;
+}
+
+#TOC li {
+    margin: 0.15em 0;
+}
+
+#TOC a {
+    color: #2563eb;
+}
+
+/* Inline formatting */
+strong {
+    font-weight: 600;
+}
+
+em {
+    font-style: italic;
+}
+
+/* Math */
+.math {
+    overflow-x: auto;
+    margin: 1em 0;
+}
+
+/* MathJax display math */
+.math.display {
+    text-align: center;
+    margin: 1em 0;
+}
+
+/* Footer / version line */
+.footer {
+    text-align: center;
+    color: #888;
+    font-size: 0.8em;
+    margin-top: 3em;
+}
+
+/* References section */
+#references p {
+    margin: 0.3em 0;
+    font-size: 0.88em;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+/* Section spacing */
+section.level1 {
+    margin: 1em 0;
+}
+
+@media (max-width: 600px) {
+    html {
+        font-size: 16px;
+    }
+    body {
+        padding: 1em 0.8em;
+    }
+    h1 {
+        font-size: 1.5em;
+    }
+    table {
+        font-size: 0.75em;
+    }
+}

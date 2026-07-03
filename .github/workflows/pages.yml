@@ -1,0 +1,47 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+
+      - name: Install Typst
+        run: |
+          curl -fsSL https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz \
+            | tar -xJ
+          sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
+          rm -rf typst-x86_64-unknown-linux-musl
+
+      - name: Build HTML
+        run: |
+          pandoc sandboxing-mitigation-comparative-analysis.md \
+            -o _output/blog.html --template=_template.html -s \
+            --toc --toc-depth=2 --section-divs --katex
+
+      - name: Build PDF (Typst)
+        run: |
+          pandoc sandboxing-mitigation-comparative-analysis.md \
+            -o _output/sandboxing-mitigation-comparative-analysis.typ --to typst
+          sed -i 's/#horizontalrule/#line()/g' \
+            _output/sandboxing-mitigation-comparative-analysis.typ
+          cat _output/_typst-preamble.typ > /tmp/combined.typ
+          cat _output/sandboxing-mitigation-comparative-analysis.typ >> /tmp/combined.typ
+          mv /tmp/combined.typ _output/sandboxing-mitigation-comparative-analysis.typ
+          typst compile _output/sandboxing-mitigation-comparative-analysis.typ
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_output
