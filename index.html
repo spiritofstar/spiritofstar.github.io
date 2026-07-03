@@ -226,6 +226,21 @@
                 text-decoration: underline;
             }
 
+            .social-links {
+                text-align: center;
+                margin: 1.5em 0 0 0;
+                font-size: 0.82em;
+            }
+            .social-links a {
+                color: var(--text-muted);
+                text-decoration: none;
+                margin: 0 0.6em;
+            }
+            .social-links a:hover {
+                color: var(--accent-hover);
+                text-decoration: underline;
+            }
+
             @media (max-width: 600px) {
                 html {
                     font-size: 16px;
@@ -303,8 +318,15 @@
         </div>
 
         <div class="footer">
-            <a href="./atom.xml">Atom feed</a> &middot;
-            <a href="./feed.json">JSON feed</a>
+            <div class="social-links">
+                <a href="https://x.com/SpiritOfStarr">Twitter / X</a>
+                <a href="https://spiritofstar.substack.com">Substack</a>
+                <a href="https://github.com/spiritofstar">GitHub</a>
+            </div>
+            <div style="margin-top: 0.8em">
+                <a href="./atom.xml">Atom feed</a> &middot;
+                <a href="./feed.json">JSON feed</a>
+            </div>
         </div>
     </body>
 </html>
