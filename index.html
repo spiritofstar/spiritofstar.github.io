@@ -3,11 +3,12 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>spiritofstar - Mobile Browser Security Research</title>
+        <title>spiritofstar</title>
         <meta
             name="description"
-            content="Independent research on mobile browser security architectures by spiritofstar."
+            content="Independent research on mobile browser security architectures."
         />
+        <meta name="color-scheme" content="light dark" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -27,6 +28,30 @@
             title="JSON Feed"
         />
         <style>
+            :root {
+                --bg: #fafafa;
+                --text: #1a1a1a;
+                --text-soft: #555;
+                --text-muted: #777;
+                --border: #e0e0e0;
+                --accent: #2563eb;
+                --accent-hover: #1d4ed8;
+                --muted-accent: #888;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg: #1a1d23;
+                    --text: #e1e3e8;
+                    --text-soft: #a0a4ae;
+                    --text-muted: #888b94;
+                    --border: #2f333c;
+                    --accent: #93a0f5;
+                    --accent-hover: #aeb8f7;
+                    --muted-accent: #666a73;
+                }
+            }
+
             *,
             *::before,
             *::after {
@@ -34,6 +59,7 @@
                 margin: 0;
                 padding: 0;
             }
+
             html {
                 font-size: 18px;
                 -webkit-text-size-adjust: 100%;
@@ -41,21 +67,29 @@
             body {
                 font-family: "Lora", Georgia, "Times New Roman", Times, serif;
                 font-optical-sizing: auto;
+                font-feature-settings: "kern", "liga", "clig", "calt", "onum";
+                font-kerning: normal;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                text-rendering: optimizeLegibility;
                 line-height: 1.7;
-                color: #1a1a1a;
-                background: #fafafa;
+                color: var(--text);
+                background: var(--bg);
                 max-width: 640px;
                 margin: 0 auto;
                 padding: 4em 1.5em;
+                orphans: 3;
+                widows: 3;
             }
 
-            /* Wordmark / brand */
+            /* Wordmark */
             .wordmark {
                 font-family: "Lora", Georgia, "Times New Roman", Times, serif;
                 font-size: 2.4em;
                 font-weight: 700;
                 letter-spacing: -0.03em;
-                color: #111;
+                font-feature-settings: "kern", "liga";
+                color: var(--text);
                 line-height: 1.15;
                 margin: 0 0 0.15em 0;
             }
@@ -68,31 +102,29 @@
             }
 
             .tagline {
-                font-family: "Lora", Georgia, "Times New Roman", Times, serif;
                 font-size: 1em;
-                color: #777;
+                color: var(--text-soft);
                 font-style: italic;
                 margin-bottom: 2.5em;
             }
 
-            /* Section headings */
             h2 {
                 font-family:
                     "Instrument Serif", Georgia, "Times New Roman", Times, serif;
                 font-size: 1.35em;
                 font-weight: 400;
+                font-feature-settings: "kern", "liga";
                 letter-spacing: 0.01em;
-                color: #333;
+                color: var(--text);
                 margin: 2.2em 0 0.7em 0;
             }
 
             hr {
                 border: none;
-                border-top: 1px solid #e0e0e0;
+                border-top: 1px solid var(--border);
                 margin: 2em 0;
             }
 
-            /* Paper listing */
             .paper {
                 margin: 1.2em 0;
             }
@@ -100,61 +132,62 @@
                 font-family: "Roboto", Helvetica, Arial, sans-serif;
                 font-size: 1.1em;
                 font-weight: 500;
+                font-feature-settings: "kern", "liga";
                 line-height: 1.4;
+                text-wrap: balance;
             }
             .paper-title a {
-                color: #2563eb;
+                color: var(--accent);
                 text-decoration: none;
             }
             .paper-title a:hover {
                 text-decoration: underline;
             }
             .paper-meta {
-                font-family: "Lora", Georgia, "Times New Roman", Times, serif;
                 font-size: 0.82em;
-                color: #888;
+                color: var(--text-muted);
                 margin-top: 0.2em;
             }
             .paper-meta a {
-                color: #666;
+                color: var(--muted-accent);
                 text-decoration: underline;
             }
             .paper-meta a:hover {
-                color: #2563eb;
+                color: var(--accent-hover);
             }
             .paper-summary {
                 font-size: 0.92em;
-                color: #555;
+                color: var(--text-soft);
                 margin-top: 0.5em;
                 line-height: 1.6;
+                text-wrap: pretty;
             }
 
-            /* About */
             .about {
                 font-size: 0.92em;
-                color: #555;
+                color: var(--text-soft);
                 line-height: 1.6;
+                text-wrap: pretty;
             }
             .about a {
-                color: #555;
+                color: var(--text-soft);
                 text-decoration: underline;
             }
             .about a:hover {
-                color: #2563eb;
+                color: var(--accent-hover);
             }
 
-            /* Feeds */
             .feeds {
                 font-size: 0.82em;
-                color: #aaa;
+                color: var(--text-muted);
                 margin-top: 3em;
             }
             .feeds a {
-                color: #999;
+                color: var(--text-muted);
                 text-decoration: none;
             }
             .feeds a:hover {
-                color: #2563eb;
+                color: var(--accent-hover);
                 text-decoration: underline;
             }
 
