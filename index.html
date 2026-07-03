@@ -6,7 +6,7 @@
         <title>spiritofstar</title>
         <meta
             name="description"
-            content="spiritofstar - security research, writing, and engineering."
+            content="spiritofstar - data analyst, psychology student, programmer."
         />
         <meta name="color-scheme" content="light dark" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -83,11 +83,6 @@
                 widows: 3;
             }
 
-            /* -- Header / wordmark -- */
-            .site-header {
-                text-align: center;
-                margin-bottom: 3em;
-            }
             .wordmark {
                 font-family: "Lora", Georgia, "Times New Roman", Times, serif;
                 font-size: 2.2em;
@@ -96,6 +91,8 @@
                 font-feature-settings: "kern", "liga";
                 color: var(--text);
                 line-height: 1.2;
+                text-align: center;
+                margin-bottom: 2.5em;
             }
             .wordmark a {
                 color: inherit;
@@ -104,32 +101,24 @@
             .wordmark a:hover {
                 opacity: 0.7;
             }
-            .site-desc {
-                font-size: 0.92em;
-                color: var(--text-muted);
-                margin-top: 0.5em;
-                font-style: italic;
-            }
 
             hr {
                 border: none;
                 border-top: 1px solid var(--border);
-                margin: 2.2em 0;
+                margin: 2em 0;
             }
 
-            /* -- Section headings -- */
             .section-heading {
                 font-family:
                     "Instrument Serif", Georgia, "Times New Roman", Times, serif;
-                font-size: 1.3em;
+                font-size: 1.25em;
                 font-weight: 400;
                 font-feature-settings: "kern", "liga";
                 letter-spacing: 0.01em;
                 color: var(--text);
-                margin-bottom: 1em;
+                margin-bottom: 0.8em;
             }
 
-            /* -- Post entry list (Substack style) -- */
             .post-list {
                 list-style: none;
                 margin: 0;
@@ -172,31 +161,6 @@
                 text-wrap: pretty;
             }
 
-            /* -- External link list -- */
-            .link-list {
-                list-style: none;
-                margin: 0;
-                padding: 0;
-            }
-            .link-list li {
-                margin-bottom: 1.2em;
-            }
-            .link-list a {
-                color: var(--text);
-                text-decoration: none;
-                font-weight: 500;
-            }
-            .link-list a:hover {
-                color: var(--accent);
-            }
-            .link-list .desc {
-                font-size: 0.85em;
-                color: var(--text-soft);
-                display: block;
-                margin-top: 0.1em;
-                font-weight: 400;
-            }
-
             .about-text {
                 font-size: 0.92em;
                 color: var(--text-soft);
@@ -211,32 +175,31 @@
                 text-decoration: underline;
             }
 
-            .footer {
-                text-align: center;
-                font-size: 0.8em;
-                color: var(--text-muted);
-                margin-top: 3em;
-            }
-            .footer a {
-                color: var(--text-muted);
-                text-decoration: none;
-            }
-            .footer a:hover {
-                color: var(--accent-hover);
-                text-decoration: underline;
-            }
-
             .social-links {
                 text-align: center;
-                margin: 1.5em 0 0 0;
+                margin-top: 2.5em;
                 font-size: 0.82em;
             }
             .social-links a {
                 color: var(--text-muted);
                 text-decoration: none;
-                margin: 0 0.6em;
+                margin: 0 0.5em;
             }
             .social-links a:hover {
+                color: var(--accent-hover);
+                text-decoration: underline;
+            }
+            .feed-links {
+                text-align: center;
+                margin-top: 0.6em;
+                font-size: 0.78em;
+            }
+            .feed-links a {
+                color: var(--text-muted);
+                text-decoration: none;
+                margin: 0 0.4em;
+            }
+            .feed-links a:hover {
                 color: var(--accent-hover);
                 text-decoration: underline;
             }
@@ -255,12 +218,7 @@
         </style>
     </head>
     <body>
-        <div class="site-header">
-            <div class="wordmark"><a href="./">spiritofstar</a></div>
-            <div class="site-desc">security research, writing, engineering</div>
-        </div>
-
-        <hr />
+        <div class="wordmark"><a href="./">spiritofstar</a></div>
 
         <h2 class="section-heading">Research</h2>
 
@@ -283,25 +241,8 @@
                     Threat-modeling analysis of GeckoView vs. Chromium security
                     architectures on Android, examining process isolation, Rust
                     memory safety, extension infrastructure, privacy
-                    convergence, and monoculture risk. Includes a claim-by-claim
-                    examination of GrapheneOS's advisories.
+                    convergence, and monoculture risk.
                 </div>
-            </li>
-        </ul>
-
-        <hr />
-
-        <h2 class="section-heading">Writing</h2>
-
-        <ul class="link-list">
-            <li>
-                <a href="https://spiritofstar.substack.com"
-                    >spiritofstar.substack.com</a
-                >
-                <span class="desc"
-                    >Broader writing on security, privacy, software engineering,
-                    and other topics.</span
-                >
             </li>
         </ul>
 
@@ -311,22 +252,19 @@
 
         <div class="about-text">
             <p>
-                Independent security research and engineering. This site hosts
-                research papers and links to my writing on Substack. Everything
-                here is independent work, unaffiliated with any vendor.
+                Data analyst, psychology student, and programmer. Interested in
+                browser security, privacy, and software safety.
             </p>
         </div>
 
-        <div class="footer">
-            <div class="social-links">
-                <a href="https://x.com/SpiritOfStarr">Twitter / X</a>
-                <a href="https://spiritofstar.substack.com">Substack</a>
-                <a href="https://github.com/spiritofstar">GitHub</a>
-            </div>
-            <div style="margin-top: 0.8em">
-                <a href="./atom.xml">Atom feed</a> &middot;
-                <a href="./feed.json">JSON feed</a>
-            </div>
+        <div class="social-links">
+            <a href="https://x.com/SpiritOfStarr">Twitter / X</a>
+            <a href="https://spiritofstar.substack.com">Substack</a>
+            <a href="https://github.com/spiritofstar">GitHub</a>
+        </div>
+        <div class="feed-links">
+            <a href="./atom.xml">Atom</a>
+            <a href="./feed.json">JSON Feed</a>
         </div>
     </body>
 </html>
