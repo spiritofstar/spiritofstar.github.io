@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Mobile Browser Security Research</title>
+  <title>spiritofstar</title>
   <subtitle
-    >Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures</subtitle>
+    >Independent research on browser security, memory safety, and privacy engineering</subtitle>
   <link href="https://spiritofstar.github.io/atom.xml" rel="self" />
   <link
-        href="https://spiritofstar.github.io/blog.html"
+        href="https://spiritofstar.github.io/"
         rel="alternate"
         type="text/html"
     />
   <updated>2026-07-04T00:00:00Z</updated>
-  <id>tag:spiritofstar.github.io,2026-07-04:/blog</id>
+  <id>tag:spiritofstar.github.io,2026-07-04:/</id>
   <author>
-    <name>Independent Security Research</name>
+    <name>spiritofstar</name>
   </author>
   <rights>CC BY 4.0</rights>
 
