@@ -23,6 +23,12 @@ jobs:
           sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
           rm -rf typst-x86_64-unknown-linux-musl
 
+      - name: Create output directory
+        run: mkdir -p _output
+
+      - name: Copy feed files
+        run: cp atom.xml feed.json _output/
+
       - name: Build HTML
         run: |
           pandoc sandboxing-mitigation-comparative-analysis.md \

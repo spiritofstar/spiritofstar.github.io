@@ -1,0 +1,32 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Mobile Browser Security Research",
+  "home_page_url": "https://spiritofstar.github.io/blog.html",
+  "feed_url": "https://spiritofstar.github.io/feed.json",
+  "authors": [
+    {
+      "name": "Independent Security Research"
+    }
+  ],
+  "language": "en",
+  "items": [
+    {
+      "id": "tag:spiritofstar.github.io,2026-07-04:/blog/sandboxing-mitigation-comparative-analysis",
+      "url": "https://spiritofstar.github.io/blog.html",
+      "title": "Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures",
+      "summary": "Hardened mobile deployment frameworks (most notably GrapheneOS) advise against Gecko-based browsers like Firefox, claiming a systemic security deficit compared to Chromium-based alternatives such as Vanadium. These advisories show significant documentation latency. They cite architectural deficiencies that have been partially or fully resolved in current stable releases, conflate distinct mitigation layers (pre-compromise versus post-compromise), and fail to account for threat-model dependencies that alter the security calculus.",
+      "content_html": "<p>Full paper: <a href=\"https://spiritofstar.github.io/blog.html\">Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures</a></p>",
+      "date_published": "2026-07-04T00:00:00Z",
+      "date_modified": "2026-07-04T00:00:00Z",
+      "tags": [
+        "browser security",
+        "sandboxing",
+        "Firefox",
+        "GeckoView",
+        "Chromium",
+        "GrapheneOS",
+        "mobile security"
+      ]
+    }
+  ]
+}

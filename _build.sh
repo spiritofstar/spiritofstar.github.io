@@ -4,7 +4,10 @@
 
 set -e
 
-echo "=== Building HTML ==="
+echo "=== Copying feeds ==="
+cp atom.xml feed.json _output/
+
+echo "=== Building HTML ===
 quarto pandoc sandboxing-mitigation-comparative-analysis.md \
   -o _output/blog.html --template=_template.html -s \
   --toc --toc-depth=2 --section-divs --katex
