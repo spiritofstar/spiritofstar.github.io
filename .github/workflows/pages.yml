@@ -26,8 +26,8 @@ jobs:
       - name: Create output directory
         run: mkdir -p _output
 
-      - name: Copy feed files
-        run: cp atom.xml feed.json _output/
+      - name: Copy static files
+        run: cp index.html atom.xml feed.json _output/
 
       - name: Build HTML
         run: |
@@ -41,7 +41,7 @@ jobs:
             -o _output/sandboxing-mitigation-comparative-analysis.typ --to typst
           sed -i 's/#horizontalrule/#line()/g' \
             _output/sandboxing-mitigation-comparative-analysis.typ
-          cat _output/_typst-preamble.typ > /tmp/combined.typ
+          cat _typst-preamble.typ > /tmp/combined.typ
           cat _output/sandboxing-mitigation-comparative-analysis.typ >> /tmp/combined.typ
           mv /tmp/combined.typ _output/sandboxing-mitigation-comparative-analysis.typ
           typst compile _output/sandboxing-mitigation-comparative-analysis.typ

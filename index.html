@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Mobile Browser Security Research</title>
+        <meta
+            name="description"
+            content="Comparative analysis of sandboxing and mitigation philosophies in mobile browser architectures."
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="alternate"
+            type="application/atom+xml"
+            href="./atom.xml"
+            title="Atom Feed"
+        />
+        <link
+            rel="alternate"
+            type="application/feed+json"
+            href="./feed.json"
+            title="JSON Feed"
+        />
+        <style>
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            html {
+                font-size: 18px;
+                -webkit-text-size-adjust: 100%;
+            }
+            body {
+                font-family: "Lora", Georgia, "Times New Roman", Times, serif;
+                font-optical-sizing: auto;
+                line-height: 1.7;
+                color: #1a1a1a;
+                background: #fafafa;
+                max-width: 680px;
+                margin: 0 auto;
+                padding: 3em 1.5em;
+            }
+            .wordmark {
+                font-family: "Lora", Georgia, "Times New Roman", Times, serif;
+                font-size: 1.8em;
+                font-weight: 600;
+                letter-spacing: -0.02em;
+                color: #111;
+                margin: 0 0 0.2em 0;
+                line-height: 1.3;
+            }
+            .subtitle {
+                font-family: "Lora", Georgia, "Times New Roman", Times, serif;
+                font-size: 1.05em;
+                color: #555;
+                font-style: italic;
+                margin-bottom: 1.5em;
+            }
+            h2 {
+                font-family:
+                    "Instrument Serif", Georgia, "Times New Roman", Times, serif;
+                font-size: 1.3em;
+                font-weight: 400;
+                letter-spacing: 0.01em;
+                color: #333;
+                margin: 2em 0 0.6em 0;
+            }
+            .paper-title {
+                font-family: "Roboto", Helvetica, Arial, sans-serif;
+                font-size: 1.15em;
+                font-weight: 500;
+                line-height: 1.4;
+            }
+            .paper-title a {
+                color: #2563eb;
+                text-decoration: none;
+            }
+            .paper-title a:hover {
+                text-decoration: underline;
+            }
+            .paper-meta {
+                font-size: 0.85em;
+                color: #777;
+                margin-top: 0.3em;
+            }
+            .paper-meta a {
+                color: #555;
+                text-decoration: underline;
+            }
+            .paper-meta a:hover {
+                color: #2563eb;
+            }
+            p {
+                margin: 0 0 1em 0;
+            }
+            hr {
+                border: none;
+                border-top: 1px solid #e0e0e0;
+                margin: 2em 0;
+            }
+            .about {
+                font-size: 0.93em;
+                color: #555;
+                font-family: "Lora", Georgia, "Times New Roman", Times, serif;
+            }
+            .about a {
+                color: #555;
+                text-decoration: underline;
+            }
+            .about a:hover {
+                color: #2563eb;
+            }
+            .feeds {
+                font-size: 0.85em;
+                color: #888;
+                margin-top: 2em;
+            }
+            .feeds a {
+                color: #888;
+                text-decoration: underline;
+            }
+            .feeds a:hover {
+                color: #2563eb;
+            }
+            @media (max-width: 600px) {
+                html {
+                    font-size: 16px;
+                }
+                body {
+                    padding: 2em 1em;
+                }
+                .wordmark {
+                    font-size: 1.5em;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wordmark">Mobile Browser Security Research</div>
+        <p class="subtitle">
+            Independent analysis of browser security architectures
+        </p>
+
+        <hr />
+
+        <h2>Paper</h2>
+
+        <div class="paper">
+            <p class="paper-title">
+                <a href="./blog.html"
+                    >Comparative Analysis of Sandboxing and Mitigation
+                    Philosophies in Mobile User-Agent Architectures</a
+                >
+            </p>
+            <p class="paper-meta">
+                July 2026 &middot;
+                <a href="./sandboxing-mitigation-comparative-analysis.pdf"
+                    >PDF</a
+                >
+                &middot; Independent Security Research
+            </p>
+            <p>
+                A multi-layered threat-modeling analysis of GeckoView and
+                Chromium security architectures on Android, examining process
+                isolation, memory safety, extension infrastructure, privacy
+                convergence, and monoculture risk. Includes a claim-by-claim
+                critical examination of GrapheneOS's published advisories
+                against Gecko-based browsers.
+            </p>
+        </div>
+
+        <hr />
+
+        <h2>About</h2>
+
+        <div class="about">
+            <p>
+                This site publishes research on mobile browser security. The
+                current paper evaluates security claims made by hardened Android
+                platforms against Gecko-based browsers, grounded in publicly
+                available primary sources and current as of July 2026.
+            </p>
+        </div>
+
+        <div class="feeds">
+            <a href="./atom.xml">Atom feed</a> &middot;
+            <a href="./feed.json">JSON feed</a>
+        </div>
+    </body>
+</html>
