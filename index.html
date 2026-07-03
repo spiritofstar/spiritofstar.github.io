@@ -6,7 +6,7 @@
         <title>spiritofstar</title>
         <meta
             name="description"
-            content="spiritofstar - independent research, security analysis, and writing."
+            content="spiritofstar - security research, writing, and engineering."
         />
         <meta name="color-scheme" content="light dark" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -64,6 +64,7 @@
                 font-size: 18px;
                 -webkit-text-size-adjust: 100%;
             }
+
             body {
                 font-family: "Lora", Georgia, "Times New Roman", Times, serif;
                 font-optical-sizing: auto;
@@ -77,20 +78,24 @@
                 background: var(--bg);
                 max-width: 640px;
                 margin: 0 auto;
-                padding: 4em 1.5em;
+                padding: 3em 1.5em;
                 orphans: 3;
                 widows: 3;
             }
 
+            /* -- Header / wordmark -- */
+            .site-header {
+                text-align: center;
+                margin-bottom: 3em;
+            }
             .wordmark {
                 font-family: "Lora", Georgia, "Times New Roman", Times, serif;
-                font-size: 2.4em;
+                font-size: 2.2em;
                 font-weight: 700;
                 letter-spacing: -0.03em;
                 font-feature-settings: "kern", "liga";
                 color: var(--text);
-                line-height: 1.15;
-                margin: 0 0 0.4em 0;
+                line-height: 1.2;
             }
             .wordmark a {
                 color: inherit;
@@ -99,123 +104,124 @@
             .wordmark a:hover {
                 opacity: 0.7;
             }
-
-            .intro {
-                font-size: 1em;
-                color: var(--text-soft);
-                margin-bottom: 2.5em;
-                line-height: 1.65;
-            }
-            .intro a {
-                color: var(--accent);
-                text-decoration: none;
-            }
-            .intro a:hover {
-                text-decoration: underline;
-            }
-
-            h2 {
-                font-family:
-                    "Instrument Serif", Georgia, "Times New Roman", Times, serif;
-                font-size: 1.35em;
-                font-weight: 400;
-                font-feature-settings: "kern", "liga";
-                letter-spacing: 0.01em;
-                color: var(--text);
-                margin: 2.2em 0 0.7em 0;
+            .site-desc {
+                font-size: 0.92em;
+                color: var(--text-muted);
+                margin-top: 0.5em;
+                font-style: italic;
             }
 
             hr {
                 border: none;
                 border-top: 1px solid var(--border);
-                margin: 2em 0;
+                margin: 2.2em 0;
             }
 
-            .paper {
-                margin: 1.2em 0;
-            }
-            .paper-title {
-                font-family: "Roboto", Helvetica, Arial, sans-serif;
-                font-size: 1.1em;
-                font-weight: 500;
+            /* -- Section headings -- */
+            .section-heading {
+                font-family:
+                    "Instrument Serif", Georgia, "Times New Roman", Times, serif;
+                font-size: 1.3em;
+                font-weight: 400;
                 font-feature-settings: "kern", "liga";
+                letter-spacing: 0.01em;
+                color: var(--text);
+                margin-bottom: 1em;
+            }
+
+            /* -- Post entry list (Substack style) -- */
+            .post-list {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+            .post-list li {
+                margin-bottom: 1.8em;
+            }
+            .post-title {
+                font-size: 1em;
+                font-weight: 500;
                 line-height: 1.4;
                 text-wrap: balance;
             }
-            .paper-title a {
-                color: var(--accent);
+            .post-title a {
+                color: var(--text);
                 text-decoration: none;
             }
-            .paper-title a:hover {
-                text-decoration: underline;
+            .post-title a:hover {
+                color: var(--accent);
             }
-            .paper-meta {
-                font-size: 0.82em;
+            .post-meta {
+                font-size: 0.78em;
                 color: var(--text-muted);
-                margin-top: 0.2em;
+                margin-top: 0.15em;
             }
-            .paper-meta a {
+            .post-meta a {
                 color: var(--muted-accent);
+                text-decoration: none;
+            }
+            .post-meta a:hover {
+                color: var(--accent-hover);
                 text-decoration: underline;
             }
-            .paper-meta a:hover {
-                color: var(--accent-hover);
-            }
-            .paper-summary {
-                font-size: 0.92em;
+            .post-desc {
+                font-size: 0.85em;
                 color: var(--text-soft);
-                margin-top: 0.5em;
-                line-height: 1.6;
+                margin-top: 0.25em;
+                line-height: 1.55;
                 text-wrap: pretty;
             }
 
+            /* -- External link list -- */
             .link-list {
                 list-style: none;
-                margin: 0.6em 0 0 0;
+                margin: 0;
                 padding: 0;
             }
             .link-list li {
-                margin: 0.5em 0;
-                font-size: 1em;
+                margin-bottom: 1.2em;
             }
             .link-list a {
-                color: var(--accent);
+                color: var(--text);
                 text-decoration: none;
                 font-weight: 500;
             }
             .link-list a:hover {
-                text-decoration: underline;
+                color: var(--accent);
             }
             .link-list .desc {
                 font-size: 0.85em;
-                color: var(--text-muted);
-                margin-left: 0.3em;
+                color: var(--text-soft);
+                display: block;
+                margin-top: 0.1em;
+                font-weight: 400;
             }
 
-            .about {
+            .about-text {
                 font-size: 0.92em;
                 color: var(--text-soft);
                 line-height: 1.6;
                 text-wrap: pretty;
             }
-            .about a {
-                color: var(--text-soft);
+            .about-text a {
+                color: var(--accent);
+                text-decoration: none;
+            }
+            .about-text a:hover {
                 text-decoration: underline;
             }
-            .about a:hover {
-                color: var(--accent-hover);
-            }
 
-            .feeds {
-                font-size: 0.82em;
+            .footer {
+                text-align: center;
+                font-size: 0.8em;
                 color: var(--text-muted);
                 margin-top: 3em;
             }
-            .feeds a {
+            .footer a {
                 color: var(--text-muted);
                 text-decoration: none;
             }
-            .feeds a:hover {
+            .footer a:hover {
                 color: var(--accent-hover);
                 text-decoration: underline;
             }
@@ -225,54 +231,52 @@
                     font-size: 16px;
                 }
                 body {
-                    padding: 2em 1em;
+                    padding: 2em 1.2em;
                 }
                 .wordmark {
-                    font-size: 1.8em;
+                    font-size: 1.7em;
                 }
             }
         </style>
     </head>
     <body>
-        <div class="wordmark"><a href="./">spiritofstar</a></div>
-
-        <div class="intro">
-            <p>
-                Security researcher and engineer. I analyze browser security
-                architectures, write about software safety, and publish
-                independent threat-modeling research. I also maintain a general
-                blog at
-                <a href="https://spiritofstar.substack.com">Substack</a>.
-            </p>
+        <div class="site-header">
+            <div class="wordmark"><a href="./">spiritofstar</a></div>
+            <div class="site-desc">security research, writing, engineering</div>
         </div>
 
         <hr />
 
-        <h2>Writing</h2>
+        <h2 class="section-heading">Research</h2>
 
-        <div class="paper">
-            <p class="paper-title">
-                <a href="./blog.html"
-                    >Comparative Analysis of Sandboxing and Mitigation
-                    Philosophies in Mobile User-Agent Architectures</a
-                >
-            </p>
-            <p class="paper-meta">
-                July 2026 &middot;
-                <a href="./sandboxing-mitigation-comparative-analysis.pdf"
-                    >PDF</a
-                >
-                &middot; 18 pages &middot; CC BY 4.0
-            </p>
-            <p class="paper-summary">
-                A multi-layered threat-modeling analysis comparing GeckoView and
-                Chromium security architectures on Android. Examines process
-                isolation, Rust memory safety, extension infrastructure, privacy
-                convergence with security, and monoculture risk. Includes a
-                claim-by-claim critical examination of GrapheneOS's published
-                advisories against Gecko-based browsers.
-            </p>
-        </div>
+        <ul class="post-list">
+            <li>
+                <div class="post-title">
+                    <a href="./blog.html"
+                        >Comparative Analysis of Sandboxing and Mitigation
+                        Philosophies in Mobile User-Agent Architectures</a
+                    >
+                </div>
+                <div class="post-meta">
+                    July 2026 &middot;
+                    <a href="./sandboxing-mitigation-comparative-analysis.pdf"
+                        >PDF</a
+                    >
+                    &middot; 18 pages
+                </div>
+                <div class="post-desc">
+                    Threat-modeling analysis of GeckoView vs. Chromium security
+                    architectures on Android, examining process isolation, Rust
+                    memory safety, extension infrastructure, privacy
+                    convergence, and monoculture risk. Includes a claim-by-claim
+                    examination of GrapheneOS's advisories.
+                </div>
+            </li>
+        </ul>
+
+        <hr />
+
+        <h2 class="section-heading">Writing</h2>
 
         <ul class="link-list">
             <li>
@@ -280,26 +284,25 @@
                     >spiritofstar.substack.com</a
                 >
                 <span class="desc"
-                    >&mdash; writing on security, privacy, and engineering</span
+                    >Broader writing on security, privacy, software engineering,
+                    and other topics.</span
                 >
             </li>
         </ul>
 
         <hr />
 
-        <h2>About</h2>
+        <h2 class="section-heading">About</h2>
 
-        <div class="about">
+        <div class="about-text">
             <p>
-                I publish independent research on browser security, memory
-                safety, and privacy engineering. This site hosts my primary
-                research papers. My broader writing lives on Substack.
-                Everything here is independent work, unaffiliated with any
-                vendor.
+                Independent security research and engineering. This site hosts
+                research papers and links to my writing on Substack. Everything
+                here is independent work, unaffiliated with any vendor.
             </p>
         </div>
 
-        <div class="feeds">
+        <div class="footer">
             <a href="./atom.xml">Atom feed</a> &middot;
             <a href="./feed.json">JSON feed</a>
         </div>
