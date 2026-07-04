@@ -125,7 +125,7 @@ broader system access.
 GeckoView does not implement the `isolatedProcess` mechanism for its
 child processes on Android. This is a substantiated architectural
 limitation that GrapheneOS correctly identifies \[1\]. The
-`isolatedProcess` flag is a declarative Android manifest property – as
+`isolatedProcess` flag is a declarative Android manifest property, as
 GrapheneOS describes it, "a very easy to use boolean property for app
 service processes" \[1\]. Its absence in GeckoView represents a
 deliberate engineering choice or resource-allocation decision by
@@ -143,7 +143,7 @@ assessment:
   and the browser chrome, even if the kernel-level protections differ
   from Chromium’s.
 
-+ #strong[Project Fission (Site Isolation) – shipped, then rolled back.]
++ #strong[Project Fission (Site Isolation), shipped, then rolled back.]
   Mozilla shipped Site Isolation for Android in Firefox 147.0 (January
   2026), with release notes stating: "Added protection against
   side-channel attacks such as Spectre using the same Site Isolation
@@ -153,12 +153,12 @@ assessment:
   2011319). The isolation strategy default was reverted to
   `ISOLATE_NOTHING` for all channels except nightly and developer
   \[27\]. As of Firefox 152 (July 2026), Fission remains disabled on
-  release and beta channels. The root cause – content process crashes
-  when isolating sites with Fission (Bug 2012435) – remains open with
-  the fix still in progress \[29\]. On nightly and developer builds,
-  Fission operates at `ISOLATE_HIGH_VALUE`, which isolates only "high
-  value" sites (e.g., login pages) rather than providing full strict
-  origin isolation. This is fundamentally different from Chromium’s site
+  release and beta channels. The root cause, content process crashes
+  when isolating sites with Fission (Bug 2012435), remains open with the
+  fix still in progress \[29\]. On nightly and developer builds, Fission
+  operates at `ISOLATE_HIGH_VALUE`, which isolates only "high value"
+  sites (e.g., login pages) rather than providing full strict origin
+  isolation. This is fundamentally different from Chromium’s site
   isolation model and means the cross-origin exfiltration protection
   described in the paper is currently unavailable on release Firefox for
   Android.
@@ -197,7 +197,7 @@ release configuration.
   full strict origin isolation.
 + #strong[Firefox 147.0] (January 2026): Ships with Fission enabled.
 + #strong[Bug 2011319] (February 2026): Users report content process
-  crashes causing random back-navigation – a regression directly
+  crashes causing random back-navigation, a regression directly
   attributable to Fission \[28\].
 + #strong[Bug 2011886] (January 23, 2026): Fission switched off in
   release and beta channels. Commit message: "Set isolation strategy to
@@ -234,7 +234,7 @@ attacks. But it does not provide the same post-exploit kernel-level
 containment. The relationship between Fission and `isolatedProcess` is
 complementary, not substitutive. Moreover, Fission’s current
 `ISOLATE_HIGH_VALUE` strategy is narrower than Chromium’s full site
-isolation – it only isolates high-value origins rather than every site.
+isolation, it only isolates high-value origins rather than every site.
 
 === 2.4 Is `isolatedProcess` the Complete Picture?
 <is-isolatedprocess-the-complete-picture>
@@ -316,7 +316,7 @@ regardless of the sandbox quality.
 
 Firefox’s approach to these APIs is markedly more conservative. Mozilla
 has declined to implement Direct Sockets, Isolated Web Apps, and several
-of the more invasive device APIs. This is not an oversight – it reflects
+of the more invasive device APIs. This is not an oversight, it reflects
 a deliberate product philosophy that prioritizes capability gating over
 capability expansion. The reasoning is straightforward: an API that does
 not exist in the codebase cannot be exploited.
@@ -348,7 +348,7 @@ vulnerability pool whose exploitation, even if well-contained, still
 threatens cross-origin data confidentiality within the browser.
 Firefox’s smaller API surface creates a smaller vulnerability pool,
 partially compensating for weaker kernel-level containment on Android.
-This is not an argument that Firefox’s approach is superior – it is an
+This is not an argument that Firefox’s approach is superior, it is an
 argument that the two projects have made different trade-offs at
 different layers, and a fair comparison must account for both sides of
 the ledger.
@@ -474,7 +474,7 @@ type-safe message passing between processes. Interface definitions are
 compiled into generated C++ code that validates message structure,
 bounds, and types at the serialization and deserialization boundaries.
 This prevents a class of memory corruption vulnerabilities at
-inter-process communication boundaries – precisely the attack surface
+inter-process communication boundaries, precisely the attack surface
 that sandbox-escape exploits target \[36\]. Firefox’s IPC layer (similar
 to Chromium’s legacy IPC) does not provide equivalent compile-time type
 safety guarantees across all channels, though specific interfaces
@@ -999,7 +999,7 @@ threat-model priorities rather than objective security deficits.
 
 === 7.1 Claim: "Firefox does not have internal sandboxing on Android"
 <claim-firefox-does-not-have-internal-sandboxing-on-android>
-#strong[Status: Substantiated – requires clarification of terminology.]
+#strong[Status: Substantiated, requires clarification of terminology.]
 
 Firefox on Android does not implement Android’s `isolatedProcess`
 mechanism for its child processes. This claim is accurate and is not in
@@ -1082,7 +1082,7 @@ zero-trust file system access (deny-by-default, with explicit whitelists
 only for required resources), and third-party DLL load blocking. The GPU
 process sandbox operates at Level 2, isolating graphics driver access
 from the OS. Mozilla’s sandbox architecture on Windows uses Job objects,
-restricted access tokens, integrity levels, and Win32k lockdown – the
+restricted access tokens, integrity levels, and Win32k lockdown, the
 same primitives that Chromium’s Windows sandbox uses. The gap on this
 platform has effectively closed. Users can verify their sandbox level by
 checking the Content Process Sandbox Level entry in `about:support`.
@@ -1470,7 +1470,7 @@ Accessed: Jul. 2026.
 Available: #link("https://wiki.mozilla.org/Security/Sandbox") .
 Accessed: Jul. 2026.
 
-\[25\] r/firefox, "Firefox Sandbox Isolation Hits Level 9 – The Gap with
+\[25\] r/firefox, "Firefox Sandbox Isolation Hits Level 9, The Gap with
 Chrome Has Closed," Reddit, Jan. 2026. \[Online\]. Available:
 #link("https://old.reddit.com/r/firefox/comments/1qkqfcx/firefox_sandbox_isolation_hits_level_9_the_gap/")[https://old.reddit.com/r/firefox/comments/1qkqfcx/firefox\_sandbox\_isolation\_hits\_level\_9\_the\_gap/]
 . Accessed: Jul. 2026.

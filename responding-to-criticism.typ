@@ -14,7 +14,7 @@
 == Abstract
 <abstract>
 My first paper compared Firefox and Chrome security on Android and
-argued the choice isn’t binary – it depends on what you’re protecting
+argued the choice isn’t binary. It depends on what you’re protecting
 against. GrapheneOS pushed back hard, and they were right about several
 things I got wrong. This paper fixes those mistakes.
 
@@ -25,14 +25,14 @@ mitigations. Those omissions made the comparison unfair, and I’ve
 corrected them here.
 
 But the core claim survived: these two engines optimize for
-fundamentally different threats. Chromium is a containment architecture
-– it assumes you’ll get compromised and limits the blast radius. Firefox
-is a prevention architecture – it reduces the chance you get compromised
+fundamentally different threats. Chromium is a containment architecture.
+It assumes you’ll get compromised and limits the blast radius. Firefox
+is a prevention architecture. It reduces the chance you get compromised
 in the first place, using Rust to eliminate entire bug classes at
 compile time. These aren’t competing claims about which is "more
 secure." They’re different answers to different questions.
 
-I also found genuinely new stuff while digging deeper – things I didn’t
+I also found genuinely new stuff while digging deeper. Things I didn’t
 know when I wrote the first draft. The V8 sandbox is more interesting
 than I realized. The extensions breaking site isolation problem affects
 both browsers, not just one. And Firefox’s lack of CFI in SpiderMonkey
@@ -55,7 +55,7 @@ the point.
 
 The response was immediate. GrapheneOS published a detailed rebuttal on
 Reddit, and their Discord community engaged extensively. Some of what
-they said was fair – I’d made real errors. Some of it felt less like
+they said was fair. I’d made real errors. Some of it felt less like
 technical correction and more like dismissal. Characterizing independent
 analysis as "dishonest" and "unethical" because it gets details wrong
 isn’t how peer review works. But I’m separating those two things here.
@@ -64,7 +64,7 @@ The corrections are real and documented below. I was imprecise about
 `isolatedProcess`. I omitted important Chromium mitigations. I didn’t
 catch the CFI gap in SpiderMonkey. Each of those is fixed.
 
-The characterizations of intent I address separately – not because they
+The characterizations of intent I address separately, not because they
 matter as much, but because the dynamic they create (ad hominem attacks
 on independent researchers) is worth naming. When every mistake gets
 framed as bad faith, fewer people do independent research. That’s bad
@@ -81,15 +81,15 @@ held up. Here’s what survived.
 <firefoxs-rust-bet-is-paying-off>
 Firefox has rewritten major subsystems in Rust: the CSS engine (Stylo),
 the renderer (WebRender), library sandboxing (RLBox), parts of the
-networking stack. Rust eliminates entire bug classes at compile time –
+networking stack. Rust eliminates entire bug classes at compile time:
 use-after-free, buffer overflows, null pointer dereferences. Chromium
 has mitigations for these (covered below), but mitigations manage
 symptoms. Rust eliminates the root cause.
 
 The numbers back this up. Roughly 70% of Chromium’s critical-severity
 bugs are memory safety issues \[14\]. Firefox’s Rust components have
-produced zero such CVEs since they shipped \[15\]. That’s not luck –
-it’s what the language guarantees.
+produced zero such CVEs since they shipped \[15\]. That’s not luck. It’s
+what the language guarantees.
 
 This doesn’t mean Firefox is "more secure." It means the two projects
 took different paths to the same goal. Firefox prevents bugs from
@@ -98,7 +98,7 @@ exploitable when they do exist. Both approaches work.
 
 === 2.2 Content Blocking !\= Privacy Theater
 <content-blocking-privacy-theater>
-GrapheneOS called extension-based content blocking "privacy theater" –
+GrapheneOS called extension-based content blocking "privacy theater,"
 equating it with antivirus-style enumeration of badness. That analogy
 doesn’t hold.
 
@@ -109,7 +109,7 @@ detection. That’s prevention.
 
 The real limitation (filter lists can’t block novel zero-days) is real
 but incomplete as a critique. Zero-day delivery in practice relies on
-known malicious infrastructure – compromised ad networks, C2 domains,
+known malicious infrastructure: compromised ad networks, C2 domains,
 exploit kit landing pages. Filter lists block those. The "enumeration is
 futile" argument assumes attackers can spin up fresh infrastructure for
 every target at zero cost. That’s not how mass-market exploitation
@@ -137,8 +137,8 @@ monoculture risk reduction. Different users will weigh that differently.
 
 === 2.4 Pick Your Threat Model
 <pick-your-threat-model>
-The original paper’s core claim – browser choice is a threat-model
-alignment, not a binary security judgment – held up completely.
+The original paper’s core claim, browser choice is a threat-model
+alignment not a binary security judgment, held up completely.
 
 - If you’re worried about targeted, state-sponsored attacks where the
   attacker has resources to find and weaponize a novel exploit, you want
@@ -166,7 +166,7 @@ Win32k syscalls from renderer processes \[9\]. - Both use broker process
 models for privileged operations.
 
 The `isolatedProcess` thing is an Android limitation because Android
-apps can’t create namespaces or use seccomp-bpf – the Android Runtime
+apps can’t create namespaces or use seccomp-bpf. The Android Runtime
 needs too many syscalls. The `isolatedProcess` flag is the only
 sandboxing game in town on Android, and Firefox doesn’t use it. That’s
 real.
@@ -174,9 +174,9 @@ real.
 But Firefox’s critics treat this as a universal Firefox deficiency when
 it’s really a platform-specific gap. If the claim were "Firefox is
 categorically less secure than Chromium," you’d expect the sandbox gap
-to exist everywhere. On Windows, it doesn’t. On Android, it does – and
-it must be weighed against Firefox’s advantages (Rust, smaller API
-surface) that apply on all platforms.
+to exist everywhere. On Windows, it doesn’t. On Android, it does. And it
+must be weighed against Firefox’s advantages (Rust, smaller API surface)
+that apply on all platforms.
 
 Picking Chrome on Android because you prioritize mobile security is
 perfectly rational. Claiming "Firefox has no sandbox" or "Firefox is
@@ -270,11 +270,11 @@ removes a false parity claim.
 Chromium’s CVE count as evidence against it was sloppy. Chromium invests
 massively more in fuzzing, AI-guided auditing, and security research.
 Finding more bugs is a sign of more testing, not less security \[18\].
-The relevant metric is residual risk after mitigation, not bug count –
+The relevant metric is residual risk after mitigation, not bug count,
 and that’s not directly measurable from public data.
 
 #strong[Extensions break site isolation in both browsers.] I implied
-Firefox’s extension model was more contained. It’s not – extensions in
+Firefox’s extension model was more contained. It’s not. Extensions in
 both Firefox and Chromium run with cross-origin access that bypasses
 site isolation \[19\]. The real comparison isn’t extensions vs no
 extensions. It’s extensions vs built-in content filtering (as Brave
@@ -286,7 +286,7 @@ should have framed it that way.
 == 4. Where We Still Disagree
 <where-we-still-disagree>
 Even after all the corrections above, some disagreements aren’t about
-facts – they’re about how you weigh them.
+facts. They’re about how you weigh them.
 
 === 4.1 "Much More Vulnerable" vs "Differently Vulnerable"
 <much-more-vulnerable-vs-differently-vulnerable>
@@ -305,9 +305,9 @@ I haven’t seen evidence that changes that.
 <advisory-latency>
 GrapheneOS’s advisory on Firefox hasn’t changed significantly since it
 was written, even as Firefox’s architecture evolved. The Fission
-rollback is an example of this working both ways – I needed to correct
-my own framing, but the advisory also doesn’t acknowledge that Firefox
-on Windows has reached sandbox parity. Documentation latency is a real
+rollback is an example of this working both ways. I needed to correct my
+own framing, but the advisory also doesn’t acknowledge that Firefox on
+Windows has reached sandbox parity. Documentation latency is a real
 problem in security engineering \[6\], and it’s not unique to any
 project.
 
@@ -333,7 +333,7 @@ That’s how research is supposed to work.
 GrapheneOS’s technical contributions to Android security are real and
 well-established. Disagreeing with specific claims in their advisory
 doesn’t diminish that. And acknowledging my own errors doesn’t mean the
-core argument was wrong – it means I’m willing to correct course when
+core argument was wrong. It means I’m willing to correct course when
 presented with better evidence.
 
 #line()
@@ -348,7 +348,7 @@ mitigations are automatic - Poor CVE count framing without accounting
 for fuzzing investment - Implied Firefox extensions have better site
 isolation properties (they don’t)
 
-Here’s what survived: - Firefox’s Rust advantage is real and widening -
+Here’s what remains: - Firefox’s Rust advantage is real and widening -
 Content blocking at the network layer is genuine pre-delivery prevention
 - Chromium monoculture is a systemic risk - Browser choice is a
 threat-model alignment, not binary "secure vs insecure" - The sandbox
