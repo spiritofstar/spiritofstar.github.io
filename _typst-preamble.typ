@@ -18,7 +18,7 @@
 ])
 #v(6mm)
 #align(center, text(size: 12pt, style: "italic")[
-  A Comparative Analysis of Mobile Browser Security Architectures on Android
+  A Threat-Modeling Analysis of GeckoView and Chromium on Android
 ])
 #v(6mm)
 #align(center, text(size: 11pt)[Independent Security Research])

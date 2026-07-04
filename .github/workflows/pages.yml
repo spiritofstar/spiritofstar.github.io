@@ -3,7 +3,6 @@ name: Build and Deploy
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -37,7 +36,7 @@ jobs:
           cp index.html atom.xml feed.json rss.xml robots.txt sitemap.xml _output/
           cp -r .well-known _output/.well-known
 
-      - name: Build paper 1 — Sandboxing Analysis
+      - name: Build paper 1 HTML and PDF
         run: |
           MD="sandboxing-mitigation-comparative-analysis.md"
           SLUG="blog"
@@ -45,27 +44,12 @@ jobs:
             --toc --toc-depth=2 --section-divs --mathjax
           pandoc "$MD" -o "_output/$SLUG.typ" --to typst
           sed -i 's/#horizontalrule/#line()/g' "_output/$SLUG.typ"
-          cat > /tmp/preamble.typ << 'EOF'
-#set document(
-  title: "Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures",
-  author: "Independent Security Research",
-)
-#set page(
-  margin: (top: 2.5cm, bottom: 2.5cm, left: 2.5cm, right: 2.5cm),
-  numbering: "1",
-  number-align: center,
-)
-#set text(font: "Times New Roman", size: 11pt)
-#set par(justify: true)
-#show math.equation: set text(size: 9.5pt)
-#set heading(numbering: "1.1")
-EOF
-          cat /tmp/preamble.typ > /tmp/combined.typ
+          cat _typst-preamble.typ > /tmp/combined.typ
           cat "_output/$SLUG.typ" >> /tmp/combined.typ
           mv /tmp/combined.typ "_output/$SLUG.typ"
           typst compile "_output/$SLUG.typ"
 
-      - name: Build paper 2 — Response to Criticism
+      - name: Build paper 2 HTML and PDF
         run: |
           MD="responding-to-criticism.md"
           SLUG="responding-to-criticism"
@@ -93,7 +77,7 @@ EOF
           mv /tmp/combined.typ "_output/$SLUG.typ"
           typst compile "_output/$SLUG.typ"
 
-      - name: Deploy to GitHub Pages (gh-pages branch)
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
