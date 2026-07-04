@@ -48,8 +48,8 @@ I welcome any corrections to my analysis. The paper is CC BY 4.0 and I would be 
 
 [1] GrapheneOS, "Usage: Web Browsing." https://grapheneos.org/usage#web-browsing
 
-[2] Full paper (HTML): https://YOUR-USER.github.io/YOUR-REPO/blog.html
-    Full paper (PDF): https://YOUR-USER.github.io/YOUR-REPO/sandboxing-mitigation-comparative-analysis.pdf
+[2] Full paper (HTML): https://spiritofstar.github.io/blog.html
+    Full paper (PDF): https://spiritofstar.github.io/sandboxing-mitigation-comparative-analysis.pdf
 
 [3] Mozilla, "Hardening Firefox Together with Anthropic's Red Team." https://blog.mozilla.org/en/firefox/hardening-firefox-anthropic-red-team/
 
