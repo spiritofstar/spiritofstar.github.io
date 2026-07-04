@@ -1,11 +1,11 @@
-# Draft: Mozilla Connect Discussion
+# Draft: Mozilla Connect Discussion (Revised)
 
 **Platform:** connect.mozilla.org
 **Category:** Firefox for Android / Security
 
 ---
 
-## Title: GrapheneOS Advises Against Firefox on Android. Can Mozilla Address These Claims Publicly?
+## Title: GrapheneOS Advises Against Firefox on Android. Can Mozilla Address These Claims?
 
 **Body:**
 
@@ -16,35 +16,37 @@ GrapheneOS, the hardening-focused Android OS, advises users against installing F
 3. Firefox "bypass or cripple a fair bit of the upstream and GrapheneOS hardening work"
 4. Extension-based privacy protections are "privacy theater"
 
-I researched these claims and published a comparative analysis [2] that maps each one against current evidence. Some claims remain substantiated. Others appear partially or fully outdated as of 2026.
+I researched these claims and published a comparative analysis [2] that maps each one against current evidence as of July 2026 (Firefox 152). Some claims remain substantiated. Others are partially or fully outdated. The full paper is at the link above.
 
 **What I found that may interest Mozilla engineers:**
 
-- Firefox 147 (January 2026) shipped Site Isolation (Fission) for Android with release notes citing "the same Site Isolation safeguards already in use by desktop Firefox." This directly addresses GrapheneOS's claim about no internal sandboxing on Android. The implementation details on how Fission works at the kernel level on Android (given that unprivileged user namespaces are not available to apps) would be valuable to document publicly.
+**Site Isolation (Fission) on Android.** Firefox 147.0 (January 2026) shipped Fission with release notes citing Spectre-class side-channel protection [12]. However, Firefox 147.0.2 (February 2026) disabled Fission on release and beta channels due to content process crashes causing random back-navigation (Bug 2011319). The isolation strategy default was reverted to ISOLATE_NOTHING for release and beta; only nightly and developer channels retained ISOLATE_HIGH_VALUE [27].
 
-- Firefox's Rust migration (Stylo, RLBox, Necko, WebRender) is structurally significant for vulnerability resistance. But I want to be precise about its scope: Rust does not protect JIT-compiled SpiderMonkey code, logic bugs, or cryptographic side channels. It is one layer among several, not a panacea.
+As of Firefox 152 (July 2026), Fission remains disabled on release and beta channels. The root cause (Bug 2012435: content process crashes when isolating sites) is still open [29]. The Nimbus experiment configuration confirms this: `nimbus.fml.yaml` shows `isolationStrategy: 0` (ISOLATE_NOTHING) for release and beta, and `isolationStrategy: 2` (ISOLATE_HIGH_VALUE) for nightly and developer.
 
-- Mozilla's 2025 collaboration with Anthropic's red team [3] and analysis of AI-discovered vulnerabilities [4] demonstrate ongoing investment in hardening. I note in my paper that Google applies comparable AI-assisted techniques, so this is not a unique Mozilla advantage, but it is real progress.
+This is the single most significant gap that GrapheneOS and security-conscious users point to. If Mozilla could provide a timeline for re-enabling Fission on release, or a status update on Bug 2012435, it would substantially change the security assessment.
 
-- The dual-engine attack surface concern (Firefox requires Chromium-based WebView on Android) describes a platform architectural constraint, not a Firefox deficiency. GrapheneOS could resolve this by substituting a GeckoView-based WebView for Vanadium, but chooses not to.
+**Specific questions I could not answer from public documentation:**
 
-**Questions I could not answer from public documentation:**
+1. **Fission status.** What is the current plan for re-enabling Fission on release channels? Bug 2012435 (content process crashes when isolating sites) has been open since February 2026 and is still unresolved as of July 2026. When does Mozilla expect to have the root cause fixed?
 
-1. Fission shipped on Android in Firefox 147. The release notes say "the same Site Isolation safeguards already in use by desktop Firefox." Community members noted that unprivileged user namespaces are not available on Android. What kernel-level mechanisms does Fission actually use on Android? How does the implementation differ from desktop?
+2. **Timeline transparency.** The Fission rollback in 147.0.2 was not mentioned in the release notes. Users discovered it through Bugzilla. Will future security-relevant configuration changes be disclosed in release notes?
 
-2. GrapheneOS correctly notes that GeckoView does not use the `android:isolatedProcess` manifest attribute for child processes. Are there plans to adopt it, or is Mozilla pursuing a different kernel sandboxing strategy that achieves equivalent post-exploit containment?
+3. **Kernel-level isolation.** Community members noted that unprivileged user namespaces are not available on Android. What kernel-level mechanisms does Fission actually use on Android, and how does the implementation compare to desktop? Is `isolatedProcess` adoption on the roadmap?
 
-3. Does Mozilla have internal metrics comparing severity-critical vulnerability density in Rust components versus C++ code paths? The 70% memory-safety statistic from Chromium's data is often cited, but similar data from Mozilla's own CVE triage would strengthen the evidence base.
+4. **Rust and vulnerability metrics.** Does Mozilla have internal data comparing severity-critical vulnerability density in Rust components versus C++ code paths? The 70% memory-safety statistic from Chromium's data is often cited, but similar data from Mozilla's own CVE triage would strengthen the evidence base.
 
-4. Has the desktop Linux sandbox gap with Chromium narrowed since Fission's 2021 desktop release? GrapheneOS still characterizes Firefox's desktop sandbox as "substantially weaker," but the claim may be outdated.
+5. **Desktop sandbox comparison.** Mozilla's Windows sandbox has reached Level 9 (Win32k lockdown), matching Chromium's capabilities. Has the desktop Linux sandbox gap with Chromium narrowed since the original GrapheneOS assessment?
 
 **Why this matters:**
 
 GrapheneOS's advisory is influential in the privacy and security community. If Mozilla has engineering responses to these claims, a public technical discussion would help users make informed decisions. Security practitioners who want to recommend Firefox on Android currently have no Mozilla-published rebuttal to cite.
 
+I am not asking Mozilla to prioritize Fission over other security work. I am asking for transparency about the current state so that the community can make accurate threat-model assessments. A public status update would be valuable even without an ETA.
+
 I welcome any corrections to my analysis. The paper is CC BY 4.0 and I would be happy to update it with engineer feedback.
 
-**References:**
+**References from my paper:**
 
 [1] GrapheneOS, "Usage: Web Browsing." https://grapheneos.org/usage#web-browsing
 
@@ -55,11 +57,21 @@ I welcome any corrections to my analysis. The paper is CC BY 4.0 and I would be 
 
 [4] Mozilla, "AI Security and Zero-Day Vulnerabilities." https://blog.mozilla.org/en/privacy-security/ai-security-zero-day-vulnerabilities/
 
+[12] Firefox 147 Release Notes: https://www.mozilla.org/en-US/firefox/android/147.0/releasenotes/
+
+[27] Bug 2011886 - Switch off isolated processes by default: https://bugzilla.mozilla.org/show_bug.cgi?id=2011886
+
+[28] Bug 2011319 - Random back-navigation after page load: https://bugzilla.mozilla.org/show_bug.cgi?id=2011319
+
+[29] Bug 2012435 - Content process crashes when isolating sites: https://bugzilla.mozilla.org/show_bug.cgi?id=2012435
+
+[30] Bug 2003658 - Make Fission + SHIP default in 147: https://bugzilla.mozilla.org/show_bug.cgi?id=2003658
+
 ---
 
 ## Notes before posting
 
-- **Fill in the links** to your HTML and PDF before posting.
-- **Keep the tone collaborative**, not adversarial. The goal is to get engineers to engage, not to put them on the defensive.
-- **Mozilla Connect** is read by product managers and engineers, but you may not get the same depth of technical response as on Discourse or GitHub. If this does not get traction within a week, cross-post to discourse.mozilla.org (Security category) with the same text.
-- **Tag it appropriately.** Mozilla Connect lets you tag posts. Use "Firefox for Android" and "Security."
+- **Fill in your links** before posting.
+- **Keep the tone collaborative.** The goal is to get engineers to engage, not to put them on the defensive. The revised draft is explicitly asking for transparency, not demanding fixes.
+- **Mozilla Connect** is read by product managers and engineers, but you may not get the same depth of technical response as on Discourse or GitHub. If this does not get traction within a week, cross-post to discourse.mozilla.org (Security category).
+- **Tag it appropriately.** Use "Firefox for Android" and "Security."
