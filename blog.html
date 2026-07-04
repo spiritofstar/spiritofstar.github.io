@@ -13,7 +13,7 @@ Research" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap"
             rel="stylesheet"
         />
         <link
@@ -35,7 +35,6 @@ Research" />
             title="RSS Feed"
         />
         <style>
-            /* ── Color scheme ── */
             :root {
                 --bg: #fafafa;
                 --surface: #f8f9fa;
@@ -52,11 +51,12 @@ Research" />
                 --pre-accent: #2c3e50;
                 --table-header: #2c3e50;
                 --table-stripe: #f5f6f8;
-                --blockquote-bg: #f0f3f5;
-                --blockquote-accent: #2c3e50;
+                --blockquote-bg: #fdf2f2;
+                --blockquote-accent: #c0392b;
                 --toc-bg: #f8f9fa;
                 --abstract-bg: #f0f3f5;
                 --abstract-accent: #2c3e50;
+                --shadow: rgba(0, 0, 0, 0.06);
             }
 
             @media (prefers-color-scheme: dark) {
@@ -81,10 +81,10 @@ Research" />
                     --toc-bg: #22262e;
                     --abstract-bg: #1f232b;
                     --abstract-accent: #93a0f5;
+                    --shadow: rgba(0, 0, 0, 0.3);
                 }
             }
 
-            /* ── Reset ── */
             *,
             *::before,
             *::after {
@@ -93,7 +93,6 @@ Research" />
                 padding: 0;
             }
 
-            /* ── Root ── */
             html {
                 font-size: 18px;
                 -webkit-text-size-adjust: 100%;
@@ -103,13 +102,12 @@ Research" />
                 font-family:
                     "Newsreader", Georgia, "Times New Roman", Times, serif;
                 font-optical-sizing: auto;
-                font-feature-settings:
-                    "kern", "liga", "clig", "calt", "onum", "pnum";
+                font-feature-settings: "kern", "liga", "clig", "calt", "onum";
                 font-kerning: normal;
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
                 text-rendering: optimizeLegibility;
-                line-height: 1.75;
+                line-height: 1.7;
                 color: var(--text);
                 background: var(--bg);
                 max-width: 720px;
@@ -119,7 +117,7 @@ Research" />
                 widows: 3;
             }
 
-            /* ── Body typography ── */
+            /* ---- Body typography ---- */
             p {
                 margin: 0 0 1em 0;
                 text-wrap: pretty;
@@ -133,12 +131,13 @@ Research" />
             }
             strong {
                 font-weight: 600;
+                font-feature-settings: "kern", "liga", "clig", "calt";
             }
             em {
                 font-style: italic;
             }
 
-            /* ── Headings ── */
+            /* ---- Heading microtypography ---- */
             h1,
             h2,
             h3,
@@ -154,14 +153,15 @@ Research" />
             }
 
             h1 {
-                font-size: 1.55em;
+                font-size: 1.6em;
                 margin: 1.6em 0 0.4em 0;
                 letter-spacing: -0.018em;
                 font-weight: 600;
+                font-feature-settings: "kern", "liga";
             }
 
             h2 {
-                font-size: 1.2em;
+                font-size: 1.25em;
                 margin: 1.7em 0 0.4em 0;
                 border-bottom: 1px solid var(--border-light);
                 padding-bottom: 0.25em;
@@ -170,21 +170,20 @@ Research" />
             }
 
             h3 {
-                font-size: 1.02em;
+                font-size: 1.05em;
                 margin: 1.4em 0 0.3em 0;
                 letter-spacing: 0.015em;
                 font-weight: 550;
             }
 
             h4 {
-                font-size: 0.92em;
+                font-size: 0.95em;
                 margin: 1.2em 0 0.2em 0;
                 letter-spacing: 0.01em;
                 font-weight: 600;
                 text-transform: uppercase;
             }
 
-            /* ── Links ── */
             a {
                 color: var(--accent);
                 text-decoration: none;
@@ -193,7 +192,6 @@ Research" />
                 text-decoration: underline;
             }
 
-            /* ── Code ── */
             code {
                 background: var(--code-bg);
                 padding: 0.15em 0.35em;
@@ -219,7 +217,7 @@ Research" />
                 font-size: inherit;
             }
 
-            /* ── Tables ── */
+            /* ---- Tables ---- */
             table {
                 width: 100%;
                 border-collapse: collapse;
@@ -248,7 +246,6 @@ Research" />
                 background: var(--table-stripe);
             }
 
-            /* ── Blockquote ── */
             blockquote {
                 border-left: 4px solid var(--blockquote-accent);
                 background: var(--blockquote-bg);
@@ -263,41 +260,25 @@ Research" />
                 margin: 2.5em 0;
             }
 
-            /* ── Math display ── */
+            /* ---- Math ---- */
             .math.display {
-                margin: 1.4em 0;
-                overflow-x: auto;
-                overflow-y: hidden;
-            }
-            /* Center display math via the parent <p> using flexbox.
-               This works even after MathJax replaces the span with a block-level mjx-container. */
-            p:has(.math.display) {
-                display: flex !important;
-                justify-content: center !important;
-                width: 100%;
-                overflow-x: auto;
-            }
-            /* Backstop for the mjx-container itself, in case :has() doesn't apply */
-            mjx-container[display="true"] {
-                text-align: center !important;
-            }
-            .math.inline {
-                font-feature-settings: "kern", "liga";
+                text-align: center;
+                margin: 1.2em 0;
             }
 
-            /* ── Header / Title block ── */
+            /* ---- Header / title block ---- */
             header {
                 text-align: center;
                 margin: 0 0 1.5em 0;
             }
             header h1 {
-                font-size: 1.85em;
+                font-size: 2em;
                 margin: 0.5em 0 0.2em 0;
                 border: none;
                 letter-spacing: -0.02em;
             }
             .subtitle {
-                font-size: 1.05em;
+                font-size: 1.1em;
                 color: var(--text-soft);
                 font-style: italic;
                 margin-bottom: 0.3em;
@@ -309,7 +290,7 @@ Research" />
                 margin: 0.15em 0;
             }
 
-            /* ── Table of contents ── */
+            /* ---- Table of contents ---- */
             #TOC {
                 background: var(--toc-bg);
                 border: 1px solid var(--border);
@@ -333,7 +314,7 @@ Research" />
                 color: var(--accent);
             }
 
-            /* ── Abstract ── */
+            /* ---- Abstract block ---- */
             section#abstract {
                 background: var(--abstract-bg);
                 border-left: 4px solid var(--abstract-accent);
@@ -343,7 +324,6 @@ Research" />
                 border-radius: 2px;
             }
 
-            /* ── Footnotes ── */
             .footnote-ref {
                 font-size: 0.8em;
                 vertical-align: super;
@@ -357,7 +337,6 @@ Research" />
                 padding-top: 1em;
             }
 
-            /* ── Small screens ── */
             @media (max-width: 600px) {
                 html {
                     font-size: 16px;
@@ -366,13 +345,13 @@ Research" />
                     padding: 1em 0.8em;
                 }
                 h1 {
-                    font-size: 1.35em;
+                    font-size: 1.4em;
                 }
                 h2 {
-                    font-size: 1.1em;
+                    font-size: 1.15em;
                 }
                 header h1 {
-                    font-size: 1.55em;
+                    font-size: 1.65em;
                 }
                 table {
                     font-size: 75%;
@@ -681,81 +660,6 @@ defense. For an attacker whose goal is kernel-level persistence after
 compromising the renderer, <code>isolatedProcess</code> provides the
 relevant defense. These address different attack objectives.</p></li>
 </ol>
-</section>
-<section id="capability-expansion-vs.-containment-rigor" class="level3">
-<h3>2.5 Capability Expansion vs. Containment Rigor</h3>
-<p>The security calculus between Chromium and GeckoView is further
-complicated by each project’s strategy for expanding the web platform’s
-native device access APIs. This section examines the trade-off between
-surface area expansion and sandbox rigor.</p>
-<p>Chromium has aggressively pushed the boundaries of what web-exposed
-interfaces can access. Key examples include:</p>
-<ul>
-<li><strong>Direct Sockets API.</strong> Allows web applications to
-establish direct TCP and UDP communications, bypassing HTTP abstractions
-entirely. While gated behind permissions and secure contexts, this
-introduces raw networking access into the browser’s attack surface. A
-vulnerability in the Direct Sockets implementation could expose
-low-level network access to an attacker who has achieved code execution
-in a renderer.</li>
-<li><strong>Isolated Web Apps (IWAs).</strong> A new application model
-that blurs the line between web pages and native applications, granting
-packaged web apps elevated capabilities including raw socket access,
-file system write access, and system API exposure [31].</li>
-<li><strong>HID and USB device access.</strong> APIs that allow web
-applications to enumerate and communicate directly with hardware
-peripherals. These represent a significant expansion of the browser’s
-trusted computing base into hardware-interface code traditionally
-reserved for native applications.</li>
-<li><strong>File System Access API.</strong> Gives web applications read
-and write access to the local file system outside the browser’s storage
-sandbox. While user-gated through file pickers, the API expands the
-blast radius of a compromised renderer to include local file system
-data.</li>
-</ul>
-<p>These capabilities expand the browser’s trusted computing base at the
-API layer. Even with permission gates and sandboxing, each new API
-represents code paths that must be correct. As the Chromium security
-team’s own data shows, the majority of severe vulnerabilities are
-memory-safety bugs in C++ code [14]. Every additional thousand lines of
-C++ API implementation expands the pool of potential vulnerabilities,
-regardless of the sandbox quality.</p>
-<p>Firefox’s approach to these APIs is markedly more conservative.
-Mozilla has declined to implement Direct Sockets, Isolated Web Apps, and
-several of the more invasive device APIs. This is not an oversight – it
-reflects a deliberate product philosophy that prioritizes capability
-gating over capability expansion. The reasoning is straightforward: an
-API that does not exist in the codebase cannot be exploited.</p>
-<p><strong>This creates an asymmetric risk profile.</strong> Chromium
-constructs a tighter post-compromise sandbox (through
-<code>isolatedProcess</code> and strict site isolation) but
-simultaneously expands its pre-compromise attack surface by integrating
-aggressive device APIs. Firefox scales down the sandbox thickness on
-certain platforms (notably Android, where <code>isolatedProcess</code>
-is absent and Fission remains disabled on release channels), but
-balances this by strictly gating extension protocol access [32] and
-rejecting entire classes of web-exposed attack surface.</p>
-<p>Bug 2034168 illustrates this philosophy in the extension context: as
-of Firefox 153 (July 2026), extensions can no longer access local files
-by default. The <code>file:</code> scheme access is gated behind an
-explicit “Access local files on your computer” permission, entirely
-separate from the broader “Access your data for all websites” permission
-[32]. An extension that can inject content scripts into every website
-cannot automatically read local files opened in the browser, because
-those two capabilities are now cryptographically separated at the
-permission level. This is the same principle applied at the extension
-API layer: capability gating as a structural defense, not merely
-post-compromise containment.</p>
-<p>The practical implication is that the comparison cannot be reduced to
-sandbox thickness alone. Chromium’s larger API surface creates a larger
-vulnerability pool whose exploitation, even if well-contained, still
-threatens cross-origin data confidentiality within the browser.
-Firefox’s smaller API surface creates a smaller vulnerability pool,
-partially compensating for weaker kernel-level containment on Android.
-This is not an argument that Firefox’s approach is superior – it is an
-argument that the two projects have made different trade-offs at
-different layers, and a fair comparison must account for both sides of
-the ledger.</p>
 <hr />
 </section>
 </section>
@@ -1308,19 +1212,65 @@ implementations, and defense-in-depth architectures. The browser
 ecosystem’s effective monoculture is an anomaly in security engineering,
 not a best practice.</p>
 </section>
-<section id="engine-diversity-vs.-aggregate-attack-surface"
-class="level3">
-<h3>6.3 Engine Diversity vs. Aggregate Attack Surface</h3>
-<p>GrapheneOS objects that GeckoView is not a WebView implementation, so
-Firefox on Android must be deployed alongside the platform’s
-Chromium-based WebView, creating “the remote attack surface of two
-separate browser engines instead of only one” [1]. This objection is
-addressed in detail in the claim-by-claim analysis (Section 7.5). In the
-context of monoculture risk, the trade-off can be stated concisely: the
-dual-engine state is an Android platform constraint, not a Firefox
-deficiency. The marginal attack surface of adding GeckoView must be
-weighed against the monoculture risk reduction that engine diversity
-provides.</p>
+<section id="the-dual-engine-requirement-reframed" class="level3">
+<h3>6.3 The Dual-Engine Requirement Reframed</h3>
+<p>GrapheneOS objects that GeckoView is not a WebView implementation,
+meaning Firefox on Android must be deployed alongside the platform’s
+Chromium-based WebView, resulting in “the remote attack surface of two
+separate browser engines instead of only one” [1].</p>
+<p><strong>This objection requires substantial reframing.</strong> It
+describes an Android platform architectural constraint and a design
+choice by GrapheneOS, not a deficiency of GeckoView.</p>
+<p>Android’s platform architecture mandates a system WebView component
+that is independent of the user’s chosen browser. On GrapheneOS, this
+WebView is Vanadium (Chromium-based) regardless of which browser the
+user selects [2]. The dual-engine concern is asymmetric:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>User’s Browser Choice</th>
+<th>Engine(s) Present</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vanadium (or any Chromium browser)</td>
+<td>Chromium (browser) + Chromium (WebView) = single engine, two
+instances</td>
+</tr>
+<tr>
+<td>Firefox (GeckoView)</td>
+<td>Gecko (browser) + Chromium (WebView) = two engines</td>
+</tr>
+</tbody>
+</table>
+<p>The dual-engine state exists because Android’s platform design
+enforces a separate WebView engine, and because that WebView is
+Chromium-based. The concern is entirely a function of these two
+platform-level decisions. If GrapheneOS were to substitute a
+GeckoView-based WebView for Vanadium’s WebView, the dual-engine concern
+would vanish. Conversely, if an Android user runs only Chromium-based
+browsers, they still have two copies of the Chromium engine on their
+device (browser + WebView), which is not commonly flagged as a security
+concern.</p>
+<p><strong>The dual-engine “problem” is a platform design constraint,
+not a Firefox deficiency.</strong> The security impact depends on the
+user’s threat model:</p>
+<ul>
+<li>A user whose primary concern is aggregate attack surface may prefer
+a Chromium-only configuration to minimize engine diversity.</li>
+<li>A user whose primary concern is monoculture risk may prefer a
+GeckoView browser even at the cost of dual-engine deployment.</li>
+<li>For both configurations, the WebView engine is present regardless of
+browser choice. The marginal additional attack surface of adding
+GeckoView is the Gecko engine itself. This is a real addition, but it
+must be weighed against the monoculture risk reduction that diversity
+provides.</li>
+</ul>
 <hr />
 </section>
 </section>
@@ -1829,26 +1779,18 @@ with Chrome Has Closed,” Reddit, Jan. 2026. [Online]. Available: <a
 href="https://old.reddit.com/r/firefox/comments/1qkqfcx/firefox_sandbox_isolation_hits_level_9_the_gap/">https://old.reddit.com/r/firefox/comments/1qkqfcx/firefox_sandbox_isolation_hits_level_9_the_gap/</a>
 . Accessed: Jul. 2026.</p>
 <p>[26] Mozilla, “Firefox for Android 152.0 Release Notes,” Jul. 2026.
-[Online]. Available: <a
-href="https://www.mozilla.org/en-US/firefox/android/152.0/releasenotes/">https://www.mozilla.org/en-US/firefox/android/152.0/releasenotes/</a></p>
+[Online]. Available:
+https://www.mozilla.org/en-US/firefox/android/152.0/releasenotes/</p>
 <p>[27] Bug 2011886 - Switch off isolated processes by default. Mozilla
-Bugzilla. <a
-href="https://bugzilla.mozilla.org/show_bug.cgi?id=2011886">https://bugzilla.mozilla.org/show_bug.cgi?id=2011886</a></p>
+Bugzilla. https://bugzilla.mozilla.org/show_bug.cgi?id=2011886</p>
 <p>[28] Bug 2011319 - Firefox for Android frequently and randomly going
-back to the previous page. Mozilla Bugzilla. <a
-href="https://bugzilla.mozilla.org/show_bug.cgi?id=2011319">https://bugzilla.mozilla.org/show_bug.cgi?id=2011319</a></p>
+back to the previous page. Mozilla Bugzilla.
+https://bugzilla.mozilla.org/show_bug.cgi?id=2011319</p>
 <p>[29] Bug 2012435 - Content process crashes when isolating a site with
-Fission. Mozilla Bugzilla. <a
-href="https://bugzilla.mozilla.org/show_bug.cgi?id=2012435">https://bugzilla.mozilla.org/show_bug.cgi?id=2012435</a></p>
+Fission. Mozilla Bugzilla.
+https://bugzilla.mozilla.org/show_bug.cgi?id=2012435</p>
 <p>[30] Bug 2003658 - Make Fission + SHIP default in 147. Mozilla
-Bugzilla. <a
-href="https://bugzilla.mozilla.org/show_bug.cgi?id=2003658">https://bugzilla.mozilla.org/show_bug.cgi?id=2003658</a></p>
-<p>[31] Chrome Developers, “Isolated Web Apps.” [Online]. Available: <a
-href="https://developer.chrome.com/docs/extensions/reference/manifest/isolated-app/">https://developer.chrome.com/docs/extensions/reference/manifest/isolated-app/</a>
-. Accessed: Jul. 2026.</p>
-<p>[32] Bug 2034168 - Restrict extensions from reading local file data
-without specific permission. Mozilla Bugzilla. <a
-href="https://bugzilla.mozilla.org/show_bug.cgi?id=2034168">https://bugzilla.mozilla.org/show_bug.cgi?id=2034168</a></p>
+Bugzilla. https://bugzilla.mozilla.org/show_bug.cgi?id=2003658</p>
 <hr />
 </section>
     </body>
