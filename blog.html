@@ -269,9 +269,16 @@ Research" />
                 overflow-x: auto;
                 overflow-y: hidden;
             }
-            /* MathJax 3 centers display math by default with its own CSS.
-               This wrapper class just ensures the p that wraps display math
-               doesn't interfere with MathJax's rendering. */
+            /* Center display math: parent p centers inline content.
+               The mjx-container is inline-block so it behaves as inline content
+               and gets centered by the parent's text-align. */
+            p:has(.math.display) {
+                text-align: center;
+            }
+            mjx-container[display="true"] {
+                display: inline-block !important;
+                text-align: left;
+            }
             .math.inline {
                 font-feature-settings: "kern", "liga";
             }
