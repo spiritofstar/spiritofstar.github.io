@@ -89,7 +89,7 @@ source, while Chromium’s mitigations manage their symptoms. Memory
 safety bugs have consistently accounted for approximately 70% of
 critical-severity Chromium CVEs \[14\]. Firefox’s Rust components have
 produced zero severity-critical memory safety CVEs since their
-respective shipping dates \[17\]. This disparity is not incidental – it
+respective shipping dates \[15\]. This disparity is not incidental – it
 is a direct consequence of language-level memory safety.
 
 The revised original paper \[1\] now includes a comprehensive accounting
@@ -152,13 +152,33 @@ provides.
 The original paper’s central finding – that browser selection is an
 alignment with a specific threat model, not a binary "secure versus
 insecure" judgment – remains both correct and underappreciated in public
-security discourse. A user whose primary concern is post-compromise
-containment (preventing a compromised renderer from accessing system
-data) should prioritize Chromium’s `isolatedProcess` sandbox. A user
-whose primary concern is pre-compromise defense (reducing the
-probability that the renderer is compromised in the first place) should
-weigh Firefox’s Rust advantage and reduced attack surface. These are
-different threat models, and both are rational.
+security discourse. Concretely, the choice depends on which attack
+scenario the user considers more probable:
+
+- #strong[For a user facing targeted, state-sponsored exploitation]
+  where the attacker has resources to discover and weaponize a novel
+  exploit, post-compromise containment is paramount. A compromised
+  renderer must be prevented from accessing system data. Here,
+  Chromium’s `isolatedProcess` sandbox provides objectively stronger
+  defenses.
+
+- #strong[For a user facing mass surveillance, ad-tech profiling, and
+  drive-by exploit campaigns] targeting the Chromium monoculture,
+  pre-compromise defense matters more. A renderer that is harder to
+  compromise in the first place (due to Rust adoption, smaller attack
+  surface, and network-layer content blocking) reduces the probability
+  that any exploit succeeds. Here, Firefox’s architectural choices
+  provide differentiated value.
+
+- #strong[For a user whose primary concern is privacy against tracking
+  and fingerprinting] (rather than exploit prevention), Firefox’s
+  structural privacy protections – Total Cookie Protection, Enhanced
+  Tracking Protection, container isolation – are materially more mature
+  than the equivalents in any Chromium-based browser.
+
+These are not competing claims about which browser is "more secure."
+They are descriptions of which browser better addresses which threat
+model. A comprehensive security assessment must acknowledge all of them.
 
 === 2.5 The Platform Distinction: Android vs. Desktop
 <the-platform-distinction-android-vs.-desktop>
@@ -283,6 +303,94 @@ boundaries provide cross-origin exfiltration protection against
 side-channel attacks, but they do not provide the kernel-level
 containment that `isolatedProcess` provides, and they are not active on
 release or beta channels.
+
+=== 3.4 Additional Technical Corrections
+<additional-technical-corrections>
+Follow-up review prompted by post-publication criticism identified
+several additional areas where the original paper’s analysis was
+incomplete, beyond those documented above.
+
+#strong[JavaScript Engine Mitigations Gap (SpiderMonkey CFI).] The
+original paper’s comparison of memory safety mitigations omitted an
+important gap in the JavaScript engine layer. Chromium’s V8 engine
+deploys Clang’s Cross-DSO Control Flow Integrity (CFI) for indirect call
+target validation, which detects type-confusion-based exploitation
+techniques at runtime \[16\]. SpiderMonkey, Firefox’s JavaScript engine,
+does not implement equivalent type-based CFI. This gap is significant
+because JavaScript engines are the single densest source of
+critical-severity vulnerabilities in both browsers. V8’s sandbox
+provides a hard memory isolation boundary for JIT-compiled code, while
+CFI provides a probabilistic defense against control-flow subversion.
+Firefox lacks equivalents for both mitigations in its JS engine.
+
+This correction narrows the Rust-advantage argument: Rust’s memory
+safety guarantees do not extend to JIT-generated code or to the C++
+compiler pipeline that produces it. Both browsers face this limitation,
+but Chromium compensates with additional layers (V8 sandbox + CFI) that
+Firefox lacks at the JS engine level, while Firefox compensates with
+Rust adoption in non-JIT subsystems (CSS, rendering, networking). The
+net assessment is not that either browser is clearly ahead, but that the
+comparison at this layer is more balanced than the original paper
+presented.
+
+#strong[Hardware Mitigations Require Active Integration.] The original
+paper characterized ARMv9 security features (Memory Tagging Extension,
+Pointer Authentication Codes, Branch Target Identification) as "enforced
+at the OS and hardware level, not by the browser vendor" (Paper 1,
+Section 3.5). This characterization was inaccurate. These features
+require active integration work by the browser vendor: allocator
+modifications for MTE tagging, compiler support for PAC/BTI
+instrumentation, and validation of compatibility across the codebase
+\[17\]. Chromium has invested in MTE integration within PartitionAlloc
+and has validated PAC/BTI compatibility. Firefox has not completed
+equivalent work. This correction removes an incorrectly claimed parity
+on these specific mitigations, though it does not change the overall
+relative assessment on currently shipping hardware.
+
+#strong[Fuzzing Investment and Vulnerability Discovery Rate.] The
+original paper’s framing of Chromium’s vulnerability statistics (Section
+3.6) did not adequately account for the relationship between fuzzing
+investment and bug discovery rate. Chromium’s substantially larger
+investment in fuzzing, AI-guided vulnerability research, and security
+auditing means it discovers and fixes more vulnerabilities. A higher
+absolute CVE count, in isolation, does not indicate a less secure
+product – it may indicate more thorough testing \[18\]. The relevant
+metric for comparative security assessment is not the number of
+vulnerabilities found but the residual risk after mitigation. Both the
+number of vulnerabilities found and the number that remain exploitable
+after mitigation contribute to residual risk, and neither is directly
+measurable from public data. This is a methodological limitation of any
+comparative analysis of this kind, and the original paper should have
+stated it more explicitly.
+
+#strong[Extensions and Site Isolation.] The original paper’s comparison
+of extension architectures (Section 4) did not address a structural
+limitation shared by both browsers: extensions break site isolation. In
+both Firefox and Chromium, extension processes run with cross-origin
+data access and inject code into web pages, creating a privileged
+execution context that bypasses origin-level process boundaries \[19\].
+This is not a Firefox-specific limitation – it is inherent to the
+extension model in both architectures. The relevant comparison, as
+critics have correctly noted, is not between "extensions versus no
+extensions" but between the extension-based approach and a built-in
+content filtering engine (as implemented in Brave).
+
+This correction narrows the argument in Section 4 of the original paper
+but does not resolve the underlying substantive disagreement. An
+extension-based approach with uBlock Origin provides network-layer
+interception with community-maintained filter lists that a built-in
+engine may not match in coverage or update cadence, but it does so at
+the cost of breaking site isolation. The Brave approach preserves site
+isolation but depends on the browser vendor’s filtering engine quality
+and update schedule. Reasonable security engineers can disagree on which
+trade-off is preferable, and the original paper should have framed this
+as an open question rather than implying a clear advantage for Firefox.
+
+These four corrections, taken together, narrow the original paper’s
+claims in specific areas but do not undermine its central thesis. The
+two engine families make fundamentally different trade-offs across
+pre-compromise and post-compromise layers, and the choice between them
+remains a threat-model alignment rather than a binary security judgment.
 
 #line()
 
@@ -451,3 +559,30 @@ Architecture for the Web," Chromium Blog, 2018. \[Online\]. Available:
 \[13\] V. Nijim, "Building a More Secure Firefox with AppContainer,"
 Mozilla Security Blog, 2019. \[Online\]. Available:
 #link("https://blog.mozilla.org/security/2019/05/22/building-a-more-secure-firefox-with-appcontainer/")
+
+\[14\] Chromium Project, "Memory Safety." \[Online\]. Available:
+#link("https://www.chromium.org/Home/chromium-security/memory-safety/").
+Accessed: Jul. 2026.
+
+\[15\] Mozilla Security Blog, "Security Advisories." \[Online\].
+Available: #link("https://www.mozilla.org/en-US/security/advisories/").
+Accessed: Jul. 2026.
+
+\[16\] Chromium Project, "Control Flow Integrity," Chromium Docs.
+\[Online\]. Available:
+#link("https://chromium.googlesource.com/chromium/src/+/main/docs/security/control-flow-integrity.md").
+Accessed: Jul. 2026.
+
+\[17\] Chromium, "PartitionAlloc Design," Chromium Docs. \[Online\].
+Available:
+#link("https://chromium.googlesource.com/chromium/src/+/main/base/allocator/partition_allocator/PA_README.md")[https://chromium.googlesource.com/chromium/src/+/main/base/allocator/partition\_allocator/PA\_README.md].
+Accessed: Jul. 2026.
+
+\[18\] Google, "OSS-Fuzz: Continuous Fuzzing for Open Source Software."
+\[Online\]. Available: #link("https://google.github.io/oss-fuzz/").
+Accessed: Jul. 2026.
+
+\[19\] Chrome Developers, "Extension Runtime and Process Model."
+\[Online\]. Available:
+#link("https://developer.chrome.com/docs/extensions/mv3/process_model/")[https://developer.chrome.com/docs/extensions/mv3/process\_model/].
+Accessed: Jul. 2026.
