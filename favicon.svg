@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <style>
+      .star { fill: #2563eb; }
+      @media (prefers-color-scheme: dark) {
+        .star { fill: #93a0f5; }
+      }
+    </style>
+  </defs>
+  <path
+        class="star"
+        d="M 50 5 L 61.2 33.3 A 5 5 0 0 1 68.0 38.0 L 98 38 L 73.9 56.9 A 5 5 0 0 1 71.2 64.8 L 79 95 L 54.0 76.0 A 5 5 0 0 1 46.0 76.0 L 21 95 L 28.8 64.8 A 5 5 0 0 1 26.1 56.9 L 2 38 L 32.0 38.0 A 5 5 0 0 1 38.8 33.3 Z"
+    />
+</svg>
