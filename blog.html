@@ -265,18 +265,21 @@ Research" />
 
             /* ── Math display ── */
             .math.display {
-                text-align: center;
                 margin: 1.4em 0;
                 overflow-x: auto;
                 overflow-y: hidden;
             }
-            mjx-container[display="true"] {
-                display: block;
-                text-align: center !important;
-                margin: 1.4em auto !important;
+            /* Center display math via the parent <p> using flexbox.
+               This works even after MathJax replaces the span with a block-level mjx-container. */
+            p:has(.math.display) {
+                display: flex !important;
+                justify-content: center !important;
+                width: 100%;
+                overflow-x: auto;
             }
-            mjx-container:not([display="true"]) {
-                display: inline;
+            /* Backstop for the mjx-container itself, in case :has() doesn't apply */
+            mjx-container[display="true"] {
+                text-align: center !important;
             }
             .math.inline {
                 font-feature-settings: "kern", "liga";
