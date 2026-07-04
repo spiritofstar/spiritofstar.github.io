@@ -9,6 +9,7 @@
 )
 #set text(font: "Times New Roman", size: 11pt)
 #set par(justify: true)
+#show math.equation: set text(size: 9.5pt)
 #set heading(numbering: "1.1")
 
 #align(center, text(size: 16pt, weight: "bold")[
