@@ -1,0 +1,6 @@
+# AI crawler opt-out
+# https://site-standards.dev/ai.txt
+
+# All AI training crawlers are prohibited
+User-agent: *
+Disallow: /

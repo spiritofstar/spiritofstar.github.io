@@ -27,7 +27,9 @@ jobs:
         run: mkdir -p _output
 
       - name: Copy static files
-        run: cp index.html atom.xml feed.json _output/
+        run: |
+          cp index.html atom.xml feed.json robots.txt _output/
+          cp -r .well-known _output/.well-known
 
       - name: Build HTML
         run: |
