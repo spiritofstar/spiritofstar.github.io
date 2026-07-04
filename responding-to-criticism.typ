@@ -160,6 +160,52 @@ probability that the renderer is compromised in the first place) should
 weigh Firefox’s Rust advantage and reduced attack surface. These are
 different threat models, and both are rational.
 
+=== 2.5 The Platform Distinction: Android vs. Desktop
+<the-platform-distinction-android-vs.-desktop>
+A critical dimension largely absent from the public criticism of the
+original paper is the platform specificity of the sandboxing gap.
+GrapheneOS’s published advisory \[3\] and its follow-up responses frame
+Firefox’s security deficiencies in platform-agnostic terms, but the
+architectural gap they identify is almost entirely Android-specific.
+
+On #strong[Windows], Firefox’s sandbox architecture has achieved
+substantial parity with Chromium:
+
+- #strong[AppContainer.] Firefox uses Windows AppContainer isolation for
+  its content processes, providing kernel-level process sandboxing
+  comparable to Chromium’s approach on the same platform \[13\].
+- #strong[Win32k syscall filtering.] Both browsers restrict Win32k
+  system calls from renderer processes, dramatically reducing the kernel
+  attack surface available to a compromised renderer \[9\].
+- #strong[Broker architecture.] Firefox employs a broker process model
+  for privileged operations (file I/O, network access) that mirrors
+  Chromium’s privilege separation design.
+
+The `isolatedProcess` deficiency that critics correctly identify is an
+Android platform constraint, not a Firefox architectural limitation. On
+Android, applications cannot create namespaces or use seccomp-bpf for
+sandboxing because the Android Runtime requires too broad a system call
+surface. The `isolatedProcess` manifest flag is the #emph[only]
+mechanism available for process isolation on Android, and its absence in
+GeckoView is a genuine limitation. But this limitation does not
+generalize to other platforms.
+
+The critics’ response – focusing exclusively on Android-specific
+technical details while the original advisory makes platform-agnostic
+claims – is itself revealing. If the claim were truly that "Firefox is
+categorically less secure than Chromium," the sandbox gap would need to
+exist across platforms. On Windows, it does not. On Android, it is real
+but must be weighed against Firefox’s pre-compromise advantages (Rust
+adoption, smaller attack surface) that apply on all platforms.
+
+A threat model that prioritizes mobile security over desktop security –
+which is reasonable given the prevalence of mobile browsing – might
+still conclude that Chromium is the safer choice on Android. But a claim
+that "Firefox lacks sandboxing" or that "Firefox is much more
+vulnerable" without platform qualification is overreach. The evidence
+supports a platform-specific, threat-model-dependent conclusion, not a
+categorical one.
+
 #line()
 
 == 3. New Discoveries and Documented Corrections
@@ -385,3 +431,23 @@ Available:
 
 \[8\] Chromium Security, "Oilpan GC Design." \[Online\]. Available:
 #link("https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/platform/heap/BlinkGCDesign.md")[https://chromium.googlesource.com/chromium/src/+/main/third\_party/blink/renderer/platform/heap/BlinkGCDesign.md]
+
+\[9\] Mozilla, "Firefox Security Sandbox," Mozilla Wiki. \[Online\].
+Available: #link("https://wiki.mozilla.org/Security/Sandbox"). Accessed:
+Jul. 2026.
+
+\[10\] Mozilla, "Integrating Project Fission (Site Isolation) in
+Firefox," Mozilla Wiki. \[Online\]. Available:
+#link("https://wiki.mozilla.org/Project_Fission")[https://wiki.mozilla.org/Project\_Fission].
+Accessed: Jul. 2026.
+
+\[11\] M. Miller, "Site Isolation: A New Defense-in-Depth Security
+Architecture for the Web," Chromium Blog, 2018. \[Online\]. Available:
+#link("https://blog.chromium.org/2018/07/site-isolation-new-defense-in-depth.html")
+
+\[12\] Apple, "WebKit Sandboxing." \[Online\]. Available:
+#link("https://webkit.org/blog/14040/webkit-sandboxing/")
+
+\[13\] V. Nijim, "Building a More Secure Firefox with AppContainer,"
+Mozilla Security Blog, 2019. \[Online\]. Available:
+#link("https://blog.mozilla.org/security/2019/05/22/building-a-more-secure-firefox-with-appcontainer/")
