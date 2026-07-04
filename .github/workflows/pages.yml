@@ -3,6 +3,7 @@ name: Build and Deploy
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -14,14 +15,16 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install Pandoc
-        run: sudo apt-get update && sudo apt-get install -y pandoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc
 
       - name: Install Typst
         run: |
-          curl -fsSL https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz \
-            | tar -xJ
-          sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/
-          rm -rf typst-x86_64-unknown-linux-musl
+          curl -fsSL https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz -o typst.tar.xz
+          tar -xf typst.tar.xz
+          sudo mv typst-*/typst /usr/local/bin/
+          rm -rf typst*
 
       - name: Build output directory
         run: |
@@ -33,10 +36,10 @@ jobs:
 
       - name: Copy static files
         run: |
-          cp index.html atom.xml feed.json rss.xml robots.txt sitemap.xml _output/
-          cp -r .well-known _output/.well-known
+          cp index.html atom.xml feed.json rss.xml robots.txt sitemap.xml _output/ || true
+          cp -r .well-known _output/.well-known || true
 
-      - name: Build paper 1 HTML and PDF
+      - name: Build paper 1 — Sandboxing Analysis
         run: |
           MD="sandboxing-mitigation-comparative-analysis.md"
           SLUG="blog"
@@ -44,12 +47,28 @@ jobs:
             --toc --toc-depth=2 --section-divs --mathjax
           pandoc "$MD" -o "_output/$SLUG.typ" --to typst
           sed -i 's/#horizontalrule/#line()/g' "_output/$SLUG.typ"
-          cat _typst-preamble.typ > /tmp/combined.typ
+
+          # Using a multi-line echo avoids the heredoc indentation trap completely
+          echo '#set document(
+            title: "Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures",
+            author: "Independent Security Research",
+          )
+          #set page(
+            margin: (top: 2.5cm, bottom: 2.5cm, left: 2.5cm, right: 2.5cm),
+            numbering: "1",
+            number-align: center,
+          )
+          #set text(font: "Times New Roman", size: 11pt)
+          #set par(justify: true)
+          #show math.equation: set text(size: 9.5pt)
+          #set heading(numbering: "1.1")' > /tmp/preamble.typ
+
+          cat /tmp/preamble.typ > /tmp/combined.typ
           cat "_output/$SLUG.typ" >> /tmp/combined.typ
           mv /tmp/combined.typ "_output/$SLUG.typ"
           typst compile "_output/$SLUG.typ"
 
-      - name: Build paper 2 HTML and PDF
+      - name: Build paper 2 — Response to Criticism
         run: |
           MD="responding-to-criticism.md"
           SLUG="responding-to-criticism"
@@ -57,28 +76,29 @@ jobs:
             --toc --toc-depth=2 --section-divs --mathjax
           pandoc "$MD" -o "_output/$SLUG.typ" --to typst
           sed -i 's/#horizontalrule/#line()/g' "_output/$SLUG.typ"
-          cat > /tmp/preamble.typ << 'EOF'
-#set document(
-  title: "Responding to Security Criticism: Corrections and Reflections",
-  author: "Independent Security Research",
-)
-#set page(
-  margin: (top: 2.5cm, bottom: 2.5cm, left: 2.5cm, right: 2.5cm),
-  numbering: "1",
-  number-align: center,
-)
-#set text(font: "Times New Roman", size: 11pt)
-#set par(justify: true)
-#show math.equation: set text(size: 9.5pt)
-#set heading(numbering: "1.1")
-EOF
+
+          # Fixed here as well
+          echo '#set document(
+            title: "Responding to Security Criticism: Corrections and Reflections",
+            author: "Independent Security Research",
+          )
+          #set page(
+            margin: (top: 2.5cm, bottom: 2.5cm, left: 2.5cm, right: 2.5cm),
+            numbering: "1",
+            number-align: center,
+          )
+          #set text(font: "Times New Roman", size: 11pt)
+          #set par(justify: true)
+          #show math.equation: set text(size: 9.5pt)
+          #set heading(numbering: "1.1")' > /tmp/preamble.typ
+
           cat /tmp/preamble.typ > /tmp/combined.typ
           cat "_output/$SLUG.typ" >> /tmp/combined.typ
           mv /tmp/combined.typ "_output/$SLUG.typ"
           typst compile "_output/$SLUG.typ"
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Deploy to GitHub Pages (gh-pages branch)
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_output
