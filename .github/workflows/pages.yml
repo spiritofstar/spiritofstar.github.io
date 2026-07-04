@@ -79,7 +79,7 @@ jobs:
 
           # Fixed here as well
           echo '#set document(
-            title: "Responding to Security Criticism: Corrections and Reflections",
+            title: "Browser Security Analysis: New Discoveries and Reaffirmed Findings",
             author: "Independent Security Research",
           )
           #set page(

@@ -77,9 +77,9 @@ build_paper \
 build_paper \
   "responding-to-criticism.md" \
   "responding-to-criticism" \
-  "Responding to Security Criticism: Corrections and Reflections" \
+  "Browser Security Analysis: New Discoveries and Reaffirmed Findings" \
   "Independent Security Research" \
-  "A Response to Technical Criticisms of the Browser Security Analysis"
+  "A Follow-Up Investigation of Mobile Browser Security Architectures"
 
 echo "=== Done ==="
 echo "Output in _output/"
