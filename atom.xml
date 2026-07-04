@@ -26,6 +26,13 @@
         />
     <published>2026-07-04T00:00:00Z</published>
     <updated>2026-07-04T00:00:00Z</updated>
+    <category term="browser security" />
+    <category term="sandboxing" />
+    <category term="Firefox" />
+    <category term="GeckoView" />
+    <category term="Chromium" />
+    <category term="GrapheneOS" />
+    <category term="mobile security" />
     <id
         >tag:spiritofstar.github.io,2026-07-04:/blog/sandboxing-mitigation-comparative-analysis</id>
     <summary
