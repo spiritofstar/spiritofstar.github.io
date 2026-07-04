@@ -438,7 +438,8 @@ threat-model dependencies that alter the security calculus. This paper
 evaluates these claims through a multi-layered threat-modeling lens
 grounded in publicly available primary sources. It examines the
 architectural evolution of GeckoView on Android, including the January
-2026 shipping of Project Fission (Site Isolation) in Firefox 147. It
+2026 shipping of Project Fission (Site Isolation) in Firefox 147 (now at
+Firefox 152, July 2026, with five additional releases of maturation). It
 covers structural pre-compromise defenses provided by Firefox’s
 industry-leading Rust adoption, WebExtension isolation architecture, and
 declarative content-blocking engine. It looks at the intersection of
@@ -548,13 +549,14 @@ multi-process re-engineering. This provides process-level isolation
 between content and the browser chrome, even if the kernel-level
 protections differ from Chromium’s.</p></li>
 <li><p><strong>Project Fission (Site Isolation) on Android (Firefox 147,
-January 2026).</strong> Mozilla shipped Site Isolation for Android in
-Firefox 147, with release notes stating: “Added protection against
-side-channel attacks such as Spectre using the same Site Isolation
-safeguards already in use by desktop Firefox” [12]. This provides
-origin-level process separation that prevents a compromised renderer for
-<code>site-a.com</code> from reading <code>site-b.com</code>’s data,
-including via side channels.</p></li>
+January 2026; now at Firefox 152, July 2026).</strong> Mozilla shipped
+Site Isolation for Android in Firefox 147 (now at Firefox 152), with
+release notes stating: “Added protection against side-channel attacks
+such as Spectre using the same Site Isolation safeguards already in use
+by desktop Firefox” [12]. This provides origin-level process separation
+that prevents a compromised renderer for <code>site-a.com</code> from
+reading <code>site-b.com</code>’s data, including via side
+channels.</p></li>
 <li><p><strong>Memory safety via Rust (Section 3).</strong> An
 increasing portion of GeckoView’s rendering pipeline is written in Rust,
 a memory-safe language that makes entire classes of vulnerabilities
@@ -572,8 +574,9 @@ version 95 (December 2021) [3], [5]. The desktop implementation assigns
 each site origin to a dedicated operating system process, with IPC
 enforcement ensuring that cross-origin data access requires explicit,
 validated channels.</p>
-<p><strong>As of Firefox 147 for Android (January 2026), this
-architecture has shipped on mobile.</strong> The release notes
+<p><strong>Firefox 147 for Android (January 2026) shipped this
+architecture on mobile. As of Firefox 152 (July 2026), Fission has
+matured across five additional releases.</strong> The release notes
 explicitly cite Spectre-class side-channel protection [12]. This closes
 a documented gap that had existed since Fission’s desktop release over
 four years earlier.</p>
@@ -1257,8 +1260,7 @@ priorities rather than objective security deficits.</p>
 class="level3">
 <h3>7.1 Claim: “Firefox does not have internal sandboxing on
 Android”</h3>
-<p><strong>Status: Partially outdated as of Firefox 147 (January
-2026).</strong></p>
+<p><strong>Status: Partially outdated.</strong></p>
 <p>Firefox on Android does not implement Android’s
 <code>isolatedProcess</code> mechanism for its child processes. This
 component of GrapheneOS’s claim remains technically accurate [1]. The
@@ -1268,12 +1270,14 @@ by Mozilla.</p>
 <p>The broader claim that Firefox has “no internal sandboxing” conflates
 the absence of one specific mechanism with the absence of all
 sandboxing. Firefox 147 shipped Site Isolation (Fission) for Android,
-providing “protection against side-channel attacks such as Spectre using
-the same Site Isolation safeguards already in use by desktop Firefox”
-[12]. Fission is a form of internal sandboxing. It enforces origin-level
-process boundaries and restricts cross-origin data access via IPC
-enforcement. Additionally, GeckoView’s multi-process architecture
-provides a privileged parent process and separate content processes.</p>
+now at Firefox 152 with continued maturation across five additional
+releases, providing “protection against side-channel attacks such as
+Spectre using the same Site Isolation safeguards already in use by
+desktop Firefox” [12]. Fission is a form of internal sandboxing. It
+enforces origin-level process boundaries and restricts cross-origin data
+access via IPC enforcement. Additionally, GeckoView’s multi-process
+architecture provides a privileged parent process and separate content
+processes.</p>
 <p>The claim conflates “no <code>isolatedProcess</code>-based
 sandboxing” with “no internal sandboxing” generally. These are
 materially different assertions, and the former does not imply the
@@ -1538,8 +1542,8 @@ full threat landscape:</p>
 <tr class="odd">
 <td><strong>Site Isolation (Mobile)</strong></td>
 <td>Strict site isolation with kernel enforcement [1]</td>
-<td>Fission shipped Firefox 147 (Jan 2026); kernel mechanism differs
-from desktop [12]</td>
+<td>Fission shipped Firefox 147 (Jan 2026), matured over 5 releases to
+Firefox 152; kernel mechanism differs from desktop [12]</td>
 </tr>
 <tr class="even">
 <td><strong>Post-Exploit Containment</strong></td>
@@ -1692,7 +1696,7 @@ href="https://blog.mozilla.org/en/firefox/hardening-firefox-anthropic-red-team/"
 Blog, 2025. [Online]. Available: <a
 href="https://blog.mozilla.org/en/privacy-security/ai-security-zero-day-vulnerabilities/">https://blog.mozilla.org/en/privacy-security/ai-security-zero-day-vulnerabilities/</a></p>
 <p>[12] Mozilla, “Firefox for Android 147.0 Release Notes,” Jan. 2026.
-[Online]. Available: <a
+(Current as of Firefox 152, Jul. 2026). [Online]. Available: <a
 href="https://www.mozilla.org/en-US/firefox/android/147.0/releasenotes/">https://www.mozilla.org/en-US/firefox/android/147.0/releasenotes/</a></p>
 <p>[13] PrivacyGuides Community, “Site Isolation (Fission) now appears
 to be active in Firefox on Android,” PrivacyGuides Discourse, Jan. 2026.
@@ -1744,6 +1748,9 @@ href="https://wiki.mozilla.org/Security/Sandbox">https://wiki.mozilla.org/Securi
 with Chrome Has Closed,” Reddit, Jan. 2026. [Online]. Available: <a
 href="https://old.reddit.com/r/firefox/comments/1qkqfcx/firefox_sandbox_isolation_hits_level_9_the_gap/">https://old.reddit.com/r/firefox/comments/1qkqfcx/firefox_sandbox_isolation_hits_level_9_the_gap/</a>
 . Accessed: Jul. 2026.</p>
+<p>[26] Mozilla, “Firefox for Android 152.0 Release Notes,” Jul. 2026.
+[Online]. Available:
+https://www.mozilla.org/en-US/firefox/android/152.0/releasenotes/</p>
 <hr />
 </section>
     </body>
