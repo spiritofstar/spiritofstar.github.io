@@ -44,17 +44,19 @@ threat-model dependencies that alter the security calculus. This paper
 evaluates these claims through a multi-layered threat-modeling lens
 grounded in publicly available primary sources. It examines the
 architectural evolution of GeckoView on Android, including the January
-2026 shipping of Project Fission (Site Isolation) in Firefox 147 (now at
-Firefox 152, July 2026, with five additional releases of maturation). It
-covers structural pre-compromise defenses provided by Firefox’s
-industry-leading Rust adoption, WebExtension isolation architecture, and
-declarative content-blocking engine. It looks at the intersection of
-privacy controls with exploit-chain disruption, including Total Cookie
-Protection and Enhanced Tracking Protection. And it considers the
-systemic security risk of a Chromium monoculture. The analysis finds
-that categorical dismissal of either engine family is unsupported by
-current evidence, and that browser selection is not a binary metric of
-"secure versus insecure" but an alignment with a specific threat model.
+2026 shipping and subsequent rollback of Project Fission (Site
+Isolation) in Firefox 147 (now at Firefox 152, July 2026), which remains
+disabled on release and beta channels due to unresolved crash bugs
+(Section 2.3). It covers structural pre-compromise defenses provided by
+Firefox’s industry-leading Rust adoption, WebExtension isolation
+architecture, and declarative content-blocking engine. It looks at the
+intersection of privacy controls with exploit-chain disruption,
+including Total Cookie Protection and Enhanced Tracking Protection. And
+it considers the systemic security risk of a Chromium monoculture. The
+analysis finds that categorical dismissal of either engine family is
+unsupported by current evidence, and that browser selection is not a
+binary metric of "secure versus insecure" but an alignment with a
+specific threat model.
 
 #line()
 
@@ -158,14 +160,25 @@ assessment:
   and the browser chrome, even if the kernel-level protections differ
   from Chromium’s.
 
-+ #strong[Project Fission (Site Isolation) on Android (Firefox 147,
-  January 2026; now at Firefox 152, July 2026).] Mozilla shipped Site
-  Isolation for Android in Firefox 147 (now at Firefox 152), with
-  release notes stating: "Added protection against side-channel attacks
-  such as Spectre using the same Site Isolation safeguards already in
-  use by desktop Firefox" \[12\]. This provides origin-level process
-  separation that prevents a compromised renderer for `site-a.com` from
-  reading `site-b.com`’s data, including via side channels.
++ #strong[Project Fission (Site Isolation) – shipped, then rolled back.]
+  Mozilla shipped Site Isolation for Android in Firefox 147.0 (January
+  2026), with release notes stating: "Added protection against
+  side-channel attacks such as Spectre using the same Site Isolation
+  safeguards already in use by desktop Firefox" \[12\]. However, Firefox
+  147.0.2 (February 2026) disabled Fission on release and beta channels
+  due to content process crashes causing random back-navigation (Bug
+  2011319). The isolation strategy default was reverted to
+  `ISOLATE_NOTHING` for all channels except nightly and developer
+  \[27\]. As of Firefox 152 (July 2026), Fission remains disabled on
+  release and beta channels. The root cause – content process crashes
+  when isolating sites with Fission (Bug 2012435) – remains open with
+  the fix still in progress \[29\]. On nightly and developer builds,
+  Fission operates at `ISOLATE_HIGH_VALUE`, which isolates only "high
+  value" sites (e.g., login pages) rather than providing full strict
+  origin isolation. This is fundamentally different from Chromium’s site
+  isolation model and means the cross-origin exfiltration protection
+  described in the paper is currently unavailable on release Firefox for
+  Android.
 
 + #strong[Memory safety via Rust (Section 3).] An increasing portion of
   GeckoView’s rendering pipeline is written in Rust, a memory-safe
@@ -183,18 +196,39 @@ assigns each site origin to a dedicated operating system process, with
 IPC enforcement ensuring that cross-origin data access requires
 explicit, validated channels.
 
-#strong[Firefox 147 for Android (January 2026) shipped this architecture
-on mobile. As of Firefox 152 (July 2026), Fission has matured across
-five additional releases.] The release notes explicitly cite
-Spectre-class side-channel protection \[12\]. This closes a documented
-gap that had existed since Fission’s desktop release over four years
-earlier.
+#strong[Fission shipped on Android in Firefox 147.0 (January 2026), but
+was rolled back in 147.0.2 (February 2026) and remains disabled on
+release and beta channels as of Firefox 152 (July 2026).] The isolation
+strategy default is `ISOLATE_NOTHING` (0) for release and beta; only
+nightly and developer channels have `ISOLATE_HIGH_VALUE` (2) \[27\]. The
+original release notes cited Spectre-class side-channel protection
+\[12\], but this protection is currently not active on the default
+release configuration.
 
-Fission is an ongoing project, not a finished one. Mozilla continues to
-refine the implementation, extend process isolation coverage to
-additional code paths, and address architectural gaps as part of its
-long-term security roadmap. The same is true on the desktop side, where
-Fission has seen continuous improvements since its 2021 launch.
+#strong[Rollback timeline.]
+
++ #strong[Bug 2003658] (December 2025/January 2026): Fission + SHIP
+  turned on by default for Firefox 147 \[30\]. The initial
+  implementation shipped with `ISOLATE_HIGH_VALUE`, isolating only "high
+  value" sites (login pages, authentication flows) rather than providing
+  full strict origin isolation.
++ #strong[Firefox 147.0] (January 2026): Ships with Fission enabled.
++ #strong[Bug 2011319] (February 2026): Users report content process
+  crashes causing random back-navigation – a regression directly
+  attributable to Fission \[28\].
++ #strong[Bug 2011886] (January 23, 2026): Fission switched off in
+  release and beta channels. Commit message: "Set isolation strategy to
+  ISOLATE\_NONE in all builds except nightly" \[27\].
++ #strong[Bug 2012435] (February 2026, #strong[still open]): Root cause
+  identified as content process crashes when isolating sites with
+  Fission. The fix remains in progress \[29\].
+
+#strong[Current state (Firefox 152, July 2026).] As reflected in
+Mozilla’s `nimbus.fml.yaml` configuration: - Release and beta channels:
+`isolationStrategy: 0` (`ISOLATE_NOTHING`) - Nightly and developer
+channels: `isolationStrategy: 2` (`ISOLATE_HIGH_VALUE`) - Mozilla’s
+Nimbus experiment system may enable Fission for some users in controlled
+experiments on release channels.
 
 #strong[Architectural caveat.] A thread on the PrivacyGuides forum noted
 that "unprivileged user namespaces are not available to apps on
@@ -209,13 +243,15 @@ Fission have not been publicly documented by Mozilla as of July 2026,
 and this remains the most significant gap in publicly verifiable
 information about the mobile architecture.
 
-#strong[To be clear:] Fission on Android does not replicate the
-`isolatedProcess`-based sandbox that Chromium employs. It provides
+#strong[To be clear:] Even if Fission were active, it does not replicate
+the `isolatedProcess`-based sandbox that Chromium employs. It provides
 origin-level process assignment and IPC enforcement, preventing
 cross-origin data exfiltration even in the presence of side-channel
 attacks. But it does not provide the same post-exploit kernel-level
 containment. The relationship between Fission and `isolatedProcess` is
-complementary, not substitutive.
+complementary, not substitutive. Moreover, Fission’s current
+`ISOLATE_HIGH_VALUE` strategy is narrower than Chromium’s full site
+isolation – it only isolates high-value origins rather than every site.
 
 === 2.4 Is `isolatedProcess` the Complete Picture?
 <is-isolatedprocess-the-complete-picture>
@@ -235,7 +271,19 @@ This paper argues it is not, for three reasons:
   materially harder to compromise in the first place due to memory-safe
   code, the relative importance of post-compromise containment is
   diminished. A sandbox is irrelevant if the renderer is never
-  successfully exploited.
+  successfully exploited. However, this calculus must be qualified by
+  the current status of Fission. Because site isolation is not active on
+  release and beta channels (Section 2.3), a compromised renderer on
+  release Firefox for Android does not have origin-level process
+  boundaries. A successful exploit could access data across origins
+  within the same process, increasing the cross-origin exfiltration risk
+  relative to what Fission would provide if active. The Rust memory
+  safety advantage reduces the #emph[probability] of compromise, but the
+  #emph[blast radius] in the event of a successful exploit is larger
+  than would be the case with active site isolation. The paper’s
+  original claim that Fission reduces blast radius remains
+  architecturally correct, but the protection is not currently available
+  in the default release configuration.
 
 + #strong[Threat-model dependence.] For an attacker whose goal is
   cross-origin data exfiltration (for example, reading your banking
@@ -865,14 +913,13 @@ resource-constrained decision by Mozilla.
 The broader claim that Firefox has "no internal sandboxing" conflates
 the absence of one specific mechanism with the absence of all
 sandboxing. Firefox 147 shipped Site Isolation (Fission) for Android,
-now at Firefox 152 with continued maturation across five additional
-releases, providing "protection against side-channel attacks such as
-Spectre using the same Site Isolation safeguards already in use by
-desktop Firefox" \[12\]. Fission is a form of internal sandboxing. It
-enforces origin-level process boundaries and restricts cross-origin data
-access via IPC enforcement. Additionally, GeckoView’s multi-process
-architecture provides a privileged parent process and separate content
-processes.
+but it was rolled back in 147.0.2 due to content process crashes and
+remains disabled on release and beta channels as of Firefox 152 (Section
+2.3). Fission provides origin-level process boundaries and restricts
+cross-origin data access via IPC enforcement, but this protection is
+currently only available on nightly and developer builds. Additionally,
+GeckoView’s multi-process architecture provides a privileged parent
+process and separate content processes.
 
 The claim conflates "no `isolatedProcess`-based sandboxing" with "no
 internal sandboxing" generally. These are materially different
@@ -1058,7 +1105,8 @@ claim:
   [GeckoView does not use `isolatedProcess` \[1\]],
   ["No internal sandboxing on Android"],
   [#strong[Partially outdated]],
-  [Fission shipped Jan 2026 \[12\]; multi-process architecture exists],
+  [Fission shipped Jan 2026, rolled back; active nightly/dev only
+  \[27\]-\[30\]; multi-process architecture exists],
   ["Much more vulnerable to exploitation"],
   [#strong[Not supported by current evidence]],
   [Rust memory safety, AI hardening, Fission landing; post-compromise
@@ -1107,8 +1155,10 @@ threat landscape:
   [Application-level process spawning + Fission origin isolation],
   [#strong[Site Isolation (Mobile)]],
   [Strict site isolation with kernel enforcement \[1\]],
-  [Fission shipped Firefox 147 (Jan 2026), matured over 5 releases to
-  Firefox 152; kernel mechanism differs from desktop \[12\]],
+  [Fission shipped Firefox 147 (Jan 2026), rolled back in 147.0.2;
+  disabled on release/beta channels as of Firefox 152; active on nightly
+  and developer channels only \[27\]-\[30\]; kernel mechanism differs
+  from desktop \[12\]],
   [#strong[Post-Exploit Containment]],
   [Strong (UID isolation, CFI, SSP, seccomp-BPF on desktop)],
   [Limited by absence of `isolatedProcess` \[1\]],
@@ -1323,5 +1373,19 @@ Chrome Has Closed," Reddit, Jan. 2026. \[Online\]. Available:
 \[26\] Mozilla, "Firefox for Android 152.0 Release Notes," Jul. 2026.
 \[Online\]. Available:
 https://www.mozilla.org/en-US/firefox/android/152.0/releasenotes/
+
+\[27\] Bug 2011886 - Switch off isolated processes by default. Mozilla
+Bugzilla. https://bugzilla.mozilla.org/show\_bug.cgi?id\=2011886
+
+\[28\] Bug 2011319 - Firefox for Android frequently and randomly going
+back to the previous page. Mozilla Bugzilla.
+https://bugzilla.mozilla.org/show\_bug.cgi?id\=2011319
+
+\[29\] Bug 2012435 - Content process crashes when isolating a site with
+Fission. Mozilla Bugzilla.
+https://bugzilla.mozilla.org/show\_bug.cgi?id\=2012435
+
+\[30\] Bug 2003658 - Make Fission + SHIP default in 147. Mozilla
+Bugzilla. https://bugzilla.mozilla.org/show\_bug.cgi?id\=2003658
 
 #line()
