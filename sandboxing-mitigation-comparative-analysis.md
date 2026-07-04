@@ -1,3 +1,4 @@
+
 ---
 title: "Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures"
 subtitle: "A Rebuttal of Outdated Claims Against Gecko-Based Browsers on Android"
@@ -12,13 +13,16 @@ format:
     toc-depth: 3
     number-sections: true
     fontsize: 11pt
+
 ---
+
 
 ---
 
 ## Abstract
 
-Hardened mobile deployment frameworks (most notably GrapheneOS) advise against Gecko-based browsers like Firefox, claiming a systemic security deficit compared to Chromium-based alternatives such as Vanadium. These advisories show significant documentation latency. They cite architectural deficiencies that have been partially or fully resolved in current stable releases, conflate distinct mitigation layers (pre-compromise versus post-compromise), and fail to account for threat-model dependencies that alter the security calculus. This paper evaluates these claims through a multi-layered threat-modeling lens grounded in publicly available primary sources. It examines the architectural evolution of GeckoView on Android, including the January 2026 shipping of Project Fission (Site Isolation) in Firefox 147. It covers structural pre-compromise defenses provided by Firefox's industry-leading Rust adoption, WebExtension isolation architecture, and declarative content-blocking engine. It looks at the intersection of privacy controls with exploit-chain disruption, including Total Cookie Protection and Enhanced Tracking Protection. And it considers the systemic security risk of a Chromium monoculture. The analysis finds that categorical dismissal of either engine family is unsupported by current evidence, and that browser selection is not a binary metric of "secure versus insecure" but an alignment with a specific threat model.
+Hardened mobile deployment frameworks (most notably GrapheneOS) advise against Gecko-based browsers like Firefox, claiming a systemic security deficit compared to Chromium-based alternatives such as Vanadium. These advisories show significant documentation latency. They cite architectural deficiencies that have been partially or fully resolved in current stable releases, conflate distinct mitigation layers (pre-compromise versus post-compromise), and fail to account for threat-model dependencies that alter the security calculus. This paper evaluates these claims through a multi-layered threat-modeling lens grounded in publicly available primary sources. It examines the architectural evolution of GeckoView on Android, including the January 2026 shipping of Project Fission (Site Isolation) in Firefox 147 (now at Firefox 152, July 2026, with five additional releases of maturation). It covers structural pre-compromise defenses provided by Firefox's industry-leading Rust adoption, WebExtension isolation architecture, and declarative content-blocking engine. It looks at the intersection of privacy controls with exploit-chain disruption, including Total Cookie Protection and Enhanced Tracking Protection. And it considers the systemic security risk of a Chromium monoculture. The analysis finds that categorical dismissal of either engine family is unsupported by current evidence, and that browser selection is not a binary metric of "secure versus insecure" but an alignment with a specific threat model.
+
 
 ---
 
@@ -33,6 +37,7 @@ This paper has two purposes. First, it provides an evidence-based, up-to-date as
 **Methodology.** All claims herein are accompanied by citations to primary or secondary sources accessible as of July 2026. Where evidence is absent or contradictory, this is explicitly noted. The authors have no affiliation with Mozilla, GrapheneOS, the Chromium project, or any commercial browser vendor.
 
 **Scope and limitations of this analysis.** This paper is a threat-modeling analysis, not an empirical vulnerability comparison. It evaluates architectural security properties, mitigation philosophies, and the alignment of each browser engine with different threat-model priorities. It does not attempt to measure or rank the absolute number of vulnerabilities per browser, and it does not provide a quantitative CVE comparison between Chromium and Firefox. Where vulnerability statistics from published sources (such as Chromium's memory safety data [14]) are cited, they are used to illustrate architectural arguments, not as comparative metrics. Readers seeking a direct CVE-by-CVE comparison should consult the respective vendor security advisory pages [17] and Chromium release notes.
+
 
 ---
 
@@ -54,7 +59,7 @@ The characterization that "Firefox does not have internal sandboxing on Android"
 
 1. **Multi-process architecture.** GeckoView on Android has operated a multi-process architecture with a privileged parent process and separate content processes since the completion of its multi-process re-engineering. This provides process-level isolation between content and the browser chrome, even if the kernel-level protections differ from Chromium's.
 
-2. **Project Fission (Site Isolation) on Android (Firefox 147, January 2026).** Mozilla shipped Site Isolation for Android in Firefox 147, with release notes stating: "Added protection against side-channel attacks such as Spectre using the same Site Isolation safeguards already in use by desktop Firefox" [12]. This provides origin-level process separation that prevents a compromised renderer for `site-a.com` from reading `site-b.com`'s data, including via side channels.
+2. **Project Fission (Site Isolation) on Android (Firefox 147, January 2026; now at Firefox 152, July 2026).** Mozilla shipped Site Isolation for Android in Firefox 147 (now at Firefox 152), with release notes stating: "Added protection against side-channel attacks such as Spectre using the same Site Isolation safeguards already in use by desktop Firefox" [12]. This provides origin-level process separation that prevents a compromised renderer for `site-a.com` from reading `site-b.com`'s data, including via side channels.
 
 3. **Memory safety via Rust (Section 3).** An increasing portion of GeckoView's rendering pipeline is written in Rust, a memory-safe language that makes entire classes of vulnerabilities (use-after-free, buffer overflows) structurally impossible in safe code paths. This is a **pre-compromise** defense that reduces the probability of successful initial compromise. It is distinct from and complementary to post-compromise containment.
 
@@ -62,7 +67,7 @@ The characterization that "Firefox does not have internal sandboxing on Android"
 
 Mozilla announced Fission's stable release for desktop Firefox in version 95 (December 2021) [3], [5]. The desktop implementation assigns each site origin to a dedicated operating system process, with IPC enforcement ensuring that cross-origin data access requires explicit, validated channels.
 
-**As of Firefox 147 for Android (January 2026), this architecture has shipped on mobile.** The release notes explicitly cite Spectre-class side-channel protection [12]. This closes a documented gap that had existed since Fission's desktop release over four years earlier.
+**Firefox 147 for Android (January 2026) shipped this architecture on mobile. As of Firefox 152 (July 2026), Fission has matured across five additional releases.** The release notes explicitly cite Spectre-class side-channel protection [12]. This closes a documented gap that had existed since Fission's desktop release over four years earlier.
 
 Fission is an ongoing project, not a finished one. Mozilla continues to refine the implementation, extend process isolation coverage to additional code paths, and address architectural gaps as part of its long-term security roadmap. The same is true on the desktop side, where Fission has seen continuous improvements since its 2021 launch.
 
@@ -79,6 +84,7 @@ A critical framing question is whether the absence of `isolatedProcess` sandboxi
 2. **The Rust advantage (Section 3).** If the renderer process is materially harder to compromise in the first place due to memory-safe code, the relative importance of post-compromise containment is diminished. A sandbox is irrelevant if the renderer is never successfully exploited.
 
 3. **Threat-model dependence.** For an attacker whose goal is cross-origin data exfiltration (for example, reading your banking session from a malicious ad), Fission provides the relevant defense. For an attacker whose goal is kernel-level persistence after compromising the renderer, `isolatedProcess` provides the relevant defense. These address different attack objectives.
+
 
 ---
 
@@ -152,6 +158,7 @@ This paper does not conduct an independent CVE census (see Scope and limitations
 
 **Summary.** The available data supports two conclusions: (a) memory safety bugs dominate browser vulnerability landscapes across both engines, and (b) Mozilla's Rust components have a clean track record since shipping, but the sample size and public documentation are insufficient for a quantitative cross-browser comparison. Architectural arguments about Rust's security value (Section 3.1-3.3) should be evaluated in light of this limited empirical basis.
 
+
 ---
 
 ## 4. Extension Architecture as Security Infrastructure
@@ -216,6 +223,7 @@ Firefox continues to support Manifest V2 extension APIs, including full `webRequ
 
 The net assessment depends on whether one views the extension API surface primarily as attack surface or as defense infrastructure. GrapheneOS's position falls firmly in the former camp [1]. This paper argues that the value of network-layer content interception as a pre-compromise defense justifies the API surface exposure for users who choose to deploy extensions. For users who do not use extensions, the API surface difference is irrelevant.
 
+
 ---
 
 ## 5. Privacy Architecture Overlap with Security Models
@@ -258,6 +266,7 @@ Disrupting the left side of this chain is a legitimate security strategy. An att
 
 GrapheneOS's position does not dispute this connection but questions the efficacy of client-side anti-fingerprinting: "Most privacy features for browsers are privacy theater without a clear threat model and these features often reduce privacy by aiding fingerprinting and adding more state shared between sites" [1]. This critique has merit for poorly implemented anti-fingerprinting measures, but it does not apply equally to all privacy features. Total Cookie Protection, for example, does not increase fingerprinting surface. It partitions state, which is a strictly additive privacy gain with no fingerprinting cost.
 
+
 ---
 
 ## 6. The Systemic Risk of Engine Monoculture
@@ -297,6 +306,7 @@ The dual-engine state exists because Android's platform design enforces a separa
 - A user whose primary concern is monoculture risk may prefer a GeckoView browser even at the cost of dual-engine deployment.
 - For both configurations, the WebView engine is present regardless of browser choice. The marginal additional attack surface of adding GeckoView is the Gecko engine itself. This is a real addition, but it must be weighed against the monoculture risk reduction that diversity provides.
 
+
 ---
 
 ## 7. Critical Examination of GrapheneOS's Claims Against Gecko-Based Browsers
@@ -305,11 +315,11 @@ GrapheneOS maintains a well-documented position advising against Gecko-based bro
 
 ### 7.1 Claim: "Firefox does not have internal sandboxing on Android"
 
-**Status: Partially outdated as of Firefox 147 (January 2026).**
+**Status: Partially outdated.**
 
 Firefox on Android does not implement Android's `isolatedProcess` mechanism for its child processes. This component of GrapheneOS's claim remains technically accurate [1]. The `isolatedProcess` attribute is a declarative manifest flag, and its absence represents a deliberate or resource-constrained decision by Mozilla.
 
-The broader claim that Firefox has "no internal sandboxing" conflates the absence of one specific mechanism with the absence of all sandboxing. Firefox 147 shipped Site Isolation (Fission) for Android, providing "protection against side-channel attacks such as Spectre using the same Site Isolation safeguards already in use by desktop Firefox" [12]. Fission is a form of internal sandboxing. It enforces origin-level process boundaries and restricts cross-origin data access via IPC enforcement. Additionally, GeckoView's multi-process architecture provides a privileged parent process and separate content processes.
+The broader claim that Firefox has "no internal sandboxing" conflates the absence of one specific mechanism with the absence of all sandboxing. Firefox 147 shipped Site Isolation (Fission) for Android, now at Firefox 152 with continued maturation across five additional releases, providing "protection against side-channel attacks such as Spectre using the same Site Isolation safeguards already in use by desktop Firefox" [12]. Fission is a form of internal sandboxing. It enforces origin-level process boundaries and restricts cross-origin data access via IPC enforcement. Additionally, GeckoView's multi-process architecture provides a privileged parent process and separate content processes.
 
 The claim conflates "no `isolatedProcess`-based sandboxing" with "no internal sandboxing" generally. These are materially different assertions, and the former does not imply the latter.
 
@@ -381,6 +391,7 @@ The following table summarizes the status of each major GrapheneOS claim:
 | "Extension privacy is theater" | **Philosophical disagreement** | Content blocking provides genuine pre-delivery interception; anti-AV analogy is structurally inapt |
 | "Dual-engine attack surface" | **Platform constraint, not Firefox deficiency** | Enforced by Android; symmetric concern; design choice by GrapheneOS |
 
+
 ---
 
 ## 8. Conclusion and Threat Model Matrix
@@ -393,7 +404,7 @@ The following matrix summarizes the evaluated properties across the full threat 
 |---|---|---|
 | **Primary Mitigation Philosophy** | Post-compromise kernel containment | Pre-compromise memory safety + content interception |
 | **Sandboxing Mechanism** | Kernel-level (`isolatedProcess`) UID isolation | Application-level process spawning + Fission origin isolation |
-| **Site Isolation (Mobile)** | Strict site isolation with kernel enforcement [1] | Fission shipped Firefox 147 (Jan 2026); kernel mechanism differs from desktop [12] |
+| **Site Isolation (Mobile)** | Strict site isolation with kernel enforcement [1] | Fission shipped Firefox 147 (Jan 2026), matured over 5 releases to Firefox 152; kernel mechanism differs from desktop [12] |
 | **Post-Exploit Containment** | Strong (UID isolation, CFI, SSP, seccomp-BPF on desktop) | Limited by absence of `isolatedProcess` [1] |
 | **Memory Safety** | Predominantly C++ (V8, Blink); Rust experimental [14], [16] | Extensive Rust adoption (Stylo, RLBox, Necko, WebRender); C++ legacy paths remain |
 | **Memory Safety Trajectory** | Rust adoption nascent; gap with Firefox widening | Continued porting of subsystems; compounding vulnerability reduction over time |
@@ -414,6 +425,7 @@ The following matrix summarizes the evaluated properties across the full threat 
 
 - **For security-conscious users on GrapheneOS specifically**, the OS-level hardening applies to all applications. GeckoView does not benefit from `isolatedProcess` regardless of the host OS, and the dual-engine deployment increases aggregate attack surface. Users in this category should evaluate whether the monoculture risk reduction and memory safety benefits of GeckoView outweigh the weaker post-exploit containment.
 
+
 ---
 
 ## Methodology Note
@@ -425,6 +437,7 @@ This analysis is based on publicly available documentation accessed in July 2026
 **This paper does not assess** the iOS versions of either browser, as iOS WebKit requirements fundamentally alter the sandboxing landscape. It also does not provide a comprehensive assessment of desktop sandboxing, except where desktop architectures are referenced for comparison.
 
 **Scope classification.** This analysis is primarily an architectural threat-modeling comparison, not an empirical vulnerability census. Where aggregate CVE data is cited (Section 3.5), it is drawn from vendor-published statistics and independent trackers, with limitations explicitly noted. Readers who need a direct quantitative comparison of CVE counts between Chromium and Firefox should consult the respective vendor advisory pages [14], [17]. The authors have made no attempt to produce an independent CVE inventory, as the methodological challenges (differential disclosure practices, severity rating inconsistencies, and the absence of Mozilla-published root-cause classifications) would produce results of limited reliability.
+
 
 ---
 
@@ -452,7 +465,7 @@ This analysis is based on publicly available documentation accessed in July 2026
 
 [11] Mozilla, "AI Security and Zero-Day Vulnerabilities," Mozilla Blog, 2025. [Online]. Available: [https://blog.mozilla.org/en/privacy-security/ai-security-zero-day-vulnerabilities/](https://blog.mozilla.org/en/privacy-security/ai-security-zero-day-vulnerabilities/)
 
-[12] Mozilla, "Firefox for Android 147.0 Release Notes," Jan. 2026. [Online]. Available: [https://www.mozilla.org/en-US/firefox/android/147.0/releasenotes/](https://www.mozilla.org/en-US/firefox/android/147.0/releasenotes/)
+[12] Mozilla, "Firefox for Android 147.0 Release Notes," Jan. 2026. (Current as of Firefox 152, Jul. 2026). [Online]. Available: [https://www.mozilla.org/en-US/firefox/android/147.0/releasenotes/](https://www.mozilla.org/en-US/firefox/android/147.0/releasenotes/)
 
 [13] PrivacyGuides Community, "Site Isolation (Fission) now appears to be active in Firefox on Android," PrivacyGuides Discourse, Jan. 2026. [Online]. Available: [https://discuss.privacyguides.net/t/site-isolation-fission-now-appears-to-be-active-in-firefox-on-android/34899](https://discuss.privacyguides.net/t/site-isolation-fission-now-appears-to-be-active-in-firefox-on-android/34899)
 
@@ -479,5 +492,7 @@ This analysis is based on publicly available documentation accessed in July 2026
 [24] Mozilla Wiki, "Security/Sandbox," Oct. 2024. [Online]. Available: [https://wiki.mozilla.org/Security/Sandbox](https://wiki.mozilla.org/Security/Sandbox) . Accessed: Jul. 2026.
 
 [25] r/firefox, "Firefox Sandbox Isolation Hits Level 9 -- The Gap with Chrome Has Closed," Reddit, Jan. 2026. [Online]. Available: [https://old.reddit.com/r/firefox/comments/1qkqfcx/firefox_sandbox_isolation_hits_level_9_the_gap/](https://old.reddit.com/r/firefox/comments/1qkqfcx/firefox_sandbox_isolation_hits_level_9_the_gap/) . Accessed: Jul. 2026.
+
+[26] Mozilla, "Firefox for Android 152.0 Release Notes," Jul. 2026. [Online]. Available: https://www.mozilla.org/en-US/firefox/android/152.0/releasenotes/
 
 ---
