@@ -28,7 +28,7 @@ jobs:
 
       - name: Copy static files
         run: |
-          cp index.html atom.xml feed.json robots.txt _output/
+          cp index.html atom.xml feed.json rss.xml robots.txt _output/
           cp -r .well-known _output/.well-known
 
       - name: Build HTML
