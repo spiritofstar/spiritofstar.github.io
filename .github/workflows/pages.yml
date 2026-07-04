@@ -97,7 +97,7 @@ jobs:
           mv /tmp/combined.typ "_output/$SLUG.typ"
           typst compile "_output/$SLUG.typ"
 
-      - name: Deploy to GitHub Pages (gh-pages branch)
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
