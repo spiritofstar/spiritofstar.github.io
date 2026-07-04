@@ -12,21 +12,37 @@
   "language": "en",
   "items": [
     {
-      "id": "tag:spiritofstar.github.io,2026-07-04:/blog/sandboxing-mitigation-comparative-analysis",
+      "id": "tag:spiritofstar.github.io,2026-07-01:/blog/responding-to-criticism",
+      "url": "https://spiritofstar.github.io/responding-to-criticism.html",
+      "title": "Responding to Security Criticism: Corrections and Reflections",
+      "summary": "This paper acknowledges and addresses technical criticisms raised by several security researchers in response to the author's prior analysis of mobile browser security architectures. It documents specific corrections made to the original paper, examines the technical merits of each criticism, and reflects on the broader dynamics of security discourse between independent researchers and project maintainers. The goal is not to rebut the criticized position but to transparently correct errors, clarify terminology, and model the kind of evidence-based revision that security research requires.",
+      "content_html": "<p>This paper acknowledges and addresses technical criticisms raised by several security researchers in response to the author&#x27;s prior analysis of mobile browser security architectures. It documents specific corrections made to the original paper, examines the technical merits of each criticism, and reflects on the broader dynamics of security discourse between independent researchers and project maintainers. The goal is not to rebut the criticized position but to transparently correct errors, clarify terminology, and model the kind of evidence-based revision that security research requires.</p><p><a href=\"https://spiritofstar.github.io/responding-to-criticism.html\">Read the full paper \u2192</a></p>",
+      "date_published": "2026-07-01T00:00:00Z",
+      "date_modified": "2026-07-01T00:00:00Z",
+      "tags": [
+        "browser security",
+        "methodology",
+        "security discourse",
+        "Firefox",
+        "Chromium"
+      ]
+    },
+    {
+      "id": "tag:spiritofstar.github.io,2026-07-01:/blog/sandboxing-mitigation-comparative-analysis",
       "url": "https://spiritofstar.github.io/blog.html",
       "title": "Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures",
-      "summary": "Hardened mobile deployment frameworks (most notably GrapheneOS) advise against Gecko-based browsers like Firefox, claiming a systemic security deficit compared to Chromium-based alternatives such as Vanadium. These advisories show significant documentation latency. They cite architectural deficiencies that have been partially or fully resolved in current stable releases, conflate distinct mitigation layers (pre-compromise versus post-compromise), and fail to account for threat-model dependencies that alter the security calculus.",
-      "content_html": "<p>Hardened mobile deployment frameworks (most notably GrapheneOS) advise against Gecko-based browsers like Firefox, claiming a systemic security deficit compared to Chromium-based alternatives such as Vanadium. These advisories show significant documentation latency. They cite architectural deficiencies that have been partially or fully resolved in current stable releases, conflate distinct mitigation layers (pre-compromise versus post-compromise), and fail to account for threat-model dependencies that alter the security calculus.</p><p>This paper evaluates these claims through a multi-layered threat-modeling lens grounded in publicly available primary sources. It examines the architectural evolution of GeckoView on Android, including the January 2026 shipping and subsequent rollback of Project Fission (Site Isolation) in Firefox 147 (now at Firefox 152, July 2026), which remains disabled on release and beta channels due to unresolved crash bugs. It covers structural pre-compromise defenses provided by Firefox&#8217;s industry-leading Rust adoption, WebExtension isolation architecture, and declarative content-blocking engine. It looks at the intersection of privacy controls with exploit-chain disruption, including Total Cookie Protection and Enhanced Tracking Protection. And it considers the systemic security risk of a Chromium monoculture.</p><p>The analysis finds that categorical dismissal of either engine family is unsupported by current evidence, and that browser selection is not a binary metric of &#8220;secure versus insecure&#8221; but an alignment with a specific threat model.</p><p><a href=\"https://spiritofstar.github.io/blog.html\">Read the full paper &rarr;</a></p>",
-      "date_published": "2026-07-04T00:00:00Z",
-      "date_modified": "2026-07-04T00:00:00Z",
+      "summary": "Hardened mobile deployment frameworks (most notably GrapheneOS) advise against Gecko-based browsers like Firefox, claiming a systemic security deficit compared to Chromium-based alternatives such as Vanadium. Their core claim regarding the absence of Android's `isolatedProcess` sandboxing in GeckoView remains accurate and is acknowledged in this analysis. However, several subsidiary claims conflate distinct mitigation layers (pre-compromise versus post-compromise) and fail to account for threat-model dependencies that alter the security calculus. This paper evaluates these claims through a multi-layered threat-modeling lens grounded in publicly available primary sources. It examines the architectural evolution of GeckoView on Android, including the January 2026 shipping and subsequent rollback of Project Fission (Site Isolation) in Firefox 147 (now at Firefox 152, July 2026), which remains disabled on release and beta channels due to unresolved crash bugs (Section 2.3). It covers structural pre-compromise defenses provided by Firefox's industry-leading Rust adoption, WebExtension isolation architecture, and declarative content-blocking engine. It looks at the intersection of privacy controls with exploit-chain disruption, including Total Cookie Protection and Enhanced Tracking Protection. And it considers the systemic security risk of a Chromium monoculture. The analysis finds that categorical dismissal of either engine family is unsupported by current evidence, and that browser selection is not a binary metric of \"secure versus insecure\" but an alignment with a specific threat model.",
+      "content_html": "<p>Hardened mobile deployment frameworks (most notably GrapheneOS) advise against Gecko-based browsers like Firefox, claiming a systemic security deficit compared to Chromium-based alternatives such as Vanadium. Their core claim regarding the absence of Android&#x27;s `isolatedProcess` sandboxing in GeckoView remains accurate and is acknowledged in this analysis. However, several subsidiary claims conflate distinct mitigation layers (pre-compromise versus post-compromise) and fail to account for threat-model dependencies that alter the security calculus. This paper evaluates these claims through a multi-layered threat-modeling lens grounded in publicly available primary sources. It examines the architectural evolution of GeckoView on Android, including the January 2026 shipping and subsequent rollback of Project Fission (Site Isolation) in Firefox 147 (now at Firefox 152, July 2026), which remains disabled on release and beta channels due to unresolved crash bugs (Section 2.3). It covers structural pre-compromise defenses provided by Firefox&#x27;s industry-leading Rust adoption, WebExtension isolation architecture, and declarative content-blocking engine. It looks at the intersection of privacy controls with exploit-chain disruption, including Total Cookie Protection and Enhanced Tracking Protection. And it considers the systemic security risk of a Chromium monoculture. The analysis finds that categorical dismissal of either engine family is unsupported by current evidence, and that browser selection is not a binary metric of &quot;secure versus insecure&quot; but an alignment with a specific threat model.</p><p><a href=\"https://spiritofstar.github.io/blog.html\">Read the full paper \u2192</a></p>",
+      "date_published": "2026-07-01T00:00:00Z",
+      "date_modified": "2026-07-01T00:00:00Z",
       "tags": [
         "browser security",
         "sandboxing",
         "Firefox",
         "GeckoView",
         "Chromium",
-        "GrapheneOS",
-        "mobile security"
+        "mobile security",
+        "comparative analysis"
       ]
     }
   ]
