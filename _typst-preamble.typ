@@ -18,7 +18,7 @@
 ])
 #v(6mm)
 #align(center, text(size: 12pt, style: "italic")[
-  A Rebuttal of Outdated Claims Against Gecko-Based Browsers on Android
+  A Comparative Analysis of Mobile Browser Security Architectures on Android
 ])
 #v(6mm)
 #align(center, text(size: 11pt)[Independent Security Research])

@@ -10,6 +10,24 @@
         />
         <meta name="color-scheme" content="light dark" />
         <meta name="robots" content="noai, noimageai" />
+        <meta property="og:title" content="spiritofstar" />
+        <meta
+            property="og:description"
+            content="Independent research on browser security, memory safety, and privacy engineering."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://spiritofstar.github.io/" />
+        <meta
+            property="og:image"
+            content="https://spiritofstar.github.io/favicon.svg"
+        />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="spiritofstar" />
+        <meta
+            name="twitter:description"
+            content="Independent research on browser security, memory safety, and privacy engineering."
+        />
+        <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -110,6 +128,26 @@
                 opacity: 0.7;
             }
 
+            .site-nav {
+                text-align: center;
+                margin: -1.5em 0 2em 0;
+                display: flex;
+                justify-content: center;
+                gap: 1.2em;
+            }
+            .site-nav a {
+                color: var(--text-muted);
+                text-decoration: none;
+                font-family: "Roboto", Helvetica, Arial, sans-serif;
+                font-size: 0.78em;
+                font-weight: 500;
+                letter-spacing: 0.03em;
+                text-transform: uppercase;
+            }
+            .site-nav a:hover {
+                color: var(--accent);
+            }
+
             hr {
                 border: none;
                 border-top: 1px solid var(--border);
@@ -125,6 +163,11 @@
                 letter-spacing: 0.01em;
                 color: var(--text);
                 margin-bottom: 0.8em;
+            }
+            .section-heading--about {
+                border-top: 1px solid var(--border);
+                padding-top: 1.5em;
+                margin-top: 1.5em;
             }
 
             .post-list {
@@ -254,9 +297,35 @@
                 }
             }
         </style>
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "spiritofstar",
+                "url": "https://spiritofstar.github.io/",
+                "description": "Independent research on browser security, memory safety, and privacy engineering",
+                "author": {
+                    "@type": "Person",
+                    "name": "spiritofstar",
+                    "url": "https://spiritofstar.github.io/",
+                    "sameAs": [
+                        "https://x.com/SpiritOfStarr",
+                        "https://bsky.app/profile/spiritofstar.bsky.social",
+                        "https://github.com/spiritofstar",
+                        "https://spiritofstar.substack.com"
+                    ]
+                },
+                "inLanguage": "en"
+            }
+        </script>
     </head>
     <body>
         <div class="wordmark"><a href="./">spiritofstar</a></div>
+
+        <nav class="site-nav">
+            <a href="./">Home</a>
+            <a href="./blog.html">Latest Research</a>
+        </nav>
 
         <h2 class="section-heading">Research</h2>
 
@@ -282,16 +351,34 @@
                     convergence, and monoculture risk.
                 </div>
             </li>
+            <li>
+                <div class="post-title">
+                    <a href="./responding-to-criticism.html"
+                        >Responding to Security Criticism: Corrections and
+                        Reflections</a
+                    >
+                </div>
+                <div class="post-meta">
+                    July 2026 &middot;
+                    <a href="./responding-to-criticism.pdf">PDF</a>
+                </div>
+                <div class="post-desc">
+                    Acknowledges and addresses technical criticisms raised by
+                    the security community, documents corrections made to the
+                    prior browser security analysis, and reflects on security
+                    discourse between independent researchers and project
+                    maintainers.
+                </div>
+            </li>
         </ul>
 
-        <hr />
-
-        <h2 class="section-heading">About</h2>
+        <h2 class="section-heading section-heading--about">About</h2>
 
         <div class="about-text">
             <p>
-                Data analyst, psychology student, and programmer. Interested in
-                browser security, privacy, and software safety.
+                Data analyst, psychology student, and programmer. Writes about
+                browser security architecture, cognitive science, political
+                psychology, and the intersection of technology with society.
             </p>
         </div>
 

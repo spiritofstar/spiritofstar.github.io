@@ -1,9 +1,17 @@
 
 ---
 title: "Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures"
-subtitle: "A Rebuttal of Outdated Claims Against Gecko-Based Browsers on Android"
+subtitle: "A Threat-Modeling Analysis of GeckoView and Chromium on Android"
 author: "Independent Security Research"
 date: "July 2026"
+categories:
+  - browser security
+  - sandboxing
+  - Firefox
+  - GeckoView
+  - Chromium
+  - mobile security
+  - comparative analysis
 format:
   html:
     toc: true
@@ -21,7 +29,7 @@ format:
 
 ## Abstract
 
-Hardened mobile deployment frameworks (most notably GrapheneOS) advise against Gecko-based browsers like Firefox, claiming a systemic security deficit compared to Chromium-based alternatives such as Vanadium. These advisories show significant documentation latency. They cite architectural deficiencies that have been partially or fully resolved in current stable releases, conflate distinct mitigation layers (pre-compromise versus post-compromise), and fail to account for threat-model dependencies that alter the security calculus. This paper evaluates these claims through a multi-layered threat-modeling lens grounded in publicly available primary sources. It examines the architectural evolution of GeckoView on Android, including the January 2026 shipping and subsequent rollback of Project Fission (Site Isolation) in Firefox 147 (now at Firefox 152, July 2026), which remains disabled on release and beta channels due to unresolved crash bugs (Section 2.3). It covers structural pre-compromise defenses provided by Firefox's industry-leading Rust adoption, WebExtension isolation architecture, and declarative content-blocking engine. It looks at the intersection of privacy controls with exploit-chain disruption, including Total Cookie Protection and Enhanced Tracking Protection. And it considers the systemic security risk of a Chromium monoculture. The analysis finds that categorical dismissal of either engine family is unsupported by current evidence, and that browser selection is not a binary metric of "secure versus insecure" but an alignment with a specific threat model.
+Hardened mobile deployment frameworks (most notably GrapheneOS) advise against Gecko-based browsers like Firefox, claiming a systemic security deficit compared to Chromium-based alternatives such as Vanadium. Their core claim regarding the absence of Android's `isolatedProcess` sandboxing in GeckoView remains accurate and is acknowledged in this analysis. However, several subsidiary claims conflate distinct mitigation layers (pre-compromise versus post-compromise) and fail to account for threat-model dependencies that alter the security calculus. This paper evaluates these claims through a multi-layered threat-modeling lens grounded in publicly available primary sources. It examines the architectural evolution of GeckoView on Android, including the January 2026 shipping and subsequent rollback of Project Fission (Site Isolation) in Firefox 147 (now at Firefox 152, July 2026), which remains disabled on release and beta channels due to unresolved crash bugs (Section 2.3). It covers structural pre-compromise defenses provided by Firefox's industry-leading Rust adoption, WebExtension isolation architecture, and declarative content-blocking engine. It looks at the intersection of privacy controls with exploit-chain disruption, including Total Cookie Protection and Enhanced Tracking Protection. And it considers the systemic security risk of a Chromium monoculture. The analysis finds that categorical dismissal of either engine family is unsupported by current evidence, and that browser selection is not a binary metric of "secure versus insecure" but an alignment with a specific threat model.
 
 
 ---
@@ -30,7 +38,7 @@ Hardened mobile deployment frameworks (most notably GrapheneOS) advise against G
 
 Criticism of Mozilla's Gecko engine on mobile platforms has historically centered on its single-process architecture. Before the completion of multi-process re-architecting, Gecko-based browsers on Android lacked robust site-level process boundaries, making them structurally vulnerable to microarchitectural side-channel attacks such as Spectre and Meltdown [6]. This deficiency was well-documented by Mozilla's own engineering team during the design phase of their multi-process architecture [4].
 
-Security guidance in the mobile ecosystem suffers from persistent documentation latency. The most influential critique of GeckoView on Android is GrapheneOS's published advisory on web browsing [1]. It has remained substantively unchanged while the target architecture has evolved significantly. Criticisms rooted in architectural deficiencies that have since been addressed continue to circulate as authoritative guidance without reference to current implementation status.
+Security guidance in the mobile ecosystem suffers from persistent documentation latency. The most influential critique of GeckoView on Android is GrapheneOS's published advisory on web browsing [1]. It has remained substantively unchanged while the target architecture has evolved significantly. Criticisms rooted in architectural deficiencies that have since been partially addressed continue to circulate as authoritative guidance without reference to current implementation status.
 
 This paper has two purposes. First, it provides an evidence-based, up-to-date assessment of the security properties of both Chromium-based and Gecko-based browser architectures on Android, distinguishing between verified architectural properties, documented limitations, and areas where public evidence is incomplete. Second, it offers a claim-by-claim critical examination of GrapheneOS's published position, identifying where its assertions remain valid, where they have been superseded by developments, and where they reflect divergent threat-model priorities rather than objective security deficits.
 
@@ -96,6 +104,27 @@ A critical framing question is whether the absence of `isolatedProcess` sandboxi
 
 3. **Threat-model dependence.** For an attacker whose goal is cross-origin data exfiltration (for example, reading your banking session from a malicious ad), Fission provides the relevant defense. For an attacker whose goal is kernel-level persistence after compromising the renderer, `isolatedProcess` provides the relevant defense. These address different attack objectives.
 
+### 2.5 Capability Expansion vs. Containment Rigor
+
+The security calculus between Chromium and GeckoView is further complicated by each project's strategy for expanding the web platform's native device access APIs. This section examines the trade-off between surface area expansion and sandbox rigor.
+
+Chromium has aggressively pushed the boundaries of what web-exposed interfaces can access. Key examples include:
+
+* **Direct Sockets API.** Allows web applications to establish direct TCP and UDP communications, bypassing HTTP abstractions entirely. While gated behind permissions and secure contexts, this introduces raw networking access into the browser's attack surface. A vulnerability in the Direct Sockets implementation could expose low-level network access to an attacker who has achieved code execution in a renderer.
+* **Isolated Web Apps (IWAs).** A new application model that blurs the line between web pages and native applications, granting packaged web apps elevated capabilities including raw socket access, file system write access, and system API exposure [31].
+* **HID and USB device access.** APIs that allow web applications to enumerate and communicate directly with hardware peripherals. These represent a significant expansion of the browser's trusted computing base into hardware-interface code traditionally reserved for native applications.
+* **File System Access API.** Gives web applications read and write access to the local file system outside the browser's storage sandbox. While user-gated through file pickers, the API expands the blast radius of a compromised renderer to include local file system data.
+
+These capabilities expand the browser's trusted computing base at the API layer. Even with permission gates and sandboxing, each new API represents code paths that must be correct. As the Chromium security team's own data shows, the majority of severe vulnerabilities are memory-safety bugs in C++ code [14]. Every additional thousand lines of C++ API implementation expands the pool of potential vulnerabilities, regardless of the sandbox quality.
+
+Firefox's approach to these APIs is markedly more conservative. Mozilla has declined to implement Direct Sockets, Isolated Web Apps, and several of the more invasive device APIs. This is not an oversight -- it reflects a deliberate product philosophy that prioritizes capability gating over capability expansion. The reasoning is straightforward: an API that does not exist in the codebase cannot be exploited.
+
+**This creates an asymmetric risk profile.** Chromium constructs a tighter post-compromise sandbox (through `isolatedProcess` and strict site isolation) but simultaneously expands its pre-compromise attack surface by integrating aggressive device APIs. Firefox scales down the sandbox thickness on certain platforms (notably Android, where `isolatedProcess` is absent and Fission remains disabled on release channels), but balances this by strictly gating extension protocol access [32] and rejecting entire classes of web-exposed attack surface.
+
+Bug 2034168 illustrates this philosophy in the extension context: as of Firefox 153 (July 2026), extensions can no longer access local files by default. The `file:` scheme access is gated behind an explicit "Access local files on your computer" permission, entirely separate from the broader "Access your data for all websites" permission [32]. An extension that can inject content scripts into every website cannot automatically read local files opened in the browser, because those two capabilities are now separated at the permission model level. This is the same principle applied at the extension API layer: capability gating as a structural defense, not merely post-compromise containment.
+
+The practical implication is that the comparison cannot be reduced to sandbox thickness alone. Chromium's larger API surface creates a larger vulnerability pool whose exploitation, even if well-contained, still threatens cross-origin data confidentiality within the browser. Firefox's smaller API surface creates a smaller vulnerability pool, partially compensating for weaker kernel-level containment on Android. This is not an argument that Firefox's approach is superior -- it is an argument that the two projects have made different trade-offs at different layers, and a fair comparison must account for both sides of the ledger.
+
 
 ---
 
@@ -123,6 +152,24 @@ This has direct security implications. Google's own security research has consis
 
 The Rust migration is not finished in Firefox either, but the trajectory is what matters. Each component ported from C++ to Rust removes an entire class of memory-safety vulnerabilities from that attack surface. As Mozilla continues porting additional subsystems (networking, media, graphics, cryptography), the potential for further vulnerability reduction grows. The gap between Firefox and Chromium in memory-safe code adoption is widening over time, not narrowing.
 
+### 3.2 Chromium's Memory Safety and Mitigation Architecture
+
+The Rust-focused comparison in Section 3.1 presents an incomplete picture of Chromium's defense-in-depth. While Chromium's codebase remains predominantly C++, the project deploys multiple structural mitigations that reduce memory corruption vulnerability density and exploitability:
+
+**V8 Sandbox (sandboxed execution for JIT-compiled code).** V8, Chromium's JavaScript engine, implements a memory sandbox within the address space of the renderer process. The V8 sandbox reserves a virtual address region (typically 1 TB on 64-bit systems) and constrains all JIT-compiled code and V8 heap allocations to this region. Pointers between sandboxed and non-sandboxed memory are encoded as offsets relative to the sandbox base, making it structurally impossible for JIT-generated code to directly reference memory outside the sandbox region even in the presence of a JIT corruption vulnerability [34]. This is a distinct mitigation from the kernel-level `isolatedProcess` sandbox and operates at the memory-safety layer.
+
+**Oilpan garbage collection for the DOM.** Chromium's DOM objects are managed by Oilpan, a tracing garbage collector integrated into the Blink rendering engine. Oilpan eliminates use-after-free vulnerabilities in DOM-manipulation code paths by providing precise reachability tracking and ensuring that object lifetimes are determined by reference reachability rather than manual reference counting [35]. This is architecturally significant because DOM-manipulation code has historically been a dense source of use-after-free vulnerabilities in browser engines. Firefox's SpiderMonkey uses a combination of reference counting and cycle collection for DOM object management, which provides memory safety guarantees that are overlapping with but not identical to Oilpan's.
+
+**Type-checked IPC (Mojo).** Chromium's Mojo IPC system enforces type-safe message passing between processes. Interface definitions are compiled into generated C++ code that validates message structure, bounds, and types at the serialization and deserialization boundaries. This prevents a class of memory corruption vulnerabilities at inter-process communication boundaries -- precisely the attack surface that sandbox-escape exploits target [36]. Firefox's IPC layer (similar to Chromium's legacy IPC) does not provide equivalent compile-time type safety guarantees across all channels, though specific interfaces benefit from generated bindings.
+
+**PartitionAlloc.** Chromium's memory allocator provides hardened allocation with features including: dedicated per-process partitions (array/string/buffer allocations isolated from general-purpose allocations), Bucket-based freelist entropy injection (ASLR within the heap), and MiraclePtr (use-after-free quasi-reference-counting via reference stability) [37]. These mitigations raise the exploitation difficulty for heap corruption vulnerabilities even when the underlying bug is present.
+
+**Type-based CFI.** Chromium ships with Clang's Cross-DSO CFI (Control Flow Integrity) enabled on supported platforms, validating indirect call targets against their declared types at runtime. This defeats type-confusion-based exploitation techniques that are a common vector for gaining code execution from memory corruption primitives [14].
+
+**Memory Tagging Extension (MTE).** On ARMv9 hardware, Chromium supports MTE-based heap tagging, which probabilistically detects spatial and temporal memory safety violations at the hardware level. This is noted in Section 3.4 as a shared mitigation, but Chromium's implementation is more mature, with per-partition MTE tags integrated into PartitionAlloc [37].
+
+The practical implication is that Chromium's memory safety strategy is multi-layered rather than language-dependent. The absence of widespread Rust adoption is partially compensated by a heterogeneous portfolio of mitigation techniques applied across the C++ attack surface. A fair comparison of pre-compromise defenses must account for both Firefox's Rust adoption and Chromium's mitigations portfolio, rather than treating Rust coverage as the sole metric.
+
 **Scope and limitations of Rust-based guarantees.** The Rust advantage in Firefox is substantial but not absolute, and its scope deserves precise characterization:
 
 1. **JIT-compiled code is outside Rust's safety guarantees.** The SpiderMonkey JavaScript JIT compiler generates and executes dynamic machine code at runtime. This code is not subject to Rust's compile-time memory-safety checks. A vulnerability in the JIT pipeline (for example, incorrect bounds computation during inline caching) can produce memory corruption regardless of the surrounding code's language. JIT engines are a primary source of critical browser vulnerabilities across both Firefox and Chromium [17]. RLBox, Mozilla's WebAssembly-based sandboxing, mitigates this by isolating certain third-party libraries into sandboxed Wasm compartments [5], but this does not extend to JIT-generated code.
@@ -133,7 +180,7 @@ The Rust migration is not finished in Firefox either, but the trajectory is what
 
 4. **The Rust migration is incomplete.** Significant portions of the GeckoView attack surface remain in C++, including core layout and DOM implementation paths. The Rust migration has made progress in strategically important areas (CSS, networking, GPU rendering), but a complete memory-safe browser engine remains a long-term goal.
 
-### 3.2 AI-Assisted Hardening Across Both Engines
+### 3.3 AI-Assisted Hardening Across Both Engines
 
 In mid-2025, Mozilla published details of a collaboration with Anthropic's red team that used AI-assisted techniques to systematically audit Firefox for exploitable bugs [10]. This effort identified and fixed latent security issues across the codebase. Mozilla also published analysis of the dual-use nature of AI in security, noting that the same techniques defenders use to find vulnerabilities can be weaponized by attackers at scale [11].
 
@@ -141,7 +188,7 @@ AI-assisted hardening is not unique to Mozilla. Google applies comparable techni
 
 These AI-assisted approaches are structurally complementary to a Rust migration. AI auditing can identify logic bugs, correctness issues, and complex inter-component vulnerabilities in both Rust and C++ code. Rust's compile-time guarantees address a different and largely orthogonal vulnerability class: memory corruption in safe code paths, regardless of auditing quality.
 
-### 3.3 Implications for the Post-Compromise vs. Pre-Compromise Calculus
+### 3.4 Implications for the Post-Compromise vs. Pre-Compromise Calculus
 
 The combined effect of Rust migration and AI-assisted hardening shifts the security calculus toward pre-compromise defense. The standard argument in favor of Chromium's sandbox assumes that renderer compromise is inevitable and that post-compromise containment is paramount. But the inevitability of compromise is itself a function of codebase vulnerability density:
 
@@ -151,7 +198,7 @@ By reducing $P(\text{Vulnerability Present})$ through memory-safe language adopt
 
 This advantage compounds over time. Each new Rust component in Firefox eliminates a vulnerability class from that component permanently. The cumulative effect of Firefox's head start in Rust adoption means the memory-safety gap between the two engines is likely to widen, not shrink, as both codebases evolve.
 
-### 3.4 Hardware Mitigations and OS-Level Protections
+### 3.5 Hardware Mitigations and OS-Level Protections
 
 Both Firefox and Chromium benefit from hardware-level exploit mitigations on modern ARM processors. These include Pointer Authentication Codes (PAC) for control-flow integrity, Branch Target Identification (BTI) for indirect branch validation, Memory Tagging Extension (MTE) on ARMv9 hardware for spatial and temporal memory safety, and shadow stacks for return address protection. All major mobile platforms supporting these features apply them to both browser engines equally, as they are enforced at the OS and hardware level, not by the browser vendor.
 
@@ -159,7 +206,7 @@ These mitigations are significant but incomplete. The PACman attack demonstrated
 
 The practical implication is that post-exploit mitigations (both software-level like `isolatedProcess` and hardware-level like PAC) are important but interdependent. Hardware mitigations make certain classes of sandbox escape more difficult, but they cannot compensate for a structurally higher vulnerability density in the rendering engine itself.
 
-### 3.5 Empirical Snapshot: Vulnerability Data from Published Sources
+### 3.6 Empirical Snapshot: Vulnerability Data from Published Sources
 
 This paper does not conduct an independent CVE census (see Scope and limitations, Section 1), but it relies on published aggregate data from the vendors themselves and from independent trackers. The following snapshot contextualizes the architectural arguments in this paper:
 
@@ -296,26 +343,9 @@ GeckoView operates on an entirely independent codebase: the Gecko rendering engi
 
 The security literature on diversity as a defense mechanism supports this principle. The use of diverse, functionally equivalent implementations reduces the likelihood that a single attack technique compromises all targets [7], [8]. This is an operational security principle employed in critical infrastructure, cryptographic implementations, and defense-in-depth architectures. The browser ecosystem's effective monoculture is an anomaly in security engineering, not a best practice.
 
-### 6.3 The Dual-Engine Requirement Reframed
+### 6.3 Engine Diversity vs. Aggregate Attack Surface
 
-GrapheneOS objects that GeckoView is not a WebView implementation, meaning Firefox on Android must be deployed alongside the platform's Chromium-based WebView, resulting in "the remote attack surface of two separate browser engines instead of only one" [1].
-
-**This objection requires substantial reframing.** It describes an Android platform architectural constraint and a design choice by GrapheneOS, not a deficiency of GeckoView.
-
-Android's platform architecture mandates a system WebView component that is independent of the user's chosen browser. On GrapheneOS, this WebView is Vanadium (Chromium-based) regardless of which browser the user selects [2]. The dual-engine concern is asymmetric:
-
-| User's Browser Choice | Engine(s) Present |
-|---|---|
-| Vanadium (or any Chromium browser) | Chromium (browser) + Chromium (WebView) = single engine, two instances |
-| Firefox (GeckoView) | Gecko (browser) + Chromium (WebView) = two engines |
-
-The dual-engine state exists because Android's platform design enforces a separate WebView engine, and because that WebView is Chromium-based. The concern is entirely a function of these two platform-level decisions. If GrapheneOS were to substitute a GeckoView-based WebView for Vanadium's WebView, the dual-engine concern would vanish. Conversely, if an Android user runs only Chromium-based browsers, they still have two copies of the Chromium engine on their device (browser + WebView), which is not commonly flagged as a security concern.
-
-**The dual-engine "problem" is a platform design constraint, not a Firefox deficiency.** The security impact depends on the user's threat model:
-
-- A user whose primary concern is aggregate attack surface may prefer a Chromium-only configuration to minimize engine diversity.
-- A user whose primary concern is monoculture risk may prefer a GeckoView browser even at the cost of dual-engine deployment.
-- For both configurations, the WebView engine is present regardless of browser choice. The marginal additional attack surface of adding GeckoView is the Gecko engine itself. This is a real addition, but it must be weighed against the monoculture risk reduction that diversity provides.
+GrapheneOS objects that GeckoView is not a WebView implementation, so Firefox on Android must be deployed alongside the platform's Chromium-based WebView, creating "the remote attack surface of two separate browser engines instead of only one" [1]. This objection is addressed in detail in the claim-by-claim analysis (Section 7.5). In the context of monoculture risk, the trade-off can be stated concisely: the dual-engine state is an Android platform constraint, not a Firefox deficiency. The marginal attack surface of adding GeckoView must be weighed against the monoculture risk reduction that engine diversity provides.
 
 
 ---
@@ -326,13 +356,16 @@ GrapheneOS maintains a well-documented position advising against Gecko-based bro
 
 ### 7.1 Claim: "Firefox does not have internal sandboxing on Android"
 
-**Status: Partially outdated.**
+**Status: Substantiated -- requires clarification of terminology.**
 
-Firefox on Android does not implement Android's `isolatedProcess` mechanism for its child processes. This component of GrapheneOS's claim remains technically accurate [1]. The `isolatedProcess` attribute is a declarative manifest flag, and its absence represents a deliberate or resource-constrained decision by Mozilla.
+Firefox on Android does not implement Android's `isolatedProcess` mechanism for its child processes. This claim is accurate and is not in dispute [1]. The `isolatedProcess` attribute is a declarative manifest flag, and its absence represents a deliberate or resource-constrained decision by Mozilla. The earlier version of this paper categorized this claim as "partially outdated," which overstated the degree to which the architecture had changed. **Correction: the core `isolatedProcess` claim remains fully substantiated.**
 
-The broader claim that Firefox has "no internal sandboxing" conflates the absence of one specific mechanism with the absence of all sandboxing. Firefox 147 shipped Site Isolation (Fission) for Android, but it was rolled back in 147.0.2 due to content process crashes and remains disabled on release and beta channels as of Firefox 152 (Section 2.3). Fission provides origin-level process boundaries and restricts cross-origin data access via IPC enforcement, but this protection is currently only available on nightly and developer builds. Additionally, GeckoView's multi-process architecture provides a privileged parent process and separate content processes.
+The definitional question is whether "internal sandboxing" requires `isolatedProcess` specifically, or whether other forms of process isolation (multi-process architecture, Fission's origin-level process assignment on nightly/developer channels) qualify as sandboxing. This paper takes the broader definition, which GrapheneOS disputes. The reader should evaluate which definition aligns with their threat model:
 
-The claim conflates "no `isolatedProcess`-based sandboxing" with "no internal sandboxing" generally. These are materially different assertions, and the former does not imply the latter.
+- If sandboxing is defined as kernel-level UID isolation via `isolatedProcess`, GrapheneOS's claim is correct and has not aged.
+- If sandboxing is defined more broadly to include any form of process-level privilege separation, GeckoView provides process isolation without kernel-level UID sandboxing, and the two projects are using different definitions.
+
+The first version of this paper did not make this definitional distinction clearly, which created an impression of dismissing GrapheneOS's accurate claim. The claim is correct within GrapheneOS's definitional framework, and this paper should have stated that explicitly.
 
 ### 7.2 Claim: "Gecko-based browsers like Firefox are much more vulnerable to exploitation"
 
@@ -504,14 +537,28 @@ This analysis is based on publicly available documentation accessed in July 2026
 
 [25] r/firefox, "Firefox Sandbox Isolation Hits Level 9 -- The Gap with Chrome Has Closed," Reddit, Jan. 2026. [Online]. Available: [https://old.reddit.com/r/firefox/comments/1qkqfcx/firefox_sandbox_isolation_hits_level_9_the_gap/](https://old.reddit.com/r/firefox/comments/1qkqfcx/firefox_sandbox_isolation_hits_level_9_the_gap/) . Accessed: Jul. 2026.
 
-[26] Mozilla, "Firefox for Android 152.0 Release Notes," Jul. 2026. [Online]. Available: https://www.mozilla.org/en-US/firefox/android/152.0/releasenotes/
+[26] Mozilla, "Firefox for Android 152.0 Release Notes," Jul. 2026. [Online]. Available: [https://www.mozilla.org/en-US/firefox/android/152.0/releasenotes/](https://www.mozilla.org/en-US/firefox/android/152.0/releasenotes/)
 
-[27] Bug 2011886 - Switch off isolated processes by default. Mozilla Bugzilla. https://bugzilla.mozilla.org/show_bug.cgi?id=2011886
+[27] Bug 2011886 - Switch off isolated processes by default. Mozilla Bugzilla. [https://bugzilla.mozilla.org/show_bug.cgi?id=2011886](https://bugzilla.mozilla.org/show_bug.cgi?id=2011886)
 
-[28] Bug 2011319 - Firefox for Android frequently and randomly going back to the previous page. Mozilla Bugzilla. https://bugzilla.mozilla.org/show_bug.cgi?id=2011319
+[28] Bug 2011319 - Firefox for Android frequently and randomly going back to the previous page. Mozilla Bugzilla. [https://bugzilla.mozilla.org/show_bug.cgi?id=2011319](https://bugzilla.mozilla.org/show_bug.cgi?id=2011319)
 
-[29] Bug 2012435 - Content process crashes when isolating a site with Fission. Mozilla Bugzilla. https://bugzilla.mozilla.org/show_bug.cgi?id=2012435
+[29] Bug 2012435 - Content process crashes when isolating a site with Fission. Mozilla Bugzilla. [https://bugzilla.mozilla.org/show_bug.cgi?id=2012435](https://bugzilla.mozilla.org/show_bug.cgi?id=2012435)
 
-[30] Bug 2003658 - Make Fission + SHIP default in 147. Mozilla Bugzilla. https://bugzilla.mozilla.org/show_bug.cgi?id=2003658
+[30] Bug 2003658 - Make Fission + SHIP default in 147. Mozilla Bugzilla. [https://bugzilla.mozilla.org/show_bug.cgi?id=2003658](https://bugzilla.mozilla.org/show_bug.cgi?id=2003658)
+
+[31] Chrome Developers, "Isolated Web Apps." [Online]. Available: [https://developer.chrome.com/docs/extensions/reference/manifest/isolated-app/](https://developer.chrome.com/docs/extensions/reference/manifest/isolated-app/) . Accessed: Jul. 2026.
+
+[32] Bug 2034168 - Restrict extensions from reading local file data without specific permission. Mozilla Bugzilla. [https://bugzilla.mozilla.org/show_bug.cgi?id=2034168](https://bugzilla.mozilla.org/show_bug.cgi?id=2034168)
+
+[33] Chromium Security Architecture. [https://chromium.googlesource.com/chromium/src/+/master/docs/security/overview.md](https://chromium.googlesource.com/chromium/src/+/master/docs/security/overview.md). Accessed: Jul. 2026.
+
+[34] V8 Sandbox Design Document. [https://docs.google.com/document/d/1FM4fQmIhEqPG8uGp5o9A-mnPB5BOeScZYpkHjo0KKA8](https://docs.google.com/document/d/1FM4fQmIhEqPG8uGp5o9A-mnPB5BOeScZYpkHjo0KKA8).
+
+[35] Oilpan Design Document. Chromium. [https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/platform/heap/BlinkGCDesign.md](https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/platform/heap/BlinkGCDesign.md)
+
+[36] Mojo IPC Documentation. Chromium. [https://chromium.googlesource.com/chromium/src/+/main/mojo/README.md](https://chromium.googlesource.com/chromium/src/+/main/mojo/README.md)
+
+[37] PartitionAlloc Design Document. Chromium. [https://chromium.googlesource.com/chromium/src/+/main/base/allocator/partition_allocator/PA_README.md](https://chromium.googlesource.com/chromium/src/+/main/base/allocator/partition_allocator/PA_README.md)
 
 ---
