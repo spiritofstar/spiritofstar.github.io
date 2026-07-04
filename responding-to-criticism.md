@@ -25,187 +25,172 @@ format:
 
 ## Abstract
 
-This follow-up investigation revisits the author's prior comparative analysis of GeckoView and Chromium security architectures on Android in light of technical criticisms raised post-publication. It documents several new discoveries -- most notably a more complete accounting of Chromium's memory safety mitigations portfolio -- and reaffirms the core findings that survived scrutiny. The analysis reaffirms that categorical dismissal of either engine family remains unsupported by current evidence; that browser selection is an alignment with a specific threat model rather than a binary secure-versus-insecure judgment; that Firefox's structural Rust advantage in critical code paths is real and widening; and that extension-based content blocking provides genuine pre-delivery interception that is not reducible to "privacy theater." Specific errors in the original paper are documented and corrected -- including imprecise framing of the `isolatedProcess` sandboxing claim and an incomplete comparison of memory safety strategies. However, these corrections reinforce rather than undermine the paper's central thesis: the two engine families make fundamentally different trade-offs across pre-compromise and post-compromise layers, and reasonable assessors can weigh these trade-offs differently depending on their threat model.
+My first paper compared Firefox and Chrome security on Android and argued the choice isn't binary -- it depends on what you're protecting against. GrapheneOS pushed back hard, and they were right about several things I got wrong. This paper fixes those mistakes.
+
+I oversold `isolatedProcess` as "the strongest sandbox" when really it's the only sandboxing mechanism Android makes available to apps. I left out Chromium's V8 sandbox, Oilpan GC, CFI, and a bunch of other mitigations. Those omissions made the comparison unfair, and I've corrected them here.
+
+But the core claim survived: these two engines optimize for fundamentally different threats. Chromium is a containment architecture -- it assumes you'll get compromised and limits the blast radius. Firefox is a prevention architecture -- it reduces the chance you get compromised in the first place, using Rust to eliminate entire bug classes at compile time. These aren't competing claims about which is "more secure." They're different answers to different questions.
+
+I also found genuinely new stuff while digging deeper -- things I didn't know when I wrote the first draft. The V8 sandbox is more interesting than I realized. The extensions breaking site isolation problem affects both browsers, not just one. And Firefox's lack of CFI in SpiderMonkey is a real gap I should have caught.
+
+The tl;dr: I got some things wrong, fixed them, and the main argument is stronger for it.
 
 ---
 
 ## 1. Introduction
 
-The author's prior paper, *Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures* [1], examined the security architectures of GeckoView (Firefox) and Chromium (Vanadium) on Android through a multi-layered threat-modeling lens. The paper concluded that categorical dismissal of either engine family was unsupported by current evidence, and that browser selection is an alignment with a specific threat model rather than a binary "secure versus insecure" judgment.
+I wrote the first paper because the public debate around Firefox vs Chrome security was stuck. One side kept saying Firefox has no sandbox, which was always overstated. The other kept saying Firefox is more secure because of Rust, which ignores real gaps. I wanted to land somewhere in the middle: these are different architectures optimized for different risks, and calling either "categorically more secure" misses the point.
 
-Following publication, several security researchers raised technical objections [2]. These fell into two categories:
+The response was immediate. GrapheneOS published a detailed rebuttal on Reddit, and their Discord community engaged extensively. Some of what they said was fair -- I'd made real errors. Some of it felt less like technical correction and more like dismissal. Characterizing independent analysis as "dishonest" and "unethical" because it gets details wrong isn't how peer review works. But I'm separating those two things here.
 
-1. **Substantive corrections** -- specific claims that were inaccurate or incomplete.
-2. **Characterizations of the paper as dishonest or unethical** -- assertions about the author's intent rather than the paper's substance.
+The corrections are real and documented below. I was imprecise about `isolatedProcess`. I omitted important Chromium mitigations. I didn't catch the CFI gap in SpiderMonkey. Each of those is fixed.
 
-This paper separates these two categories. The substantive corrections are documented below alongside new evidence gathered during follow-up investigation. The characterizations of intent are addressed separately -- not because they warrant equal weight, but because the dynamic they represent (ad hominem dismissal of independent analysis) is itself worth examining.
-
-Crucially, the core findings of the original paper survive this review. The sections that follow document what was discovered, what was corrected, and what remains not only standing but strengthened.
+The characterizations of intent I address separately -- not because they matter as much, but because the dynamic they create (ad hominem attacks on independent researchers) is worth naming. When every mistake gets framed as bad faith, fewer people do independent research. That's bad for everyone.
 
 ---
 
-## 2. Reaffirmed Findings
+## 2. What I Still Stand By
 
-The following findings from the original paper survive the review of post-publication criticism and are supported by current evidence as of July 2026.
+Not everything in the original paper was wrong. Actually, most of it held up. Here's what survived.
 
-### 2.1 Firefox's Structural Rust Advantage Is Real and Widening
+### 2.1 Firefox's Rust Bet Is Paying Off
 
-Firefox has converted critical browser subsystems -- including the CSS engine (Stylo), the rendering engine (WebRender), and the sandboxing layer (RLBox) -- to Rust, a memory-safe language that eliminates entire classes of vulnerabilities (use-after-free, buffer overflows, null pointer dereferences) at compile time. Chromium's mitigations portfolio, detailed in Section 3.1, reduces but does not eliminate the risk from its predominantly C++ codebase.
+Firefox has rewritten major subsystems in Rust: the CSS engine (Stylo), the renderer (WebRender), library sandboxing (RLBox), parts of the networking stack. Rust eliminates entire bug classes at compile time -- use-after-free, buffer overflows, null pointer dereferences. Chromium has mitigations for these (covered below), but mitigations manage symptoms. Rust eliminates the root cause.
 
-The advantage is structural: Rust eliminates memory safety bugs at the source, while Chromium's mitigations manage their symptoms. Memory safety bugs have consistently accounted for approximately 70% of critical-severity Chromium CVEs [14]. Firefox's Rust components have produced zero severity-critical memory safety CVEs since their respective shipping dates [15]. This disparity is not incidental -- it is a direct consequence of language-level memory safety.
+The numbers back this up. Roughly 70% of Chromium's critical-severity bugs are memory safety issues [14]. Firefox's Rust components have produced zero such CVEs since they shipped [15]. That's not luck -- it's what the language guarantees.
 
-The revised original paper [1] now includes a comprehensive accounting of Chromium's mitigations (Section 3.2), making the comparison fairer. But the conclusion is unchanged: Firefox's approach reduces the probability of compromise at the source, while Chromium's approach limits the blast radius after compromise. These are complementary strategies, not substitutes.
+This doesn't mean Firefox is "more secure." It means the two projects took different paths to the same goal. Firefox prevents bugs from existing in the first place. Chromium prevents bugs from being exploitable when they do exist. Both approaches work.
 
-### 2.2 Extension-Based Content Blocking Is Not "Privacy Theater"
+### 2.2 Content Blocking != Privacy Theater
 
-The claim that content filtering reduces to "enumeration of badness" conflates two distinct mechanisms:
+GrapheneOS called extension-based content blocking "privacy theater" -- equating it with antivirus-style enumeration of badness. That analogy doesn't hold.
 
-- **Enumeration-based detection** (identifying known-bad signatures) is limited against novel threats.
-- **Network-layer blocking** (intercepting requests before they reach the rendering engine) reduces attack surface by preventing code from being loaded at all.
+Blocking a request at the network layer before the payload reaches your device is structurally different from scanning a file after it's already on disk. uBlock Origin stops exploits from being delivered. That's not detection. That's prevention.
 
-These are different mechanisms with different security properties. Blocking a known exploit delivery domain at the network layer prevents the exploit from reaching the renderer regardless of whether the browser has a sandbox vulnerability. This is not "privacy theater" -- it is a pre-compromise defense that operates at a different layer than sandboxing.
+The real limitation (filter lists can't block novel zero-days) is real but incomplete as a critique. Zero-day delivery in practice relies on known malicious infrastructure -- compromised ad networks, C2 domains, exploit kit landing pages. Filter lists block those. The "enumeration is futile" argument assumes attackers can spin up fresh infrastructure for every target at zero cost. That's not how mass-market exploitation works.
 
-The limitations that critics correctly identify (filter lists cannot block novel zero-day delivery vectors) are real but not dispositive. Zero-day exploitation in practice frequently relies on known malicious infrastructure -- compromised ad networks, command-and-control domains, exploit kit landing pages -- that filter lists can and do block. The argument that "enumerating badness is futile" assumes attackers can instantiate novel delivery infrastructure for every target at zero cost, which does not hold for mass-market exploitation campaigns.
+### 2.3 Monoculture Risk Is Real
 
-### 2.3 Monoculture Risk Is a Structurally Real Concern
+Chromium's market share on mobile is overwhelming. When the Chromium engine has a critical vuln, billions of devices are affected simultaneously. That concentration of value creates attacker incentives that don't exist for Firefox's minority codebase.
 
-The systemic security risk of Chromium's near-total market dominance on mobile (via WebView) is real regardless of Firefox's individual security posture. A monoculture concentrates attacker attention on a single codebase. When that codebase is compromised, the entire ecosystem is affected. This is not a theoretical concern -- it is a well-documented property of complex systems [4].
+This isn't about Firefox being "more secure." It's about attacker economics. A Chromium zero-day is worth more to an exploit broker than a Firefox zero-day, purely because of market share. Firefox being ignored by attackers is itself a security property, even if it's not a flattering one.
 
-Firefox's minority share means it receives less attacker attention, which is itself a security property. This does not make Firefox "more secure" in an absolute sense, but it means the two browsers operate under fundamentally different attacker incentive structures. A comparative analysis that ignores this dimension is incomplete.
+The dual-engine criticism ("Firefox adds a second engine to your device") is an Android platform constraint, not a Firefox deficiency. Android mandates a system WebView, and on GrapheneOS that WebView is Vanadium regardless of your browser choice. The decision to also run Firefox is a marginal attack surface increase weighed against monoculture risk reduction. Different users will weigh that differently.
 
-The dual-engine state (Firefox + Android WebView = two engines) that critics cite as a liability is an Android platform constraint, not a Firefox deficiency. The marginal attack surface of adding GeckoView must be weighed against the monoculture risk reduction that engine diversity provides.
+### 2.4 Pick Your Threat Model
 
-### 2.4 The Threat-Model Alignment Thesis Holds
+The original paper's core claim -- browser choice is a threat-model alignment, not a binary security judgment -- held up completely.
 
-The original paper's central finding -- that browser selection is an alignment with a specific threat model, not a binary "secure versus insecure" judgment -- remains both correct and underappreciated in public security discourse. Concretely, the choice depends on which attack scenario the user considers more probable:
+- If you're worried about targeted, state-sponsored attacks where the attacker has resources to find and weaponize a novel exploit, you want Chrome/Chromium. Post-compromise containment is your priority, and `isolatedProcess` delivers that.
+- If you're worried about mass surveillance, ad-tech profiling, and drive-by exploits targeting the Chromium monoculture, Firefox makes more sense. A renderer that's harder to compromise in the first place reduces the probability that any exploit succeeds.
+- If your primary concern is privacy (tracking, fingerprinting), Firefox's Total Cookie Protection, ETP, and container isolation are genuinely ahead of anything in the Chromium ecosystem.
 
-- **For a user facing targeted, state-sponsored exploitation** where the attacker has resources to discover and weaponize a novel exploit, post-compromise containment is paramount. A compromised renderer must be prevented from accessing system data. Here, Chromium's `isolatedProcess` sandbox provides objectively stronger defenses.
+These aren't competing claims about which browser is "more secure." They're different tools for different jobs.
 
-- **For a user facing mass surveillance, ad-tech profiling, and drive-by exploit campaigns** targeting the Chromium monoculture, pre-compromise defense matters more. A renderer that is harder to compromise in the first place (due to Rust adoption, smaller attack surface, and network-layer content blocking) reduces the probability that any exploit succeeds. Here, Firefox's architectural choices provide differentiated value.
+### 2.5 Android vs. Desktop Matters
 
-- **For a user whose primary concern is privacy against tracking and fingerprinting** (rather than exploit prevention), Firefox's structural privacy protections -- Total Cookie Protection, Enhanced Tracking Protection, container isolation -- are materially more mature than the equivalents in any Chromium-based browser.
+This is the point I keep coming back to. The sandbox gap everyone's arguing about is almost entirely Android-specific.
 
-These are not competing claims about which browser is "more secure." They are descriptions of which browser better addresses which threat model. A comprehensive security assessment must acknowledge all of them.
+On Windows, Firefox's sandbox is at parity with Chrome's:
+- Both use AppContainer for kernel-level process isolation [13].
+- Both restrict Win32k syscalls from renderer processes [9].
+- Both use broker process models for privileged operations.
 
-### 2.5 The Platform Distinction: Android vs. Desktop
+The `isolatedProcess` thing is an Android limitation because Android apps can't create namespaces or use seccomp-bpf -- the Android Runtime needs too many syscalls. The `isolatedProcess` flag is the only sandboxing game in town on Android, and Firefox doesn't use it. That's real.
 
-A critical dimension largely absent from the public criticism of the original paper is the platform specificity of the sandboxing gap. GrapheneOS's published advisory [3] and its follow-up responses frame Firefox's security deficiencies in platform-agnostic terms, but the architectural gap they identify is almost entirely Android-specific.
+But Firefox's critics treat this as a universal Firefox deficiency when it's really a platform-specific gap. If the claim were "Firefox is categorically less secure than Chromium," you'd expect the sandbox gap to exist everywhere. On Windows, it doesn't. On Android, it does -- and it must be weighed against Firefox's advantages (Rust, smaller API surface) that apply on all platforms.
 
-On **Windows**, Firefox's sandbox architecture has achieved substantial parity with Chromium:
-
-- **AppContainer.** Firefox uses Windows AppContainer isolation for its content processes, providing kernel-level process sandboxing comparable to Chromium's approach on the same platform [13].
-- **Win32k syscall filtering.** Both browsers restrict Win32k system calls from renderer processes, dramatically reducing the kernel attack surface available to a compromised renderer [9].
-- **Broker architecture.** Firefox employs a broker process model for privileged operations (file I/O, network access) that mirrors Chromium's privilege separation design.
-
-The `isolatedProcess` deficiency that critics correctly identify is an Android platform constraint, not a Firefox architectural limitation. On Android, applications cannot create namespaces or use seccomp-bpf for sandboxing because the Android Runtime requires too broad a system call surface. The `isolatedProcess` manifest flag is the *only* mechanism available for process isolation on Android, and its absence in GeckoView is a genuine limitation. But this limitation does not generalize to other platforms.
-
-The critics' response -- focusing exclusively on Android-specific technical details while the original advisory makes platform-agnostic claims -- is itself revealing. If the claim were truly that "Firefox is categorically less secure than Chromium," the sandbox gap would need to exist across platforms. On Windows, it does not. On Android, it is real but must be weighed against Firefox's pre-compromise advantages (Rust adoption, smaller attack surface) that apply on all platforms.
-
-A threat model that prioritizes mobile security over desktop security -- which is reasonable given the prevalence of mobile browsing -- might still conclude that Chromium is the safer choice on Android. But a claim that "Firefox lacks sandboxing" or that "Firefox is much more vulnerable" without platform qualification is overreach. The evidence supports a platform-specific, threat-model-dependent conclusion, not a categorical one.
+Picking Chrome on Android because you prioritize mobile security is perfectly rational. Claiming "Firefox has no sandbox" or "Firefox is much more vulnerable" without qualifying the platform is overreach.
 
 ---
 
-## 3. New Discoveries and Documented Corrections
+## 3. What I Got Wrong
 
-Follow-up investigation prompted by post-publication review revealed several areas where the original paper was incomplete or imprecise. These are documented below.
+Post-publication review caught several things. Here's what they were and how I fixed them.
 
-### 3.1 Chromium's Memory Safety Mitigations Portfolio
+### 3.1 I Left Out Half of Chromium's Mitigations
 
-The original paper's Section 3 extensively documented Firefox's Rust adoption but omitted several significant Chromium memory safety mitigations. This omission created an incomplete comparison. The following mitigations have been added to the revised original paper [1]:
+My first paper spent a lot of time on Firefox's Rust adoption and barely mentioned Chromium's mitigations. That made the comparison look one-sided even though the actual security picture is more balanced. Here's what I missed:
 
-| Mitigation | Description |
+| Mitigation | What It Does |
 |---|---|
-| **V8 Sandbox** | Address-space sandbox constraining JIT-compiled code to a reserved virtual region |
-| **Oilpan GC** | Tracing garbage collector eliminating use-after-free in DOM code paths |
-| **Mojo IPC** | Type-checked inter-process communication with compile-time message validation |
-| **PartitionAlloc** | Hardened allocator with per-partition isolation, freelist entropy, MiraclePtr |
-| **Type-based CFI** | Clang Cross-DSO CFI for indirect call target validation at runtime |
-| **MTE Integration** | Memory Tagging Extension support in PartitionAlloc |
+| **V8 Sandbox** | Locks JIT code to a reserved memory region so a JS exploit can't touch anything outside it |
+| **Oilpan GC** | Garbage collector for DOM objects that eliminates use-after-free in rendering code |
+| **Mojo IPC** | Type-checked message passing between processes so sandbox-escape exploits have fewer holes |
+| **PartitionAlloc** | Hardened heap allocator with partition isolation, freelist entropy, MiraclePtr |
+| **Type-based CFI** | Validates indirect function calls at runtime to block control-flow hijacking |
+| **MTE** | Memory tagging at the hardware level (integrated into PartitionAlloc) |
 
-These mitigations represent a genuine and substantial investment in memory safety. Chromium's approach is defense-in-depth: it does not eliminate memory safety vulnerabilities at the source (as Rust does), but it makes them significantly harder to exploit. The revised paper now accounts for both strategies.
+Chromium doesn't prevent memory bugs at the source the way Rust does, but it makes them significantly harder to exploit. That's a real investment, and ignoring it made my comparison incomplete.
 
-### 3.2 The `isolatedProcess` Architecture Gap
+### 3.2 The `isolatedProcess` Thing
 
-The original paper categorized the claim that "Firefox does not have internal sandboxing on Android" as "Partially outdated." This categorization was imprecise. The claim is accurate under the definition of sandboxing used by the GrapheneOS project (kernel-level UID isolation via `android:isolatedProcess`). GeckoView does not implement this mechanism for its child processes on Android. This is a substantiated architectural limitation.
+I categorized GrapheneOS's "Firefox has no internal sandboxing" claim as "partially outdated." That was wrong. If you define sandboxing as kernel-level UID isolation (which is how GrapheneOS defines it), the claim is fully accurate. GeckoView doesn't use `isolatedProcess`. Full stop.
 
-Whether one considers this omission dispositive depends on whether one defines sandboxing as requiring kernel-level UID isolation or accepts broader definitions including process-level privilege separation. This is a genuine definitional disagreement, not a factual one. The revised paper makes this distinction explicit.
+The disagreement isn't about facts. It's about definitions. GrapheneOS says sandboxing requires `isolatedProcess`. I was using a broader definition that includes process-level privilege separation. Both definitions are internally consistent. I should have been clearer about this from the beginning.
 
-### 3.3 Fission Deployment Status
+### 3.3 Fission Isn't Really Shipping on Android
 
-The original paper documented that Project Fission (Site Isolation) shipped in Firefox 147 and was subsequently rolled back due to unresolved crash bugs, remaining disabled on release and beta channels as of Firefox 152 (July 2026). This documentation was accurate but insufficiently emphasized. The abstract and conclusion occasionally referenced Fission as a current mitigation without adequate caveats about its release-channel status.
+My first paper mentioned Fission (Site Isolation) shipping on Android, then rolling back. But the abstract and conclusion referenced Fission like it was a current mitigation. It's not. Fission is disabled on release and beta channels as of Firefox 152. Nightly and developer builds have it at a reduced level (`ISOLATE_HIGH_VALUE` rather than full origin isolation). The paper should have been more careful about this.
 
-The revised paper corrects this: Fission's origin-level process boundaries provide cross-origin exfiltration protection against side-channel attacks, but they do not provide the kernel-level containment that `isolatedProcess` provides, and they are not active on release or beta channels.
+### 3.4 Other Things I Missed
 
-### 3.4 Additional Technical Corrections
+**SpiderMonkey has no CFI.** This is a real gap I should have caught. V8 has Clang's Cross-DSO Control Flow Integrity for indirect call validation [16]. SpiderMonkey doesn't. Since JS engines are the densest source of critical vulns in both browsers, this matters. Combined with V8's memory sandbox (which Firefox also lacks), Chromium's JS engine mitigation layer is genuinely stronger. Rust doesn't help here because JIT-generated code isn't subject to Rust's safety guarantees.
 
-Follow-up review prompted by post-publication criticism identified several additional areas where the original paper's analysis was incomplete, beyond those documented above.
+**Hardware mitigations aren't automatic.** I wrote that MTE, PAC, and BTI are "enforced at the OS and hardware level, not by the browser vendor." That's wrong. These features require allocator modifications, compiler support, and codebase validation. Chromium has done that work (MTE in PartitionAlloc, PAC/BTI validation). Firefox hasn't. This removes a false parity claim.
 
-**JavaScript Engine Mitigations Gap (SpiderMonkey CFI).** The original paper's comparison of memory safety mitigations omitted an important gap in the JavaScript engine layer. Chromium's V8 engine deploys Clang's Cross-DSO Control Flow Integrity (CFI) for indirect call target validation, which detects type-confusion-based exploitation techniques at runtime [16]. SpiderMonkey, Firefox's JavaScript engine, does not implement equivalent type-based CFI. This gap is significant because JavaScript engines are the single densest source of critical-severity vulnerabilities in both browsers. V8's sandbox provides a hard memory isolation boundary for JIT-compiled code, while CFI provides a probabilistic defense against control-flow subversion. Firefox lacks equivalents for both mitigations in its JS engine.
+**More CVEs doesn't mean less secure.** My first paper's framing of Chromium's CVE count as evidence against it was sloppy. Chromium invests massively more in fuzzing, AI-guided auditing, and security research. Finding more bugs is a sign of more testing, not less security [18]. The relevant metric is residual risk after mitigation, not bug count -- and that's not directly measurable from public data.
 
-This correction narrows the Rust-advantage argument: Rust's memory safety guarantees do not extend to JIT-generated code or to the C++ compiler pipeline that produces it. Both browsers face this limitation, but Chromium compensates with additional layers (V8 sandbox + CFI) that Firefox lacks at the JS engine level, while Firefox compensates with Rust adoption in non-JIT subsystems (CSS, rendering, networking). The net assessment is not that either browser is clearly ahead, but that the comparison at this layer is more balanced than the original paper presented.
-
-**Hardware Mitigations Require Active Integration.** The original paper characterized ARMv9 security features (Memory Tagging Extension, Pointer Authentication Codes, Branch Target Identification) as "enforced at the OS and hardware level, not by the browser vendor" (Paper 1, Section 3.5). This characterization was inaccurate. These features require active integration work by the browser vendor: allocator modifications for MTE tagging, compiler support for PAC/BTI instrumentation, and validation of compatibility across the codebase [17]. Chromium has invested in MTE integration within PartitionAlloc and has validated PAC/BTI compatibility. Firefox has not completed equivalent work. This correction removes an incorrectly claimed parity on these specific mitigations, though it does not change the overall relative assessment on currently shipping hardware.
-
-**Fuzzing Investment and Vulnerability Discovery Rate.** The original paper's framing of Chromium's vulnerability statistics (Section 3.6) did not adequately account for the relationship between fuzzing investment and bug discovery rate. Chromium's substantially larger investment in fuzzing, AI-guided vulnerability research, and security auditing means it discovers and fixes more vulnerabilities. A higher absolute CVE count, in isolation, does not indicate a less secure product -- it may indicate more thorough testing [18]. The relevant metric for comparative security assessment is not the number of vulnerabilities found but the residual risk after mitigation. Both the number of vulnerabilities found and the number that remain exploitable after mitigation contribute to residual risk, and neither is directly measurable from public data. This is a methodological limitation of any comparative analysis of this kind, and the original paper should have stated it more explicitly.
-
-**Extensions and Site Isolation.** The original paper's comparison of extension architectures (Section 4) did not address a structural limitation shared by both browsers: extensions break site isolation. In both Firefox and Chromium, extension processes run with cross-origin data access and inject code into web pages, creating a privileged execution context that bypasses origin-level process boundaries [19]. This is not a Firefox-specific limitation -- it is inherent to the extension model in both architectures. The relevant comparison, as critics have correctly noted, is not between "extensions versus no extensions" but between the extension-based approach and a built-in content filtering engine (as implemented in Brave).
-
-This correction narrows the argument in Section 4 of the original paper but does not resolve the underlying substantive disagreement. An extension-based approach with uBlock Origin provides network-layer interception with community-maintained filter lists that a built-in engine may not match in coverage or update cadence, but it does so at the cost of breaking site isolation. The Brave approach preserves site isolation but depends on the browser vendor's filtering engine quality and update schedule. Reasonable security engineers can disagree on which trade-off is preferable, and the original paper should have framed this as an open question rather than implying a clear advantage for Firefox.
-
-These four corrections, taken together, narrow the original paper's claims in specific areas but do not undermine its central thesis. The two engine families make fundamentally different trade-offs across pre-compromise and post-compromise layers, and the choice between them remains a threat-model alignment rather than a binary security judgment.
+**Extensions break site isolation in both browsers.** I implied Firefox's extension model was more contained. It's not -- extensions in both Firefox and Chromium run with cross-origin access that bypasses site isolation [19]. The real comparison isn't extensions vs no extensions. It's extensions vs built-in content filtering (as Brave does). That's a genuine trade-off with no clear winner, and my paper should have framed it that way.
 
 ---
 
-## 4. Remaining Points of Disagreement
+## 4. Where We Still Disagree
 
-Beyond the corrections documented above, several areas of substantive disagreement remain between the original paper and its critics. These are not errors -- they reflect different interpretative frameworks.
+Even after all the corrections above, some disagreements aren't about facts -- they're about how you weigh them.
 
-### 4.1 "Differently Vulnerable" Versus "Much More Vulnerable"
+### 4.1 "Much More Vulnerable" vs "Differently Vulnerable"
 
-The claim that Firefox is categorically "much more vulnerable to exploitation" conflates post-compromise containment quality with overall exploit risk. The two engines make different trade-offs:
+GrapheneOS says Firefox is "much more vulnerable to exploitation." I don't think the evidence supports that, even after accounting for everything I got wrong.
 
-- Chromium prioritizes **post-compromise containment**: strong kernel-level sandboxing via `isolatedProcess`, but a larger C++ attack surface in the renderer.
-- Firefox prioritizes **pre-compromise defense**: smaller attack surface, Rust adoption in critical subsystems, but weaker kernel-level sandboxing.
+Chrome has stronger post-compromise containment. Firefox has stronger pre-compromise prevention. These are different priorities, and calling one "much more vulnerable" treats containment as the only metric that matters. That's a value judgment, not a technical fact. My position is that both are rational depending on what you're protecting against, and I haven't seen evidence that changes that.
 
-Critics treat the post-compromise difference as dispositive. This paper treats it as one factor among several. Neither position is empirically wrong -- they reflect different threat-model priorities.
+### 4.2 Advisory Latency
 
-### 4.2 Documentation Latency in Security Guidance
-
-The original paper identified documentation latency in security advisories as a real phenomenon. This is a well-documented issue in security engineering [6] and is not specific to any one project. Citing a published advisory that has not been updated to reflect current implementation status is not the same as dismissing the project's overall security posture. The original paper should have made this distinction clearer, but the underlying observation remains valid.
+GrapheneOS's advisory on Firefox hasn't changed significantly since it was written, even as Firefox's architecture evolved. The Fission rollback is an example of this working both ways -- I needed to correct my own framing, but the advisory also doesn't acknowledge that Firefox on Windows has reached sandbox parity. Documentation latency is a real problem in security engineering [6], and it's not unique to any project.
 
 ---
 
-## 5. On the Nature of the Criticism
+## 5. The Personal Stuff
 
-The technical objections raised against the original paper divided into two categories: substantive corrections and characterizations of intent. The substantive corrections are documented and addressed above. The characterizations merit separate examination -- not because they carry equal weight, but because they reveal a dynamic worth naming.
+GrapheneOS called my paper "dishonest" and "unethical" in their Discord. On Reddit, they said it wasn't "based on real research or factual information" and that I was driven by "biases."
 
-### 5.1 Ad Hominem as a Rhetorical Strategy
+I'm separating this from the technical corrections because it's a different category of thing. Getting facts wrong isn't the same as being dishonest. An error means peer review worked. Calling someone dishonest for making errors raises the cost of doing independent research.
 
-Characterizing an interlocutor's arguments as "dishonest," "unethical," or "ludicrous" attributes intent rather than engaging substance. This is not rigorous peer review -- it is a rhetorical tactic that raises the cost of independent analysis. When every comparative assessment risks being framed as an attack, fewer researchers will produce them, and the field's collective understanding suffers.
+I don't have institutional backing. I'm not affiliated with Mozilla, Google, or any vendor. The goal of both papers is the same: improve the quality of publicly available evidence about mobile browser security. I made mistakes, I fixed them, I documented everything transparently. That's how research is supposed to work.
 
-A paper that makes an error is not thereby dishonest. An error is evidence that post-publication review is functioning as intended. Conflating error with bad faith is not a contribution to security discourse -- it is a barrier to entry for independent researchers who lack the institutional backing to absorb reputational attacks.
-
-### 5.2 What Engagement Looks Like From This Side
-
-This author has no affiliation with Mozilla, the Chromium project, or any commercial browser vendor. The goal of both papers is to improve the quality of publicly available evidence about mobile browser security. The corrections documented in this paper are made in service of that goal, and they are made transparently and promptly.
-
-Hardened mobile deployment frameworks maintain the most thoroughly documented security hardening of any Android deployment framework. Their technical contributions to mobile security are substantial and well-established. Disagreeing with specific claims in their advisory does not diminish those contributions, and acknowledging specific errors does not constitute a retraction of the paper's central findings -- which, as documented above, remain standing.
+GrapheneOS's technical contributions to Android security are real and well-established. Disagreeing with specific claims in their advisory doesn't diminish that. And acknowledging my own errors doesn't mean the core argument was wrong -- it means I'm willing to correct course when presented with better evidence.
 
 ---
 
-## 6. Conclusion
+## 6. Bottom Line
 
-This follow-up investigation has documented new discoveries (Chromium's comprehensive memory safety mitigations portfolio, the precise status of `isolatedProcess` sandboxing in GeckoView, the current deployment status of Fission) and reaffirmed the core findings that survived scrutiny.
+Here's what I got wrong and fixed:
+- `isolatedProcess` framing was imprecise (I called it "partially outdated" when it's fully accurate)
+- Left out Chromium's V8 sandbox, Oilpan, CFI, MTE, and other mitigations
+- Didn't catch SpiderMonkey's missing CFI
+- Wrongly claimed hardware mitigations are automatic
+- Poor CVE count framing without accounting for fuzzing investment
+- Implied Firefox extensions have better site isolation properties (they don't)
 
-**What stands.** Categorical dismissal of either engine family remains unsupported by current evidence. Firefox's structural Rust advantage in critical code paths is real and widening over time. Extension-based content blocking provides genuine pre-delivery interception that is not reducible to "privacy theater." The systemic risk of a Chromium monoculture is a structurally real concern. And browser selection remains an alignment with a specific threat model, not a binary secure-versus-insecure judgment.
+Here's what survived:
+- Firefox's Rust advantage is real and widening
+- Content blocking at the network layer is genuine pre-delivery prevention
+- Chromium monoculture is a systemic risk
+- Browser choice is a threat-model alignment, not binary "secure vs insecure"
+- The sandbox gap is Android-specific; on Windows, Firefox is at parity
 
-**What was corrected.** The original paper's characterization of the `isolatedProcess` claim was imprecise and has been reclassified. The abstract's framing has been revised. The comparison of memory safety strategies has been expanded to include Chromium's mitigations.
-
-**What this means.** The corrections strengthen rather than undermine the paper's central thesis. The original analysis was incomplete in specific ways, and those gaps have been filled. The conclusions that have been reaffirmed were tested against the strongest available criticisms and held.
-
-Security research benefits from post-publication review, transparent correction of errors, and good-faith engagement across disagreements. Characterizing analytical errors as dishonest or unethical does not advance the field -- it discourages the independent analysis that security engineering urgently needs.
-
-The author welcomes further technical engagement with the security community on the substantive issues raised in both papers.
+The mistakes made the original paper weaker than it should have been. Fixing them makes the argument stronger, because now it accounts for the best counterarguments and still holds.
 
 ---
 
