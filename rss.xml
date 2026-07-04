@@ -19,7 +19,15 @@
       <category>Chromium</category>
       <category>comparative analysis</category>
       <description><![CDATA[
-This follow-up investigation revisits the author's prior comparative analysis of GeckoView and Chromium security architectures on Android in light of technical criticisms raised post-publication. It documents several new discoveries -- most notably a more complete accounting of Chromium's memory safety mitigations portfolio -- and reaffirms the core findings that survived scrutiny. The analysis reaffirms that categorical dismissal of either engine family remains unsupported by current evidence; that browser selection is an alignment with a specific threat model rather than a binary secure-versus-insecure judgment; that Firefox's structural Rust advantage in critical code paths is real and widening; and that extension-based content blocking provides genuine pre-delivery interception that is not reducible to "privacy theater." Specific errors in the original paper are documented and corrected -- including imprecise framing of the `isolatedProcess` sandboxing claim and an incomplete comparison of memory safety strategies. However, these corrections reinforce rather than undermine the paper's central thesis: the two engine families make fundamentally different trade-offs across pre-compromise and post-compromise layers, and reasonable assessors can weigh these trade-offs differently depending on their threat model.
+My first paper compared Firefox and Chrome security on Android and argued the choice isn't binary -- it depends on what you're protecting against. GrapheneOS pushed back hard, and they were right about several things I got wrong. This paper fixes those mistakes.
+
+I oversold `isolatedProcess` as "the strongest sandbox" when really it's the only sandboxing mechanism Android makes available to apps. I left out Chromium's V8 sandbox, Oilpan GC, CFI, and a bunch of other mitigations. Those omissions made the comparison unfair, and I've corrected them here.
+
+But the core claim survived: these two engines optimize for fundamentally different threats. Chromium is a containment architecture -- it assumes you'll get compromised and limits the blast radius. Firefox is a prevention architecture -- it reduces the chance you get compromised in the first place, using Rust to eliminate entire bug classes at compile time. These aren't competing claims about which is "more secure." They're different answers to different questions.
+
+I also found genuinely new stuff while digging deeper -- things I didn't know when I wrote the first draft. The V8 sandbox is more interesting than I realized. The extensions breaking site isolation problem affects both browsers, not just one. And Firefox's lack of CFI in SpiderMonkey is a real gap I should have caught.
+
+The tl;dr: I got some things wrong, fixed them, and the main argument is stronger for it.
 
 <a href="https://spiritofstar.github.io/responding-to-criticism.html">Read the full paper &rarr;</a>
       ]]></description>
