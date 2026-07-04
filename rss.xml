@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>spiritofstar</title>
+    <description>Independent research on browser security, memory safety, and privacy engineering</description>
+    <link>https://spiritofstar.github.io/</link>
+    <language>en</language>
+    <lastBuildDate>Sat, 04 Jul 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://spiritofstar.github.io/rss.xml" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title>Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures</title>
+      <link>https://spiritofstar.github.io/blog.html</link>
+      <guid>https://spiritofstar.github.io/blog.html</guid>
+      <pubDate>Sat, 04 Jul 2026 00:00:00 +0000</pubDate>
+      <description>Hardened mobile deployment frameworks (most notably GrapheneOS) advise against Gecko-based browsers like Firefox, claiming a systemic security deficit compared to Chromium-based alternatives such as Vanadium. These advisories show significant documentation latency.</description>
+    </item>
+  </channel>
+</rss>
