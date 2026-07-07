@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
     <style>
-      svg { background: transparent; }
       .star { fill: #2563eb; stroke: #2563eb; stroke-width: 8; stroke-linejoin: round; }
       @media (prefers-color-scheme: dark) {
         .star { fill: #93a0f5; stroke: #93a0f5; }
