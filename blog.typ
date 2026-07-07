@@ -1395,10 +1395,10 @@ be active in Firefox on Android," PrivacyGuides Discourse, Jan. 2026.
 
 \[15\] M. Miller, "Trends and Challenges in the Vulnerability Mitigation
 Landscape," USENIX Enigma 2019. \[Online\]. Available:
-#link("https://www.usenix.org/conference/enigma2019/presentation/miller")
+#link("https://www.youtube.com/watch?v=fxR7qEa0hVI")[https://www.youtube.com/watch?v\=fxR7qEa0hVI]
 
 \[16\] Chromium Project, "Rust in Chromium." \[Online\]. Available:
-#link("https://chromium.googlesource.com/chromium/src/+/main/docs/security/rust.md")
+#link("https://security.googleblog.com/2023/01/supporting-use-of-rust-in-chromium.html")
 . Accessed: Jul. 2026.
 
 \[17\] Mozilla Security Blog, "Security Advisories," various years.

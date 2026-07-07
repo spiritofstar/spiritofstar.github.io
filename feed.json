@@ -12,6 +12,23 @@
   "language": "en",
   "items": [
     {
+      "id": "tag:spiritofstar.github.io,2026-07-01:/blog/Assessment over Authority",
+      "url": "https://spiritofstar.github.io/Assessment over Authority.html",
+      "title": "Assessment over Authority: Methodology, Threat Modeling, and the False Binary in Browser Security",
+      "summary": "Independent research on browser security, memory safety, and privacy engineering",
+      "content_html": "<p>Independent research on browser security, memory safety, and privacy engineering</p><p><a href=\"https://spiritofstar.github.io/Assessment over Authority.html\">Read the full paper \u2192</a></p>",
+      "date_published": "2026-07-01T00:00:00Z",
+      "date_modified": "2026-07-01T00:00:00Z",
+      "tags": [
+        "browser security",
+        "methodology",
+        "threat modeling",
+        "Firefox",
+        "Chromium",
+        "security discourse"
+      ]
+    },
+    {
       "id": "tag:spiritofstar.github.io,2026-07-01:/blog/responding-to-criticism",
       "url": "https://spiritofstar.github.io/responding-to-criticism.html",
       "title": "Browser Security Analysis: New Discoveries and Reaffirmed Findings",
