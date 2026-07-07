@@ -12,28 +12,45 @@
   "language": "en",
   "items": [
     {
+      "id": "tag:spiritofstar.github.io,2026-07-01:/blog/Assessment over Authority",
+      "url": "https://spiritofstar.github.io/Assessment over Authority.html",
+      "title": "Assessment over Authority: Methodology, Threat Modeling, and the False Binary in Browser Security",
+      "summary": "Independent research on browser security, memory safety, and privacy engineering",
+      "content_html": "<p>Independent research on browser security, memory safety, and privacy engineering</p><p><a href=\"https://spiritofstar.github.io/Assessment over Authority.html\">Read the full paper \u2192</a></p>",
+      "date_published": "2026-07-01T00:00:00Z",
+      "date_modified": "2026-07-01T00:00:00Z",
+      "tags": [
+        "browser security",
+        "methodology",
+        "threat modeling",
+        "Firefox",
+        "Chromium",
+        "security discourse"
+      ]
+    },
+    {
       "id": "tag:spiritofstar.github.io,2026-07-01:/blog/responding-to-criticism",
       "url": "https://spiritofstar.github.io/responding-to-criticism.html",
-      "title": "Responding to Security Criticism: Corrections and Reflections",
-      "summary": "This paper acknowledges and addresses technical criticisms raised by the GrapheneOS project in response to the author's prior analysis of mobile browser security architectures. It documents specific corrections made to the original paper, examines the technical merits of each criticism, and reflects on the broader dynamics of security discourse between independent researchers and project maintainers. The goal is not to rebut GrapheneOS's position but to transparently correct errors, clarify terminology, and model the kind of evidence-based revision that security research requires.",
-      "content_html": "<p>This paper acknowledges and addresses technical criticisms raised by the GrapheneOS project in response to the author&#x27;s prior analysis of mobile browser security architectures. It documents specific corrections made to the original paper, examines the technical merits of each criticism, and reflects on the broader dynamics of security discourse between independent researchers and project maintainers. The goal is not to rebut GrapheneOS&#x27;s position but to transparently correct errors, clarify terminology, and model the kind of evidence-based revision that security research requires.</p><p><a href=\"https://spiritofstar.github.io/responding-to-criticism.html\">Read the full paper \u2192</a></p>",
+      "title": "Browser Security Analysis: New Discoveries and Reaffirmed Findings",
+      "summary": "GrapheneOS responded to my first paper. Some of it was fair. I oversold isolatedProcess. Called it \"the strongest sandbox\" when it's just the standard Android option. Didn't mention V8 sandbox. Or Oilpan. Or CFI. Made the comparison look one-sided.\n\nThe core point still works. Chrome is built for containment. Sandboxes, site isolation, MTE, CFI. Firefox is built for prevention. Rust rewrites, RLBox, smaller API surface. Different approaches to the same problem.\n\nI also missed things I should have caught. V8 has a memory sandbox that locks JIT code into a reserved region. SpiderMonkey has no CFI.\n\nFixed now.",
+      "content_html": "<p>GrapheneOS responded to my first paper. Some of it was fair. I oversold isolatedProcess. Called it &quot;the strongest sandbox&quot; when it&#x27;s just the standard Android option. Didn&#x27;t mention V8 sandbox. Or Oilpan. Or CFI. Made the comparison look one-sided.\n\nThe core point still works. Chrome is built for containment. Sandboxes, site isolation, MTE, CFI. Firefox is built for prevention. Rust rewrites, RLBox, smaller API surface. Different approaches to the same problem.\n\nI also missed things I should have caught. V8 has a memory sandbox that locks JIT code into a reserved region. SpiderMonkey has no CFI.\n\nFixed now.</p><p><a href=\"https://spiritofstar.github.io/responding-to-criticism.html\">Read the full paper \u2192</a></p>",
       "date_published": "2026-07-01T00:00:00Z",
       "date_modified": "2026-07-01T00:00:00Z",
       "tags": [
         "browser security",
         "methodology",
         "security discourse",
-        "GrapheneOS",
         "Firefox",
-        "Chromium"
+        "Chromium",
+        "comparative analysis"
       ]
     },
     {
       "id": "tag:spiritofstar.github.io,2026-07-01:/blog/sandboxing-mitigation-comparative-analysis",
       "url": "https://spiritofstar.github.io/blog.html",
       "title": "Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures",
-      "summary": "Hardened mobile deployment frameworks (most notably GrapheneOS) advise against Gecko-based browsers like Firefox, claiming a systemic security deficit compared to Chromium-based alternatives such as Vanadium. Their core claim regarding the absence of Android's `isolatedProcess` sandboxing in GeckoView remains accurate and is acknowledged in this analysis. However, several subsidiary claims conflate distinct mitigation layers (pre-compromise versus post-compromise) and fail to account for threat-model dependencies that alter the security calculus. This paper evaluates these claims through a multi-layered threat-modeling lens grounded in publicly available primary sources. It examines the architectural evolution of GeckoView on Android, including the January 2026 shipping and subsequent rollback of Project Fission (Site Isolation) in Firefox 147 (now at Firefox 152, July 2026), which remains disabled on release and beta channels due to unresolved crash bugs (Section 2.3). It covers structural pre-compromise defenses provided by Firefox's industry-leading Rust adoption, WebExtension isolation architecture, and declarative content-blocking engine. It looks at the intersection of privacy controls with exploit-chain disruption, including Total Cookie Protection and Enhanced Tracking Protection. And it considers the systemic security risk of a Chromium monoculture. The analysis finds that categorical dismissal of either engine family is unsupported by current evidence, and that browser selection is not a binary metric of \"secure versus insecure\" but an alignment with a specific threat model.",
-      "content_html": "<p>Hardened mobile deployment frameworks (most notably GrapheneOS) advise against Gecko-based browsers like Firefox, claiming a systemic security deficit compared to Chromium-based alternatives such as Vanadium. Their core claim regarding the absence of Android&#x27;s `isolatedProcess` sandboxing in GeckoView remains accurate and is acknowledged in this analysis. However, several subsidiary claims conflate distinct mitigation layers (pre-compromise versus post-compromise) and fail to account for threat-model dependencies that alter the security calculus. This paper evaluates these claims through a multi-layered threat-modeling lens grounded in publicly available primary sources. It examines the architectural evolution of GeckoView on Android, including the January 2026 shipping and subsequent rollback of Project Fission (Site Isolation) in Firefox 147 (now at Firefox 152, July 2026), which remains disabled on release and beta channels due to unresolved crash bugs (Section 2.3). It covers structural pre-compromise defenses provided by Firefox&#x27;s industry-leading Rust adoption, WebExtension isolation architecture, and declarative content-blocking engine. It looks at the intersection of privacy controls with exploit-chain disruption, including Total Cookie Protection and Enhanced Tracking Protection. And it considers the systemic security risk of a Chromium monoculture. The analysis finds that categorical dismissal of either engine family is unsupported by current evidence, and that browser selection is not a binary metric of &quot;secure versus insecure&quot; but an alignment with a specific threat model.</p><p><a href=\"https://spiritofstar.github.io/blog.html\">Read the full paper \u2192</a></p>",
+      "summary": "GrapheneOS advises against Gecko-based browsers like Firefox, citing a security gap compared to Chromium-based alternatives such as Vanadium. Their core claim about the absence of Android's `isolatedProcess` sandboxing in GeckoView is accurate and acknowledged here. Several subsidiary claims mix up distinct mitigation layers (pre-compromise versus post-compromise) and don't account for threat-model dependencies that change the security calculus. This paper evaluates those claims through a multi-layered threat-modeling lens using publicly available sources. It covers the architectural evolution of GeckoView on Android, including the January 2026 shipping and subsequent rollback of Project Fission (Site Isolation) in Firefox 147, which remains disabled on release and beta channels due to unresolved crash bugs (Section 2.3). It covers structural pre-compromise defenses from Firefox's Rust adoption, WebExtension isolation, and declarative content-blocking. It looks at privacy controls intersecting with exploit-chain disruption. And it considers the systemic security risk of a Chromium monoculture. The analysis finds that categorical dismissal of either engine family isn't supported by current evidence. Browser selection is not a binary \"secure versus insecure\" metric but alignment with a specific threat model.",
+      "content_html": "<p>GrapheneOS advises against Gecko-based browsers like Firefox, citing a security gap compared to Chromium-based alternatives such as Vanadium. Their core claim about the absence of Android&#x27;s `isolatedProcess` sandboxing in GeckoView is accurate and acknowledged here. Several subsidiary claims mix up distinct mitigation layers (pre-compromise versus post-compromise) and don&#x27;t account for threat-model dependencies that change the security calculus. This paper evaluates those claims through a multi-layered threat-modeling lens using publicly available sources. It covers the architectural evolution of GeckoView on Android, including the January 2026 shipping and subsequent rollback of Project Fission (Site Isolation) in Firefox 147, which remains disabled on release and beta channels due to unresolved crash bugs (Section 2.3). It covers structural pre-compromise defenses from Firefox&#x27;s Rust adoption, WebExtension isolation, and declarative content-blocking. It looks at privacy controls intersecting with exploit-chain disruption. And it considers the systemic security risk of a Chromium monoculture. The analysis finds that categorical dismissal of either engine family isn&#x27;t supported by current evidence. Browser selection is not a binary &quot;secure versus insecure&quot; metric but alignment with a specific threat model.</p><p><a href=\"https://spiritofstar.github.io/blog.html\">Read the full paper \u2192</a></p>",
       "date_published": "2026-07-01T00:00:00Z",
       "date_modified": "2026-07-01T00:00:00Z",
       "tags": [
@@ -42,8 +59,8 @@
         "Firefox",
         "GeckoView",
         "Chromium",
-        "GrapheneOS",
-        "mobile security"
+        "mobile security",
+        "comparative analysis"
       ]
     }
   ]

@@ -515,9 +515,9 @@ This analysis is based on publicly available documentation accessed in July 2026
 
 [14] Chromium Project, "Memory Safety." [Online]. Available: [https://www.chromium.org/Home/chromium-security/memory-safety/](https://www.chromium.org/Home/chromium-security/memory-safety/) . Accessed: Jul. 2026.
 
-[15] M. Miller, "Trends and Challenges in the Vulnerability Mitigation Landscape," USENIX Enigma 2019. [Online]. Available: [https://www.usenix.org/conference/enigma2019/presentation/miller](https://www.usenix.org/conference/enigma2019/presentation/miller)
+[15] M. Miller, "Trends and Challenges in the Vulnerability Mitigation Landscape," USENIX Enigma 2019. [Online]. Available: [https://www.youtube.com/watch?v=fxR7qEa0hVI](https://www.youtube.com/watch?v=fxR7qEa0hVI)
 
-[16] Chromium Project, "Rust in Chromium." [Online]. Available: [https://chromium.googlesource.com/chromium/src/+/main/docs/security/rust.md](https://chromium.googlesource.com/chromium/src/+/main/docs/security/rust.md) . Accessed: Jul. 2026.
+[16] Chromium Project, "Rust in Chromium." [Online]. Available: [https://security.googleblog.com/2023/01/supporting-use-of-rust-in-chromium.html](https://security.googleblog.com/2023/01/supporting-use-of-rust-in-chromium.html) . Accessed: Jul. 2026.
 
 [17] Mozilla Security Blog, "Security Advisories," various years. [Online]. Available: [https://www.mozilla.org/en-US/security/advisories/](https://www.mozilla.org/en-US/security/advisories/) . Accessed: Jul. 2026.
 

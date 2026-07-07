@@ -30,7 +30,7 @@ if ref_start > 0:
         num = m.group(1)
         return f'<p id="ref-{num}">[{num}]'
 
-    ref_section_linked = re.sub(r"<p>\[(\d+)\]", add_ref_id, ref_section)
+    ref_section_linked = re.sub(r"<p>\s*\[(\d+)\]", add_ref_id, ref_section)
 
     if ref_section_linked != ref_section:
         html = html[:ref_start] + ref_section_linked + html[ref_end:]

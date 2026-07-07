@@ -74,12 +74,20 @@ build_paper \
   "Independent Security Research" \
   "A Threat-Modeling Analysis of GeckoView and Chromium on Android"
 
+
 build_paper \
   "responding-to-criticism.md" \
   "responding-to-criticism" \
   "Browser Security Analysis: New Discoveries and Reaffirmed Findings" \
   "Independent Security Research" \
   "A Follow-Up Investigation of Mobile Browser Security Architectures"
+
+build_paper \
+  "Assessment over Authority.md" \
+  "assessment-over-authority" \
+  "Assessment over Authority: Methodology, Threat Modeling, and the False Binary in Browser Security" \
+  "spiritofstar" \
+  "Why security assessment requires threat modeling, not vendor loyalty"
 
 echo "=== Done ==="
 echo "Output in _output/"
