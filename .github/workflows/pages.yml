@@ -97,6 +97,34 @@ jobs:
           mv /tmp/combined.typ "_output/$SLUG.typ"
           typst compile "_output/$SLUG.typ"
 
+      - name: Build paper 3 — Assessment over Authority
+        run: |
+          MD="Assessment over Authority.md"
+          SLUG="assessment-over-authority"
+          pandoc "$MD" -o "_output/$SLUG.html" --template=_template.html -s \
+            --toc --toc-depth=2 --section-divs --mathjax
+          pandoc "$MD" -o "_output/$SLUG.typ" --to typst
+          sed -i 's/#horizontalrule/#line()/g' "_output/$SLUG.typ"
+
+          echo '#set document(
+            title: "Assessment over Authority: Methodology, Threat Modeling, and the False Binary in Browser Security",
+            author: "spiritofstar",
+          )
+          #set page(
+            margin: (top: 2.5cm, bottom: 2.5cm, left: 2.5cm, right: 2.5cm),
+            numbering: "1",
+            number-align: center,
+          )
+          #set text(font: "Times New Roman", size: 11pt)
+          #set par(justify: true)
+          #show math.equation: set text(size: 9.5pt)
+          #set heading(numbering: "1.1")' > /tmp/preamble.typ
+
+          cat /tmp/preamble.typ > /tmp/combined.typ
+          cat "_output/$SLUG.typ" >> /tmp/combined.typ
+          mv /tmp/combined.typ "_output/$SLUG.typ"
+          typst compile "_output/$SLUG.typ"
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
