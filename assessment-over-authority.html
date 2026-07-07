@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Assessment over Authority: Methodology, Threat Modeling,
+and the False Binary in Browser Security</title>
+                <meta name="author" content="spiritofstar" />
+                <meta name="date" content="July 2026" />
+        <meta name="color-scheme" content="light dark" />
+        <meta name="robots" content="noai, noimageai" />
+        <meta property="og:title" content="Assessment over Authority:
+Methodology, Threat Modeling, and the False Binary in Browser
+Security" />
+        <meta property="og:description" content="Why security assessment
+requires threat modeling, not vendor loyalty" />
+        <meta property="og:type" content="article" />
+        <meta
+            property="og:url"
+            content="https://spiritofstar.github.io/blog.html"
+        />
+        <meta
+            property="og:image"
+            content="https://spiritofstar.github.io/favicon.svg"
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Assessment over Authority:
+Methodology, Threat Modeling, and the False Binary in Browser
+Security" />
+        <meta name="twitter:description" content="Why security
+assessment requires threat modeling, not vendor loyalty" />
+        <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "ScholarlyArticle",
+                "headline": "Assessment over Authority: Methodology,
+Threat Modeling, and the False Binary in Browser Security",
+                "author": "spiritofstar",
+                "datePublished": "July 2026",
+                "description": "Why security assessment requires threat
+modeling, not vendor loyalty"
+                "inLanguage": "en",
+                "isPartOf": {
+                    "@type": "Blog",
+                    "name": "spiritofstar",
+                    "url": "https://spiritofstar.github.io/"
+                },
+                "publisher": {
+                    "@type": "Person",
+                    "name": "spiritofstar",
+                    "url": "https://spiritofstar.github.io/",
+                    "sameAs": [
+                        "https://x.com/SpiritOfStarr",
+                        "https://bsky.app/profile/spiritofstar.bsky.social",
+                        "https://github.com/spiritofstar"
+                    ]
+                }
+            }
+        </script>
+
+        <link
+            rel="alternate"
+            type="application/atom+xml"
+            href="./atom.xml"
+            title="Atom Feed"
+        />
+        <link
+            rel="alternate"
+            type="application/feed+json"
+            href="./feed.json"
+            title="JSON Feed"
+        />
+        <link
+            rel="alternate"
+            type="application/rss+xml"
+            href="./rss.xml"
+            title="RSS Feed"
+        />
+        <style>
+            /* ── Color scheme ── */
+            :root {
+                --bg: #fafafa;
+                --surface: #f8f9fa;
+                --text: #1a1a1a;
+                --text-soft: #555;
+                --text-muted: #777;
+                --border: #e0e0e0;
+                --border-light: #ddd;
+                --accent: #2563eb;
+                --accent-soft: #3b82f6;
+                --code-bg: #eee;
+                --pre-bg: #f5f5f5;
+                --pre-border: #e0e0e0;
+                --pre-accent: #2c3e50;
+                --table-header: #2c3e50;
+                --table-stripe: #f5f6f8;
+                --blockquote-bg: #f0f3f5;
+                --blockquote-accent: #2c3e50;
+                --toc-bg: #f8f9fa;
+                --abstract-bg: #f0f3f5;
+                --abstract-accent: #2c3e50;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg: #1a1d23;
+                    --surface: #22262e;
+                    --text: #e1e3e8;
+                    --text-soft: #a0a4ae;
+                    --text-muted: #888b94;
+                    --border: #2f333c;
+                    --border-light: #383d47;
+                    --accent: #93a0f5;
+                    --accent-soft: #7e8ce8;
+                    --code-bg: #262a33;
+                    --pre-bg: #22262e;
+                    --pre-border: #2f333c;
+                    --pre-accent: #93a0f5;
+                    --table-header: #2f333c;
+                    --table-stripe: #22262e;
+                    --blockquote-bg: #1f232b;
+                    --blockquote-accent: #93a0f5;
+                    --toc-bg: #22262e;
+                    --abstract-bg: #1f232b;
+                    --abstract-accent: #93a0f5;
+                }
+            }
+
+            /* ── Reset ── */
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* ── Root ── */
+            html {
+                font-size: 18px;
+                -webkit-text-size-adjust: 100%;
+            }
+
+            body {
+                font-family:
+                    "Newsreader", Georgia, "Times New Roman", Times, serif;
+                font-optical-sizing: auto;
+                font-feature-settings:
+                    "kern", "liga", "clig", "calt", "onum", "pnum";
+                font-kerning: normal;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                text-rendering: optimizeLegibility;
+                line-height: 1.75;
+                color: var(--text);
+                background: var(--bg);
+                max-width: 720px;
+                margin: 0 auto;
+                padding: 2em 1.5em;
+                orphans: 3;
+                widows: 3;
+            }
+
+            /* ── Body typography ── */
+            p {
+                margin: 0 0 1em 0;
+                text-wrap: pretty;
+            }
+            ul,
+            ol {
+                margin: 0.5em 0 1em 1.5em;
+            }
+            li {
+                margin: 0.3em 0;
+            }
+            strong {
+                font-weight: 600;
+            }
+            em {
+                font-style: italic;
+            }
+
+            /* ── Headings ── */
+            h1,
+            h2,
+            h3,
+            h4 {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+                    Arial, sans-serif;
+                color: var(--text);
+                line-height: 1.35;
+                font-weight: 500;
+                font-kerning: normal;
+                text-wrap: balance;
+            }
+
+            h1 {
+                font-size: 1.55em;
+                margin: 1.6em 0 0.4em 0;
+                letter-spacing: -0.018em;
+                font-weight: 600;
+            }
+
+            h2 {
+                font-size: 1.2em;
+                margin: 1.7em 0 0.4em 0;
+                border-bottom: 1px solid var(--border-light);
+                padding-bottom: 0.25em;
+                letter-spacing: 0.02em;
+                font-weight: 550;
+            }
+
+            h3 {
+                font-size: 1.02em;
+                margin: 1.4em 0 0.3em 0;
+                letter-spacing: 0.015em;
+                font-weight: 550;
+            }
+
+            h4 {
+                font-size: 0.92em;
+                margin: 1.2em 0 0.2em 0;
+                letter-spacing: 0.01em;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+
+            /* ── Links ── */
+            a {
+                color: var(--accent);
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+
+            /* ── Code ── */
+            code {
+                background: var(--code-bg);
+                padding: 0.15em 0.35em;
+                border-radius: 3px;
+                font-family:
+                    "SF Mono", "Fira Code", Consolas, "Liberation Mono",
+                    monospace;
+                font-size: 82%;
+            }
+
+            pre {
+                background: var(--pre-bg);
+                border: 1px solid var(--pre-border);
+                border-left: 3px solid var(--pre-accent);
+                padding: 0.8em 1em;
+                overflow-x: auto;
+                margin: 1em 0;
+                font-size: 82%;
+            }
+            pre code {
+                background: none;
+                padding: 0;
+                font-size: inherit;
+            }
+
+            /* ── Tables ── */
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 1.2em 0;
+                font-size: 82%;
+                display: block;
+                overflow-x: auto;
+            }
+            th {
+                background: var(--table-header);
+                color: #fff;
+                padding: 0.5em 0.6em;
+                text-align: left;
+                font-weight: 600;
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+                    Arial, sans-serif;
+                letter-spacing: 0.02em;
+                font-size: 0.9em;
+            }
+            td {
+                padding: 0.4em 0.6em;
+                border-bottom: 1px solid var(--border-light);
+            }
+            tr:nth-child(even) {
+                background: var(--table-stripe);
+            }
+
+            /* ── Blockquote ── */
+            blockquote {
+                border-left: 4px solid var(--blockquote-accent);
+                background: var(--blockquote-bg);
+                padding: 0.5em 1em;
+                margin: 1em 0;
+                color: var(--text-soft);
+            }
+
+            hr {
+                border: none;
+                border-top: 1px solid var(--border);
+                margin: 2.5em 0;
+            }
+
+            /* ── Math display ── */
+            .math.display {
+                display: block;
+                text-align: center;
+                margin: 1.4em auto;
+                overflow-x: auto;
+                overflow-y: hidden;
+            }
+            /* After MathJax renders, center via direct container styling.
+               Note: !important overrides MathJax's own inline styles. */
+            mjx-container[display="true"] {
+                display: block !important;
+                text-align: center !important;
+                margin: 1.2em auto !important;
+                overflow-x: auto;
+                overflow-y: hidden;
+            }
+            .math.inline {
+                font-feature-settings: "kern", "liga";
+            }
+
+            /* ── Header / Title block ── */
+            header {
+                text-align: center;
+                margin: 0 0 1.5em 0;
+            }
+            header h1 {
+                font-size: 1.85em;
+                margin: 0.5em 0 0.2em 0;
+                border: none;
+                letter-spacing: -0.02em;
+            }
+            .subtitle {
+                font-size: 1.05em;
+                color: var(--text-soft);
+                font-style: italic;
+                margin-bottom: 0.3em;
+            }
+            .author,
+            .date {
+                color: var(--text-muted);
+                font-size: 0.85em;
+                margin: 0.15em 0;
+            }
+
+            /* ── Table of contents ── */
+            #TOC {
+                background: var(--toc-bg);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                padding: 0.8em 1.2em;
+                margin: 1em 0 1.5em 0;
+                font-size: 0.85em;
+            }
+            #TOC ul {
+                list-style: none;
+                margin: 0.3em 0;
+                padding-left: 1.2em;
+            }
+            #TOC > ul {
+                padding-left: 0;
+            }
+            #TOC li {
+                margin: 0.15em 0;
+            }
+            #TOC a {
+                color: var(--accent);
+            }
+
+            /* ── Abstract ── */
+            section#abstract {
+                background: var(--abstract-bg);
+                border-left: 4px solid var(--abstract-accent);
+                padding: 1em 1.2em;
+                margin: 1.5em 0;
+                font-size: 0.93em;
+                border-radius: 2px;
+            }
+
+            /* ── Footnotes ── */
+            .footnote-ref {
+                font-size: 0.8em;
+                vertical-align: super;
+                line-height: 0;
+            }
+            .footnotes {
+                font-size: 0.85em;
+                color: var(--text-soft);
+                border-top: 1px solid var(--border);
+                margin-top: 2em;
+                padding-top: 1em;
+            }
+
+            /* ── Site navigation ── */
+            .site-nav {
+                text-align: center;
+                margin: 0 0 1.5em 0;
+                display: flex;
+                justify-content: center;
+                gap: 1.2em;
+            }
+            .site-nav--footer {
+                margin-top: 3em;
+                padding-top: 1.5em;
+                border-top: 1px solid var(--border);
+            }
+            .site-nav a {
+                color: var(--text-muted);
+                text-decoration: none;
+                font-family: "Fraunces", Georgia, "Times New Roman", serif;
+                font-size: 0.82em;
+                font-weight: 500;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+            }
+            .site-nav a:hover {
+                color: var(--accent);
+            }
+
+            /* ── Small screens ── */
+            @media (max-width: 600px) {
+                html {
+                    font-size: 16px;
+                }
+                body {
+                    padding: 1em 0.8em;
+                }
+                h1 {
+                    font-size: 1.35em;
+                }
+                h2 {
+                    font-size: 1.1em;
+                }
+                header h1 {
+                    font-size: 1.55em;
+                }
+                table {
+                    font-size: 75%;
+                }
+            }
+        </style>
+        
+    </head>
+    <body>
+        <nav class="site-nav">
+            <a href="./">Home</a>
+            <a href="./blog.html">Latest Research</a>
+        </nav>
+        <header>
+            <h1>Assessment over Authority: Methodology, Threat Modeling,
+and the False Binary in Browser Security</h1>
+                        <p class="subtitle">Why security assessment
+requires threat modeling, not vendor loyalty</p>
+                         <p class="author">spiritofstar</p>
+                        <p class="date">July 2026</p>
+        </header>
+                <nav id="TOC" role="doc-toc"><ul>
+<li><a href="#intention" id="toc-intention">Intention</a></li>
+</ul></nav>
+         <section id="abstract" class="level3">
+<h3>Abstract</h3>
+<p>I made my own research blog about Firefox and Chromium, pulling from
+low-level source repositories, security documentation, and the actual
+online available information on the Web. research detailed information
+that up to date and accurate improvements, post accurately detailed how
+dual-engine attack surface argument (Firefox requires Chromium WebView
+on Android) is a platform architectural constraint, not a Firefox
+deficiency, as well research also detailed how individual threat model
+is more integral to overall security than default sandboxing as well as
+exploit mitigation differences that end up being arbitrary if indeed
+exploits tend to use social engineering Firefox completely outclasses
+Chromium at network-layer privacy isolation, but it takes a second place
+when it comes to trapping a weaponized mobile exploit, it is improving,
+In my blog, i was accused of “LLM-generated biased text”, i don’t use
+LLMs for writing my Text(because i did not write in personal style but
+rather in research standard), I however do use multiple different styles
+of writing(because of sheer amount of accusations i did rewrite blog in
+“human language” and outlined it in updates, which was further used to
+jusitify AI accusations), it being Formal Academic Style(based on APA
+Standard), as well as my own natural style, which i am forced to write
+it because of sheer amount of toxic backlash, but i will indeed keep
+writing a Blog, given a research of how different browsers have
+different strategies in Sandboxing ### The “Dual-Engine” Attack Surface
+is a Platform Law, Not a Firefox Flaw</p>
+<p>This is an argument i haven’t seen addressed, at all(just disregarded
+as inaccurate with no evidence or reasoning) One of the most common
+arguments weaponized against Firefox on Android is that it introduces a
+dangerous “dual-engine” attack surface. The claim is that by installing
+Firefox, you are actively exposing your device to two major codebases at
+the same time: <code>GeckoView</code> and the native Chromium-based
+<code>Android System WebView</code>. [1]</p>
+<p>My research accurately detailed how this dual-engine argument is a
+platform architectural constraint indeed, not a Firefox deficiency in
+true and valid sense.</p>
+<p>System Developers giving preferential treatment to Chromium and it’s
+Webview reinforces monopoly that worsens security. [2] Firefox did not
+introduce that attack surface, the Android platform however did. Blaming
+Firefox for the passive existence of a mandatory system component is a
+fundamental logical error. ### Threat Modeling Matters More Than
+Arbitrary Mitigations</p>
+<p>My research also detailed how an individual’s specific threat model
+is far more integral to overall operational security than default
+sandboxing configurations or exploit mitigation differences. In the real
+world, these highly technical defensive differences end up being
+completely arbitrary if indeed exploits tend to use social
+engineering.</p>
+<p>If an adversary compromises a user via phishing, malicious APK
+sideloading, or basic credential theft, the depth of a browser’s JIT
+compiler sandbox means absolutely nothing. The attack bypassed the
+browser engine entirely.</p>
+<p>When evaluating the two browsers where the technical boundaries
+<em>do</em> matter, it comes down to a deliberate architectural
+trade-off:</p>
+<ul>
+<li><p><strong>Firefox completely outclasses Chromium at network-layer
+privacy isolation.</strong> [3] Features like Total Cookie Protection
+[3] automatically wall off storage and tracking graphs into independent
+“jars” for every single first-party domain, natively preventing
+corporate surveillance and cross-site fingerprinting without breaking
+client-side JavaScript APIs.</p></li>
+<li><p><strong>However, it takes a second place when it comes to
+trapping a weaponized mobile exploit.</strong> On Android, Firefox lacks
+kernel-level process containment (<code>android:isolatedProcess</code>)
+[4] and does not possess an intra-process sandbox for its SpiderMonkey
+JIT engine equivalent to Chromium’s V8 Sandbox. [5]</p></li>
+</ul>
+<p>Crucially, <strong>it is improving.</strong> Mozilla is actively
+working through these historical mobile architectural deficits, recently
+pushing Project Fission (site isolation). [6] It is steadily playing
+catch-up to harden its post-compromise net. ### The Conclusion</p>
+<p>Security is not a single, linear scoreboard where one browser wins a
+universal trophy. It is a choice between two entirely different
+engineering paradigms. Chromium builds an incredibly complex web API
+surface (exposing high-risk hooks like WebUSB and Direct Sockets) [7]
+but wraps it in state-of-the-art post-compromise containment. Firefox
+radically reduces the pre-compromise attack surface by omitting those
+complex APIs entirely and writing outer parsing layers in compile-time
+memory-safe Rust (research groups pointed out that Chromium also invests
+in memory-safety as well as Rust components, Chromium is indeed
+memory-safe), [8] while explicitly optimizing for user privacy.</p>
+<p>An objective assessment looks at what you are actually trying to
+defend against, rather than blindly bowing to the authority of a
+specific dev team’s preferred threat model.</p>
+</section>
+<section id="intention" class="level2">
+<h2>Intention</h2>
+<p>I, the Author, was accused of being biased towards a browser, which
+isn’t worth dignifying as a response, I discovered new information
+regarding browser security, as Data Analyst, I incorporated it into my
+research blog, However, something that was distasteful(I am writing this
+in “human” language), almost purposeful and targeted misunderstanding
+which I feel like I have to demostrate, how some research groups view
+skepticism, frame it as a response to the bias towards a browser, and
+actively encourage inline groups to “counter” it</p>
+<section id="references" class="level3">
+<h3>References</h3>
+<p>[1] GrapheneOS, “Usage: Web Browsing.” [Online]. Available: <a
+href="https://grapheneos.org/usage#web-browsing">https://grapheneos.org/usage#web-browsing</a>.</p>
+<p>[2] D. Geer et al., “CyberInsecurity: The Cost of Monopoly,” CCIA,
+2003.</p>
+<p>[3] Mozilla, “Total Cookie Protection,” Mozilla Security Blog.
+[Online]. Available: <a
+href="https://blog.mozilla.org/security/2021/02/23/total-cookie-protection/">https://blog.mozilla.org/security/2021/02/23/total-cookie-protection/</a>.</p>
+<p>[4] Android Open Source Project, “Isolated Process,” Android
+Developers. [Online]. Available: <a
+href="https://developer.android.com/guide/topics/manifest/service-element#isolatedProcess">https://developer.android.com/guide/topics/manifest/service-element#isolatedProcess</a>.</p>
+<p>[5] V8 Sandbox Design Document. [Online]. Available: <a
+href="https://docs.google.com/document/d/1FM4fQmIhEqPG8uGp5o9A-mnPB5BOeScZYpkHjo0KKA8">https://docs.google.com/document/d/1FM4fQmIhEqPG8uGp5o9A-mnPB5BOeScZYpkHjo0KKA8</a>.</p>
+<p>[6] Mozilla Wiki, “Project Fission.” [Online]. Available: <a
+href="https://wiki.mozilla.org/Project_Fission">https://wiki.mozilla.org/Project_Fission</a>.</p>
+<p>[7] Chromium Project, “Direct Sockets API.” [Online]. Available: <a
+href="https://wicg.github.io/direct-sockets/">https://wicg.github.io/direct-sockets/</a>.</p>
+<p>[8] Chromium Project, “Rust in Chromium.” [Online]. Available: <a
+href="https://security.googleblog.com/2023/01/supporting-use-of-rust-in-chromium.html">https://security.googleblog.com/2023/01/supporting-use-of-rust-in-chromium.html</a>.</p>
+</section>
+</section>
+        <nav class="site-nav site-nav--footer">
+            <a href="./">Back to Home</a>
+        </nav>
+    </body>
+</html>
