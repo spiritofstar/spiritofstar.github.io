@@ -1,11 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
     <style>
+      svg { background: transparent; }
       .star { fill: #2563eb; stroke: #2563eb; stroke-width: 8; stroke-linejoin: round; }
       @media (prefers-color-scheme: dark) {
         .star { fill: #93a0f5; stroke: #93a0f5; }
       }
     </style>
   </defs>
-  <path class="star" d="M50 4 L61 37 L96 37 L67 59 L78 94 L50 72 L22 94 L33 59 L4 37 L39 37 Z"/>
+  <path
+        class="star"
+        d="M50 4 L61 37 L96 37 L67 59 L78 94 L50 72 L22 94 L33 59 L4 37 L39 37 Z"
+    />
 </svg>
