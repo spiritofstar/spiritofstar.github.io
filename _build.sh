@@ -8,7 +8,7 @@ echo "=== Generating site components and feeds ==="
 python3 _build.py
 
 echo "=== Copying static files ==="
-cp index.html atom.xml feed.json rss.xml robots.txt sitemap.xml _output/
+cp index.html atom.xml feed.json rss.xml robots.txt sitemap.xml favicon.svg _output/
 cp -r .well-known _output/.well-known
 
 build_paper() {

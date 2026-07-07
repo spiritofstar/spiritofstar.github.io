@@ -36,7 +36,7 @@ jobs:
 
       - name: Copy static files
         run: |
-          cp index.html atom.xml feed.json rss.xml robots.txt sitemap.xml _output/ || true
+          cp index.html atom.xml feed.json rss.xml robots.txt sitemap.xml favicon.svg _output/ || true
           cp -r .well-known _output/.well-known || true
 
       - name: Build paper 1 — Sandboxing Analysis
