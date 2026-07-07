@@ -48,6 +48,84 @@
             title="RSS Feed"
         />
         <style>
+            /* Self-hosted fonts */
+            @font-face {
+                font-family: "Lora";
+                font-style: normal;
+                font-weight: 1 1000;
+                font-display: swap;
+                src: url(fonts/Lora-VariableFont_wght.ttf) format("truetype");
+            }
+            @font-face {
+                font-family: "Lora";
+                font-style: italic;
+                font-weight: 1 1000;
+                font-display: swap;
+                src: url(fonts/Lora-Italic-VariableFont_wght.ttf)
+                    format("truetype");
+            }
+            @font-face {
+                font-family: "Fraunces";
+                font-style: normal;
+                font-weight: 1 1000;
+                font-display: swap;
+                src: url(fonts/Fraunces-VariableFont_SOFT,WONK,opsz,wght.ttf)
+                    format("truetype");
+            }
+            @font-face {
+                font-family: "Fraunces";
+                font-style: italic;
+                font-weight: 1 1000;
+                font-display: swap;
+                src: url(fonts/Fraunces-Italic-VariableFont_SOFT,WONK,opsz,wght.ttf)
+                    format("truetype");
+            }
+            @font-face {
+                font-family: "Instrument Serif";
+                font-style: normal;
+                font-weight: 400;
+                font-display: swap;
+                src: url(fonts/InstrumentSerif-Regular.ttf) format("truetype");
+            }
+            @font-face {
+                font-family: "Instrument Serif";
+                font-style: italic;
+                font-weight: 400;
+                font-display: swap;
+                src: url(fonts/InstrumentSerif-Italic.ttf) format("truetype");
+            }
+            @font-face {
+                font-family: "Newsreader";
+                font-style: normal;
+                font-weight: 1 1000;
+                font-display: swap;
+                src: url(fonts/Newsreader-VariableFont_opsz,wght.ttf)
+                    format("truetype");
+            }
+            @font-face {
+                font-family: "Newsreader";
+                font-style: italic;
+                font-weight: 1 1000;
+                font-display: swap;
+                src: url(fonts/Newsreader-Italic-VariableFont_opsz,wght.ttf)
+                    format("truetype");
+            }
+            @font-face {
+                font-family: "EB Garamond";
+                font-style: normal;
+                font-weight: 1 1000;
+                font-display: swap;
+                src: url(fonts/EBGaramond-VariableFont_wght.ttf)
+                    format("truetype");
+            }
+            @font-face {
+                font-family: "EB Garamond";
+                font-style: italic;
+                font-weight: 1 1000;
+                font-display: swap;
+                src: url(fonts/EBGaramond-Italic-VariableFont_wght.ttf)
+                    format("truetype");
+            }
             :root {
                 --bg: #fafafa;
                 --text: #1a1a1a;
@@ -86,7 +164,7 @@
             }
 
             body {
-                font-family: Georgia, "Times New Roman", Times, serif;
+                font-family: "Lora", Georgia, "Times New Roman", Times, serif;
                 font-optical-sizing: auto;
                 font-feature-settings: "kern", "liga", "clig", "calt", "onum";
                 font-kerning: normal;
@@ -104,7 +182,7 @@
             }
 
             .wordmark {
-                font-family: Georgia, "Times New Roman", Times, serif;
+                font-family: "Lora", Georgia, "Times New Roman", Times, serif;
                 font-size: 2.2em;
                 font-weight: 700;
                 letter-spacing: -0.03em;
@@ -140,9 +218,7 @@
                 gap: 1.2em;
             }
             .site-nav a {
-                color: var(--text-muted);
-                text-decoration: none;
-                font-family: Georgia, "Times New Roman", serif;
+                font-family: "Fraunces", Georgia, "Times New Roman", serif;
                 font-size: 0.82em;
                 font-weight: 500;
                 letter-spacing: 0.04em;
@@ -172,7 +248,8 @@
             }
 
             .section-heading {
-                font-family: Georgia, "Times New Roman", Times, serif;
+                font-family:
+                    "Instrument Serif", Georgia, "Times New Roman", Times, serif;
                 font-size: 1.25em;
                 font-weight: 400;
                 font-feature-settings: "kern", "liga";
@@ -195,7 +272,7 @@
                 margin-bottom: 1.8em;
             }
             .post-title {
-                font-family: Georgia, "Times New Roman", Times, serif;
+                font-family: "Lora", Georgia, "Times New Roman", Times, serif;
                 font-size: 1em;
                 font-weight: 500;
                 line-height: 1.4;
@@ -214,8 +291,7 @@
             }
 
             .tag {
-                display: inline-block;
-                font-family: Georgia, "Times New Roman", serif;
+                font-family: "Fraunces", Georgia, "Times New Roman", serif;
                 font-size: 0.65em;
                 font-weight: 500;
                 letter-spacing: 0.03em;
@@ -280,11 +356,7 @@
                 flex-wrap: wrap;
                 gap: 0.35em;
                 margin-bottom: 0.3em;
-            }
-            .post-hover-reading {
-                font-size: 0.72em;
-                color: var(--text-muted);
-                font-family: Georgia, "Times New Roman", serif;
+                font-family: "Fraunces", Georgia, "Times New Roman", serif;
             }
 
             @media (prefers-color-scheme: dark) {
@@ -300,7 +372,7 @@
                 text-align: center;
             }
             .newsletter-label {
-                font-family: Georgia, "Times New Roman", serif;
+                font-family: "Fraunces", Georgia, "Times New Roman", serif;
                 font-size: 0.82em;
                 font-weight: 500;
                 letter-spacing: 0.04em;
@@ -323,9 +395,7 @@
                 gap: 0.5em;
             }
             .copyright {
-                font-size: 0.75em;
-                color: var(--text-muted);
-                font-family: Georgia, "Times New Roman", serif;
+                font-family: "Fraunces", Georgia, "Times New Roman", serif;
             }
 
             .about-text {
@@ -350,13 +420,7 @@
                 gap: 1.2em;
             }
             .social-links a {
-                color: var(--text-muted);
-                text-decoration: none;
-                display: inline-flex;
-                align-items: center;
-                gap: 0.35em;
-                font-size: 0.85em;
-                font-family: Helvetica, Arial, sans-serif;
+                font-family: "EB Garamond", Georgia, "Times New Roman", serif;
                 font-weight: 500;
                 font-feature-settings: "kern", "liga";
                 font-kerning: normal;
