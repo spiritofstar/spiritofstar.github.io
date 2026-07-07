@@ -118,6 +118,14 @@
             .wordmark a {
                 color: inherit;
                 text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25em;
+            }
+            .wordmark a svg {
+                height: 0.85em;
+                width: auto;
+                aspect-ratio: 1;
             }
             .wordmark a:hover {
                 opacity: 0.7;
@@ -429,7 +437,20 @@
     </head>
     <body>
         <header>
-            <h1 class="wordmark"><a href="./">spiritofstar</a></h1>
+            <h1 class="wordmark">
+                <a href="./"
+                    ><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 100 100"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M50 4 L61 37 L96 37 L67 59 L78 94 L50 72 L22 94 L33 59 L4 37 L39 37 Z"
+                            fill="currentColor"
+                        /></svg
+                    >spiritofstar</a
+                >
+            </h1>
 
             <nav class="site-nav">
                 <a href="./">Home</a>
