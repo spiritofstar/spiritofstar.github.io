@@ -24,7 +24,12 @@
     <category term="security discourse" />
     <id>tag:spiritofstar.github.io,2026-07-01:/blog/Assessment over Authority</id>
     <summary type="html"><![CDATA[
-Independent research on browser security, memory safety, and privacy engineering
+I made my own research blog  about Firefox and Chromium, pulling from low-level source repositories, security documentation, and the actual online available information on the Web.
+research detailed information that up to date and accurate improvements, 
+post accurately detailed how dual-engine attack surface argument (Firefox requires Chromium WebView on Android) is a platform architectural constraint, not a Firefox deficiency, as well
+research also detailed how individual threat model is more integral to overall security than default sandboxing as well as exploit mitigation differences that end up being arbitrary if indeed exploits tend to use social engineering
+Firefox completely outclasses Chromium at network-layer privacy isolation, but it takes a second place when it comes to trapping a weaponized mobile exploit, it is improving, 
+In my blog, i was accused of "LLM-generated biased text", i don't use LLMs for writing my Text(because i did not write in personal style but rather in research standard), I however do use multiple different styles of writing(because of sheer amount of accusations i did rewrite blog in "human language" and outlined it in updates, which was further used to jusitify AI accusations), it being Formal Academic Style(based on APA Standard), as well as my own natural style, which i am forced to write it because of sheer amount of toxic backlash, but i will indeed keep writing a Blog, given a research of how different browsers have different strategies in Sandboxing
     ]]></summary>
     <content type="html" src="https://spiritofstar.github.io/Assessment over Authority.html" />
   </entry>

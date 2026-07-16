@@ -48,19 +48,21 @@
             title="RSS Feed"
         />
         <style>
+            /* Minimal blog-style CSS for HTML output. Pure CSS, no framework dependencies. */
+
             /* Self-hosted fonts */
             @font-face {
                 font-family: "Lora";
                 font-style: normal;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Lora-VariableFont_wght.ttf) format("truetype");
             }
             @font-face {
                 font-family: "Lora";
                 font-style: italic;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Lora-Italic-VariableFont_wght.ttf)
                     format("truetype");
             }
@@ -68,7 +70,7 @@
                 font-family: "Fraunces";
                 font-style: normal;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Fraunces-VariableFont_SOFT,WONK,opsz,wght.ttf)
                     format("truetype");
             }
@@ -76,7 +78,7 @@
                 font-family: "Fraunces";
                 font-style: italic;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Fraunces-Italic-VariableFont_SOFT,WONK,opsz,wght.ttf)
                     format("truetype");
             }
@@ -84,21 +86,21 @@
                 font-family: "Instrument Serif";
                 font-style: normal;
                 font-weight: 400;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/InstrumentSerif-Regular.ttf) format("truetype");
             }
             @font-face {
                 font-family: "Instrument Serif";
                 font-style: italic;
                 font-weight: 400;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/InstrumentSerif-Italic.ttf) format("truetype");
             }
             @font-face {
                 font-family: "Newsreader";
                 font-style: normal;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Newsreader-VariableFont_opsz,wght.ttf)
                     format("truetype");
             }
@@ -106,7 +108,7 @@
                 font-family: "Newsreader";
                 font-style: italic;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Newsreader-Italic-VariableFont_opsz,wght.ttf)
                     format("truetype");
             }
@@ -114,7 +116,7 @@
                 font-family: "EB Garamond";
                 font-style: normal;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/EBGaramond-VariableFont_wght.ttf)
                     format("truetype");
             }
@@ -122,7 +124,7 @@
                 font-family: "EB Garamond";
                 font-style: italic;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/EBGaramond-Italic-VariableFont_wght.ttf)
                     format("truetype");
             }
@@ -171,6 +173,10 @@
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
                 text-rendering: optimizeLegibility;
+                hyphens: auto;
+                hyphenate-limit-chars: 6 3 3;
+                hyphenate-limit-lines: 2;
+                hyphenate-limit-zone: 8%;
                 line-height: 1.75;
                 color: var(--text);
                 background: var(--bg);

@@ -22,14 +22,16 @@ format:
 
 ---
 
-### Abstract
+## Abstract
+
 I made my own research blog  about Firefox and Chromium, pulling from low-level source repositories, security documentation, and the actual online available information on the Web.
 research detailed information that up to date and accurate improvements, 
 post accurately detailed how dual-engine attack surface argument (Firefox requires Chromium WebView on Android) is a platform architectural constraint, not a Firefox deficiency, as well
 research also detailed how individual threat model is more integral to overall security than default sandboxing as well as exploit mitigation differences that end up being arbitrary if indeed exploits tend to use social engineering
 Firefox completely outclasses Chromium at network-layer privacy isolation, but it takes a second place when it comes to trapping a weaponized mobile exploit, it is improving, 
 In my blog, i was accused of "LLM-generated biased text", i don't use LLMs for writing my Text(because i did not write in personal style but rather in research standard), I however do use multiple different styles of writing(because of sheer amount of accusations i did rewrite blog in "human language" and outlined it in updates, which was further used to jusitify AI accusations), it being Formal Academic Style(based on APA Standard), as well as my own natural style, which i am forced to write it because of sheer amount of toxic backlash, but i will indeed keep writing a Blog, given a research of how different browsers have different strategies in Sandboxing
-### The "Dual-Engine" Attack Surface is a Platform Law, Not a Firefox Flaw
+
+## The "Dual-Engine" Attack Surface is a Platform Law, Not a Firefox Flaw
 
 This is an argument i haven't seen addressed, at all(just disregarded as inaccurate with no evidence or reasoning)
 One of the most common arguments weaponized against Firefox on Android is that it introduces a dangerous "dual-engine" attack surface. The claim is that by installing Firefox, you are actively exposing your device to two major codebases at the same time: `GeckoView` and the native Chromium-based `Android System WebView`. [1]
@@ -38,7 +40,8 @@ My research accurately detailed how this dual-engine argument is a platform arch
 
 System Developers giving preferential treatment to Chromium and it's Webview reinforces monopoly that worsens security. [2] Firefox did not introduce that attack surface, the Android platform however did.
 Blaming Firefox for the passive existence of a mandatory system component is a fundamental logical error.
-### Threat Modeling Matters More Than Arbitrary Mitigations
+
+## Threat Modeling Matters More Than Arbitrary Mitigations
 
 My research also detailed how an individual's specific threat model is far more integral to overall operational security than default sandboxing configurations or exploit mitigation differences. In the real world, these highly technical defensive differences end up being completely arbitrary if indeed exploits tend to use social engineering.
 
@@ -51,16 +54,18 @@ When evaluating the two browsers where the technical boundaries _do_ matter, it 
 - **However, it takes a second place when it comes to trapping a weaponized mobile exploit.** On Android, Firefox lacks kernel-level process containment (`android:isolatedProcess`) [4] and does not possess an intra-process sandbox for its SpiderMonkey JIT engine equivalent to Chromium's V8 Sandbox. [5]
 
 Crucially, **it is improving.** Mozilla is actively working through these historical mobile architectural deficits, recently pushing Project Fission (site isolation). [6] It is steadily playing catch-up to harden its post-compromise net.
-### The Conclusion
+
+## The Conclusion
 
 Security is not a single, linear scoreboard where one browser wins a universal trophy. It is a choice between two entirely different engineering paradigms. Chromium builds an incredibly complex web API surface (exposing high-risk hooks like WebUSB and Direct Sockets) [7] but wraps it in state-of-the-art post-compromise containment. Firefox radically reduces the pre-compromise attack surface by omitting those complex APIs entirely and writing outer parsing layers in compile-time memory-safe Rust (research groups pointed out that Chromium also invests in memory-safety as well as Rust components, Chromium is indeed memory-safe), [8] while explicitly optimizing for user privacy.
 
 An objective assessment looks at what you are actually trying to defend against, rather than blindly bowing to the authority of a specific dev team's preferred threat model.
 
-##  Intention
+## Intention
+
 I, the Author, was accused of being biased towards a browser, which isn't worth dignifying as a response, I discovered new information regarding browser security, as Data Analyst, I incorporated it into my research blog, However, something that was distasteful(I am writing this in "human" language), almost purposeful and targeted misunderstanding which I feel like I have to demostrate, how some research groups view skepticism, frame it as a response to the bias towards a browser, and actively encourage inline groups to "counter" it
 
-### References
+## References
 
 [1] GrapheneOS, "Usage: Web Browsing." [Online]. Available: [https://grapheneos.org/usage#web-browsing](https://grapheneos.org/usage#web-browsing).
 
