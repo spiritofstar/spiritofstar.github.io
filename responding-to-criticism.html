@@ -77,12 +77,14 @@ Browser Security Architectures"
             title="RSS Feed"
         />
         <style>
+            /* Minimal blog-style CSS for HTML output. Pure CSS, no framework dependencies. */
+
             /* Self-hosted fonts */
             @font-face {
                 font-family: "Fraunces";
                 font-style: normal;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Fraunces-VariableFont_SOFT,WONK,opsz,wght.ttf)
                     format("truetype");
             }
@@ -90,7 +92,7 @@ Browser Security Architectures"
                 font-family: "Fraunces";
                 font-style: italic;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Fraunces-Italic-VariableFont_SOFT,WONK,opsz,wght.ttf)
                     format("truetype");
             }
@@ -98,7 +100,7 @@ Browser Security Architectures"
                 font-family: "Newsreader";
                 font-style: normal;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Newsreader-VariableFont_opsz,wght.ttf)
                     format("truetype");
             }
@@ -106,7 +108,7 @@ Browser Security Architectures"
                 font-family: "Newsreader";
                 font-style: italic;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Newsreader-Italic-VariableFont_opsz,wght.ttf)
                     format("truetype");
             }
@@ -157,6 +159,22 @@ Browser Security Architectures"
                     --abstract-bg: #1f232b;
                     --abstract-accent: #93a0f5;
                 }
+
+                @media print {
+                    body {
+                        background: white;
+                        color: black;
+                    }
+                    section#abstract {
+                        background: #f9f9f9;
+                        border-left: 4px solid #333;
+                        print-color-adjust: exact;
+                        -webkit-print-color-adjust: exact;
+                    }
+                    a {
+                        color: black;
+                    }
+                }
             }
 
             /* ── Reset ── */
@@ -184,6 +202,10 @@ Browser Security Architectures"
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
                 text-rendering: optimizeLegibility;
+                hyphens: auto;
+                hyphenate-limit-chars: 6 3 3;
+                hyphenate-limit-lines: 2;
+                hyphenate-limit-zone: 8%;
                 line-height: 1.75;
                 color: var(--text);
                 background: var(--bg);
@@ -245,10 +267,15 @@ Browser Security Architectures"
             }
 
             h3 {
-                font-size: 1.02em;
-                margin: 1.4em 0 0.3em 0;
-                letter-spacing: 0.015em;
-                font-weight: 550;
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+                    Arial, sans-serif;
+                font-size: 0.85em;
+                margin: 1.8em 0 0.5em 0;
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+                font-weight: 600;
+                color: var(--text-soft);
             }
 
             h4 {
@@ -302,6 +329,7 @@ Browser Security Architectures"
                 font-size: 82%;
                 display: block;
                 overflow-x: auto;
+                break-inside: avoid;
             }
             th {
                 background: var(--table-header);
@@ -330,6 +358,7 @@ Browser Security Architectures"
                 padding: 0.5em 1em;
                 margin: 1em 0;
                 color: var(--text-soft);
+                break-inside: avoid;
             }
 
             hr {
@@ -453,6 +482,64 @@ Browser Security Architectures"
             }
             .site-nav a:hover {
                 color: var(--accent);
+            }
+
+            /* ── Pre, images, math — avoid breaks ── */
+            pre,
+            img,
+            .math.display {
+                break-inside: avoid;
+            }
+
+            /* ── Drop cap for abstract first paragraph ── */
+            section#abstract > p:first-of-type::first-letter {
+                float: left;
+                font-family:
+                    "Fraunces", Georgia, "Times New Roman", Times, serif;
+                font-size: 3.2em;
+                font-weight: 600;
+                line-height: 0.85;
+                margin: 0.08em 0.12em 0 0;
+                color: var(--text);
+                text-transform: uppercase;
+            }
+
+            @media print {
+                body {
+                    background: white;
+                    color: black;
+                    max-width: none;
+                }
+                .site-nav,
+                #TOC,
+                .site-nav--footer {
+                    display: none;
+                }
+                pre,
+                blockquote,
+                table,
+                img,
+                .math.display {
+                    break-inside: avoid;
+                }
+                a {
+                    color: black;
+                    text-decoration: underline;
+                }
+                a[href^="http"]::after {
+                    content: " (" attr(href) ")";
+                    font-size: 0.8em;
+                    color: #555;
+                }
+                section#abstract {
+                    background: #f9f9f9;
+                    border-left: 4px solid #333;
+                    print-color-adjust: exact;
+                    -webkit-print-color-adjust: exact;
+                }
+                @page {
+                    margin: 2cm;
+                }
             }
 
             /* ── Small screens ── */

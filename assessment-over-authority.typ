@@ -11,7 +11,7 @@
 #set par(justify: true)
 #show math.equation: set text(size: 9.5pt)
 #set heading(numbering: "1.1")
-=== Abstract
+== Abstract
 <abstract>
 I made my own research blog about Firefox and Chromium, pulling from
 low-level source repositories, security documentation, and the actual
@@ -34,9 +34,11 @@ jusitify AI accusations), it being Formal Academic Style(based on APA
 Standard), as well as my own natural style, which i am forced to write
 it because of sheer amount of toxic backlash, but i will indeed keep
 writing a Blog, given a research of how different browsers have
-different strategies in Sandboxing \#\#\# The "Dual-Engine" Attack
-Surface is a Platform Law, Not a Firefox Flaw
+different strategies in Sandboxing
 
+== The "Dual-Engine" Attack Surface is a Platform Law, Not a Firefox
+Flaw
+<the-dual-engine-attack-surface-is-a-platform-law-not-a-firefox-flaw>
 This is an argument i haven’t seen addressed, at all(just disregarded as
 inaccurate with no evidence or reasoning) One of the most common
 arguments weaponized against Firefox on Android is that it introduces a
@@ -53,9 +55,10 @@ System Developers giving preferential treatment to Chromium and it’s
 Webview reinforces monopoly that worsens security. \[2\] Firefox did not
 introduce that attack surface, the Android platform however did. Blaming
 Firefox for the passive existence of a mandatory system component is a
-fundamental logical error. \#\#\# Threat Modeling Matters More Than
-Arbitrary Mitigations
+fundamental logical error.
 
+== Threat Modeling Matters More Than Arbitrary Mitigations
+<threat-modeling-matters-more-than-arbitrary-mitigations>
 My research also detailed how an individual’s specific threat model is
 far more integral to overall operational security than default
 sandboxing configurations or exploit mitigation differences. In the real
@@ -86,8 +89,10 @@ When evaluating the two browsers where the technical boundaries
 Crucially, #strong[it is improving.] Mozilla is actively working through
 these historical mobile architectural deficits, recently pushing Project
 Fission (site isolation). \[6\] It is steadily playing catch-up to
-harden its post-compromise net. \#\#\# The Conclusion
+harden its post-compromise net.
 
+== The Conclusion
+<the-conclusion>
 Security is not a single, linear scoreboard where one browser wins a
 universal trophy. It is a choice between two entirely different
 engineering paradigms. Chromium builds an incredibly complex web API
@@ -114,7 +119,7 @@ which I feel like I have to demostrate, how some research groups view
 skepticism, frame it as a response to the bias towards a browser, and
 actively encourage inline groups to "counter" it
 
-=== References
+== References
 <references>
 \[1\] GrapheneOS, "Usage: Web Browsing." \[Online\]. Available:
 #link("https://grapheneos.org/usage#web-browsing")[https://grapheneos.org/usage\#web-browsing].

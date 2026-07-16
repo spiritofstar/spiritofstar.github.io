@@ -78,12 +78,14 @@ modeling, not vendor loyalty"
             title="RSS Feed"
         />
         <style>
+            /* Minimal blog-style CSS for HTML output. Pure CSS, no framework dependencies. */
+
             /* Self-hosted fonts */
             @font-face {
                 font-family: "Fraunces";
                 font-style: normal;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Fraunces-VariableFont_SOFT,WONK,opsz,wght.ttf)
                     format("truetype");
             }
@@ -91,7 +93,7 @@ modeling, not vendor loyalty"
                 font-family: "Fraunces";
                 font-style: italic;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Fraunces-Italic-VariableFont_SOFT,WONK,opsz,wght.ttf)
                     format("truetype");
             }
@@ -99,7 +101,7 @@ modeling, not vendor loyalty"
                 font-family: "Newsreader";
                 font-style: normal;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Newsreader-VariableFont_opsz,wght.ttf)
                     format("truetype");
             }
@@ -107,7 +109,7 @@ modeling, not vendor loyalty"
                 font-family: "Newsreader";
                 font-style: italic;
                 font-weight: 1 1000;
-                font-display: swap;
+                font-display: optional;
                 src: url(fonts/Newsreader-Italic-VariableFont_opsz,wght.ttf)
                     format("truetype");
             }
@@ -158,6 +160,22 @@ modeling, not vendor loyalty"
                     --abstract-bg: #1f232b;
                     --abstract-accent: #93a0f5;
                 }
+
+                @media print {
+                    body {
+                        background: white;
+                        color: black;
+                    }
+                    section#abstract {
+                        background: #f9f9f9;
+                        border-left: 4px solid #333;
+                        print-color-adjust: exact;
+                        -webkit-print-color-adjust: exact;
+                    }
+                    a {
+                        color: black;
+                    }
+                }
             }
 
             /* ── Reset ── */
@@ -185,6 +203,10 @@ modeling, not vendor loyalty"
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
                 text-rendering: optimizeLegibility;
+                hyphens: auto;
+                hyphenate-limit-chars: 6 3 3;
+                hyphenate-limit-lines: 2;
+                hyphenate-limit-zone: 8%;
                 line-height: 1.75;
                 color: var(--text);
                 background: var(--bg);
@@ -246,10 +268,15 @@ modeling, not vendor loyalty"
             }
 
             h3 {
-                font-size: 1.02em;
-                margin: 1.4em 0 0.3em 0;
-                letter-spacing: 0.015em;
-                font-weight: 550;
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+                    Arial, sans-serif;
+                font-size: 0.85em;
+                margin: 1.8em 0 0.5em 0;
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+                font-weight: 600;
+                color: var(--text-soft);
             }
 
             h4 {
@@ -303,6 +330,7 @@ modeling, not vendor loyalty"
                 font-size: 82%;
                 display: block;
                 overflow-x: auto;
+                break-inside: avoid;
             }
             th {
                 background: var(--table-header);
@@ -331,6 +359,7 @@ modeling, not vendor loyalty"
                 padding: 0.5em 1em;
                 margin: 1em 0;
                 color: var(--text-soft);
+                break-inside: avoid;
             }
 
             hr {
@@ -456,6 +485,64 @@ modeling, not vendor loyalty"
                 color: var(--accent);
             }
 
+            /* ── Pre, images, math — avoid breaks ── */
+            pre,
+            img,
+            .math.display {
+                break-inside: avoid;
+            }
+
+            /* ── Drop cap for abstract first paragraph ── */
+            section#abstract > p:first-of-type::first-letter {
+                float: left;
+                font-family:
+                    "Fraunces", Georgia, "Times New Roman", Times, serif;
+                font-size: 3.2em;
+                font-weight: 600;
+                line-height: 0.85;
+                margin: 0.08em 0.12em 0 0;
+                color: var(--text);
+                text-transform: uppercase;
+            }
+
+            @media print {
+                body {
+                    background: white;
+                    color: black;
+                    max-width: none;
+                }
+                .site-nav,
+                #TOC,
+                .site-nav--footer {
+                    display: none;
+                }
+                pre,
+                blockquote,
+                table,
+                img,
+                .math.display {
+                    break-inside: avoid;
+                }
+                a {
+                    color: black;
+                    text-decoration: underline;
+                }
+                a[href^="http"]::after {
+                    content: " (" attr(href) ")";
+                    font-size: 0.8em;
+                    color: #555;
+                }
+                section#abstract {
+                    background: #f9f9f9;
+                    border-left: 4px solid #333;
+                    print-color-adjust: exact;
+                    -webkit-print-color-adjust: exact;
+                }
+                @page {
+                    margin: 2cm;
+                }
+            }
+
             /* ── Small screens ── */
             @media (max-width: 600px) {
                 html {
@@ -494,10 +581,22 @@ requires threat modeling, not vendor loyalty</p>
                         <p class="date">July 2026</p>
         </header>
                 <nav id="TOC" role="doc-toc"><ul>
+<li><a href="#abstract" id="toc-abstract">Abstract</a></li>
+<li><a
+href="#the-dual-engine-attack-surface-is-a-platform-law-not-a-firefox-flaw"
+id="toc-the-dual-engine-attack-surface-is-a-platform-law-not-a-firefox-flaw">The
+“Dual-Engine” Attack Surface is a Platform Law, Not a Firefox
+Flaw</a></li>
+<li><a href="#threat-modeling-matters-more-than-arbitrary-mitigations"
+id="toc-threat-modeling-matters-more-than-arbitrary-mitigations">Threat
+Modeling Matters More Than Arbitrary Mitigations</a></li>
+<li><a href="#the-conclusion" id="toc-the-conclusion">The
+Conclusion</a></li>
 <li><a href="#intention" id="toc-intention">Intention</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
 </ul></nav>
-         <section id="abstract" class="level3">
-<h3>Abstract</h3>
+         <section id="abstract" class="level2">
+<h2>Abstract</h2>
 <p>I made my own research blog about Firefox and Chromium, pulling from
 low-level source repositories, security documentation, and the actual
 online available information on the Web. research detailed information
@@ -519,8 +618,13 @@ jusitify AI accusations), it being Formal Academic Style(based on APA
 Standard), as well as my own natural style, which i am forced to write
 it because of sheer amount of toxic backlash, but i will indeed keep
 writing a Blog, given a research of how different browsers have
-different strategies in Sandboxing ### The “Dual-Engine” Attack Surface
-is a Platform Law, Not a Firefox Flaw</p>
+different strategies in Sandboxing</p>
+</section>
+<section
+id="the-dual-engine-attack-surface-is-a-platform-law-not-a-firefox-flaw"
+class="level2">
+<h2>The “Dual-Engine” Attack Surface is a Platform Law, Not a Firefox
+Flaw</h2>
 <p>This is an argument i haven’t seen addressed, at all(just disregarded
 as inaccurate with no evidence or reasoning) One of the most common
 arguments weaponized against Firefox on Android is that it introduces a
@@ -535,8 +639,11 @@ true and valid sense.</p>
 Webview reinforces monopoly that worsens security. [2] Firefox did not
 introduce that attack surface, the Android platform however did. Blaming
 Firefox for the passive existence of a mandatory system component is a
-fundamental logical error. ### Threat Modeling Matters More Than
-Arbitrary Mitigations</p>
+fundamental logical error.</p>
+</section>
+<section id="threat-modeling-matters-more-than-arbitrary-mitigations"
+class="level2">
+<h2>Threat Modeling Matters More Than Arbitrary Mitigations</h2>
 <p>My research also detailed how an individual’s specific threat model
 is far more integral to overall operational security than default
 sandboxing configurations or exploit mitigation differences. In the real
@@ -566,7 +673,10 @@ JIT engine equivalent to Chromium’s V8 Sandbox. [5]</p></li>
 <p>Crucially, <strong>it is improving.</strong> Mozilla is actively
 working through these historical mobile architectural deficits, recently
 pushing Project Fission (site isolation). [6] It is steadily playing
-catch-up to harden its post-compromise net. ### The Conclusion</p>
+catch-up to harden its post-compromise net.</p>
+</section>
+<section id="the-conclusion" class="level2">
+<h2>The Conclusion</h2>
 <p>Security is not a single, linear scoreboard where one browser wins a
 universal trophy. It is a choice between two entirely different
 engineering paradigms. Chromium builds an incredibly complex web API
@@ -591,8 +701,9 @@ in “human” language), almost purposeful and targeted misunderstanding
 which I feel like I have to demostrate, how some research groups view
 skepticism, frame it as a response to the bias towards a browser, and
 actively encourage inline groups to “counter” it</p>
-<section id="references" class="level3">
-<h3>References</h3>
+</section>
+<section id="references" class="level2">
+<h2>References</h2>
 <p>[1] GrapheneOS, “Usage: Web Browsing.” [Online]. Available: <a
 href="https://grapheneos.org/usage#web-browsing">https://grapheneos.org/usage#web-browsing</a>.</p>
 <p>[2] D. Geer et al., “CyberInsecurity: The Cost of Monopoly,” CCIA,
@@ -611,7 +722,6 @@ href="https://wiki.mozilla.org/Project_Fission">https://wiki.mozilla.org/Project
 href="https://wicg.github.io/direct-sockets/">https://wicg.github.io/direct-sockets/</a>.</p>
 <p>[8] Chromium Project, “Rust in Chromium.” [Online]. Available: <a
 href="https://security.googleblog.com/2023/01/supporting-use-of-rust-in-chromium.html">https://security.googleblog.com/2023/01/supporting-use-of-rust-in-chromium.html</a>.</p>
-</section>
 </section>
         <nav class="site-nav site-nav--footer">
             <a href="./">Back to Home</a>
