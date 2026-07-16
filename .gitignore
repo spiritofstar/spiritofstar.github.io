@@ -11,3 +11,6 @@ _output/
 *.swp
 *.swo
 *~
+
+# macOS icon cache
+Untitled.icon/
