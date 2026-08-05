@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+import { abstractOf, pdfUrl } from '../lib/posts';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const abstract = abstractOf(post);
+---
+
+<BaseLayout title={`${post.data.title} — spiritofstar`} description={abstract}>
+  <ArticleLayout post={post} pdfPath={pdfUrl(post)}>
+    <Content />
+  </ArticleLayout>
+</BaseLayout>

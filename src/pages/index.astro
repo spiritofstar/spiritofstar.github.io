@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { abstractOf, pdfUrl, postUrl, readingTime, sortedPosts } from '../lib/posts';
+
+const posts = sortedPosts(await getCollection('posts'));
+---
+
+<BaseLayout
+  title="spiritofstar — Independent research on browser security, memory safety, and privacy engineering"
+  description="Independent research on browser security, memory safety, and privacy engineering"
+>
+  <header>
+    <h1 class="wordmark">
+      <a href="/">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" aria-hidden="true">
+          <path
+            d="M50 4 L61 37 L96 37 L67 59 L78 94 L50 72 L22 94 L33 59 L4 37 L39 37 Z"
+            fill="currentColor"
+          />
+        </svg>
+        spiritofstar
+      </a>
+    </h1>
+
+    <p class="tagline">
+      Independent research on browser security, memory safety, and privacy engineering.
+    </p>
+  </header>
+
+  <main>
+    <h2 class="section-heading section-heading--about">About</h2>
+
+    <div class="about-text">
+      <p>
+        Data analyst, psychology student, and programmer. Writes about browser
+        security architecture, cognitive science, political psychology, and the
+        intersection of technology with society.
+      </p>
+    </div>
+
+    <h2 class="section-heading section-heading--research">Research</h2>
+
+    <ul class="post-list">
+      {
+        posts.map((post) => (
+          <li>
+            <div class="post-title">
+              <a href={postUrl(post)}>{post.data.title}</a>
+              <div class="post-hover-card">
+                <div class="post-hover-tags">
+                  {post.data.categories.slice(0, 3).map((c) => <span class="tag">{c}</span>)}
+                </div>
+                <div class="post-hover-reading">{readingTime(post)}</div>
+              </div>
+            </div>
+            <div class="post-meta">
+              {post.data.date}
+              {post.data.date && <span> &middot; </span>}
+              <a href={pdfUrl(post)}>PDF</a>
+            </div>
+            <div class="post-desc">{abstractOf(post)}</div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <section class="newsletter" aria-labelledby="newsletter-heading">
+      <h3 class="newsletter-label" id="newsletter-heading">
+        Subscribe to the Newsletter
+      </h3>
+      <p class="newsletter-desc">
+        Get notified when new research is published. No spam, unsubscribe anytime.
+      </p>
+      <iframe
+        src="https://spiritofstar.substack.com/embed"
+        width="480"
+        height="320"
+        style="border: 1px solid var(--border); background: var(--bg)"
+        frameborder="0"
+        scrolling="no"
+        title="Substack newsletter signup"
+      ></iframe>
+    </section>
+  </main>
+</BaseLayout>

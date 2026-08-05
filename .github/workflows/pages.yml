@@ -14,6 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
       - name: Install Pandoc
         run: |
           sudo apt-get update
@@ -26,111 +31,18 @@ jobs:
           sudo mv typst-*/typst /usr/local/bin/
           rm -rf typst*
 
-      - name: Build output directory
-        run: |
-          rm -rf _output
-          mkdir _output
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Generate site components and feeds
-        run: python3 _build.py
+      - name: Build site (Astro + feeds)
+        run: npm run build
 
-      - name: Copy static files
-        run: |
-          mkdir -p _output
-          cp index.html atom.xml feed.json rss.xml robots.txt sitemap.xml favicon.svg _output/ || true
-          mkdir -p _output/fonts
-          cp -r fonts/* _output/fonts/ || true
-          cp -r .well-known _output/.well-known || true
-
-      - name: Build paper 1 — Sandboxing Analysis
-        run: |
-          MD="sandboxing-mitigation-comparative-analysis.md"
-          SLUG="blog"
-          pandoc "$MD" -o "_output/$SLUG.html" --template=_template.html -s \
-            --toc --toc-depth=2 --section-divs --mathjax
-          pandoc "$MD" -o "_output/$SLUG.typ" --to typst
-          sed -i 's/#horizontalrule/#line()/g' "_output/$SLUG.typ"
-
-          # Using a multi-line echo avoids the heredoc indentation trap completely
-          echo '#set document(
-            title: "Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures",
-            author: "Independent Security Research",
-          )
-          #set page(
-            margin: (top: 2.5cm, bottom: 2.5cm, left: 2.5cm, right: 2.5cm),
-            numbering: "1",
-            number-align: center,
-          )
-          #set text(font: "Times New Roman", size: 11pt)
-          #set par(justify: true)
-          #show math.equation: set text(size: 9.5pt)
-          #set heading(numbering: "1.1")' > /tmp/preamble.typ
-
-          cat /tmp/preamble.typ > /tmp/combined.typ
-          cat "_output/$SLUG.typ" >> /tmp/combined.typ
-          mv /tmp/combined.typ "_output/$SLUG.typ"
-          typst compile "_output/$SLUG.typ"
-
-      - name: Build paper 2 — Response to Criticism
-        run: |
-          MD="responding-to-criticism.md"
-          SLUG="responding-to-criticism"
-          pandoc "$MD" -o "_output/$SLUG.html" --template=_template.html -s \
-            --toc --toc-depth=2 --section-divs --mathjax
-          pandoc "$MD" -o "_output/$SLUG.typ" --to typst
-          sed -i 's/#horizontalrule/#line()/g' "_output/$SLUG.typ"
-
-          # Fixed here as well
-          echo '#set document(
-            title: "Browser Security Analysis: New Discoveries and Reaffirmed Findings",
-            author: "Independent Security Research",
-          )
-          #set page(
-            margin: (top: 2.5cm, bottom: 2.5cm, left: 2.5cm, right: 2.5cm),
-            numbering: "1",
-            number-align: center,
-          )
-          #set text(font: "Times New Roman", size: 11pt)
-          #set par(justify: true)
-          #show math.equation: set text(size: 9.5pt)
-          #set heading(numbering: "1.1")' > /tmp/preamble.typ
-
-          cat /tmp/preamble.typ > /tmp/combined.typ
-          cat "_output/$SLUG.typ" >> /tmp/combined.typ
-          mv /tmp/combined.typ "_output/$SLUG.typ"
-          typst compile "_output/$SLUG.typ"
-
-      - name: Build paper 3 — Assessment over Authority
-        run: |
-          MD="Assessment over Authority.md"
-          SLUG="assessment-over-authority"
-          pandoc "$MD" -o "_output/$SLUG.html" --template=_template.html -s \
-            --toc --toc-depth=2 --section-divs --mathjax
-          pandoc "$MD" -o "_output/$SLUG.typ" --to typst
-          sed -i 's/#horizontalrule/#line()/g' "_output/$SLUG.typ"
-
-          echo '#set document(
-            title: "Assessment over Authority: Methodology, Threat Modeling, and the False Binary in Browser Security",
-            author: "spiritofstar",
-          )
-          #set page(
-            margin: (top: 2.5cm, bottom: 2.5cm, left: 2.5cm, right: 2.5cm),
-            numbering: "1",
-            number-align: center,
-          )
-          #set text(font: "Times New Roman", size: 11pt)
-          #set par(justify: true)
-          #show math.equation: set text(size: 9.5pt)
-          #set heading(numbering: "1.1")' > /tmp/preamble.typ
-
-          cat /tmp/preamble.typ > /tmp/combined.typ
-          cat "_output/$SLUG.typ" >> /tmp/combined.typ
-          mv /tmp/combined.typ "_output/$SLUG.typ"
-          typst compile "_output/$SLUG.typ"
+      - name: Build PDFs (pandoc → typst)
+        run: npm run build:pdfs
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_output
+          publish_dir: ./dist
           clean: true

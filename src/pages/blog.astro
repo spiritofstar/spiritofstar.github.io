@@ -1,0 +1,9 @@
+---
+import { getEntry } from 'astro:content';
+import PostPage from '../components/PostPage.astro';
+
+// The sandboxing paper keeps the old /blog.html URL.
+const post = await getEntry('posts', 'sandboxing-mitigation-comparative-analysis');
+---
+
+<PostPage post={post!} />

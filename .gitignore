@@ -1,16 +1,18 @@
-# Build artifacts (except docs/ for GitHub Pages)
+# Dependencies
+node_modules/
+
+# Astro build output
+dist/
+.astro/
+
+# Old Quarto pipeline
+_quarto.yml
 _output/
-
-# Quarto working files
 .quarto/
+*.typ.tmp
 
-# macOS
+# Local CMS
+public/admin/config.local.yml
+
+# OS noise
 .DS_Store
-
-# Editor temp files
-*.swp
-*.swo
-*~
-
-# macOS icon cache
-Untitled.icon/

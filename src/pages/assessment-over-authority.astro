@@ -1,0 +1,8 @@
+---
+import { getEntry } from 'astro:content';
+import PostPage from '../components/PostPage.astro';
+
+const post = await getEntry('posts', 'assessment-over-authority');
+---
+
+<PostPage post={post!} />

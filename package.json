@@ -1,0 +1,23 @@
+{
+  "name": "spiritofstar-blog",
+  "type": "module",
+  "version": "2.0.0",
+  "private": true,
+  "description": "spiritofstar.github.io — Astro + Typst research blog",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && node scripts/generate-feeds.mjs",
+    "preview": "astro preview",
+    "build:pdfs": "sh scripts/build-pdfs.sh",
+    "cms": "npx decap-server"
+  },
+  "dependencies": {
+    "@myriaddreamin/typst-ts-node-compiler": "^0.7.0",
+    "@myriaddreamin/typst-ts-renderer": "^0.7.0",
+    "@myriaddreamin/typst.ts": "^0.7.0",
+    "astro": "^5.13.5",
+    "astro-typst": "^0.12.4",
+    "cheerio": "^1.0.0",
+    "unist-util-visit": "^5.0.0"
+  }
+}

@@ -1,0 +1,59 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'Independent research on browser security, memory safety, and privacy engineering',
+} = Astro.props;
+
+const SITE = 'https://spiritofstar.github.io';
+const path = Astro.url.pathname === '/' ? '/' : Astro.url.pathname.replace(/index\.html$/, '');
+const canonical = `${SITE}${path}`;
+const jsonLd = '{"@context":"https://schema.org","@type":"WebSite","name":"spiritofstar","url":"https://spiritofstar.github.io/","description":"Independent research on browser security, memory safety, and privacy engineering","author":{"@type":"Person","name":"spiritofstar","url":"https://spiritofstar.github.io/","sameAs":["https://x.com/SpiritOfStarr","https://bsky.app/profile/spiritofstar.bsky.social","https://github.com/spiritofstar","https://spiritofstar.substack.com"]},"inLanguage":"en"}';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="robots" content="noai, noimageai" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={`${SITE}/favicon.svg`} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS Feed" />
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom Feed" />
+    <link rel="alternate" type="application/feed+json" href="/feed.json" title="JSON Feed" />
+    <!--
+      Content Security Policy (enforced via meta tag because GitHub Pages
+      does not send server headers). Everything is first-party; the only
+      exceptions are the JSON-LD script below (allowed by its SHA-256 hash)
+      and the Substack newsletter iframe.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'sha256-HUiY42Fe8a2bmXC5mK8oyOs/uT3mav65WpGQJZq+ZkE='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-src https://spiritofstar.substack.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+    />
+    <script type="application/ld+json">{jsonLd}</script>
+  </head>
+  <body>
+    <Nav />
+    <slot />
+    <Footer />
+  </body>
+</html>

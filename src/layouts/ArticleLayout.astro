@@ -1,0 +1,36 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  pdfPath?: string;
+  /** Path to the rendered PDF on the deployed site. */
+}
+
+const { post, pdfPath } = Astro.props;
+const { title, subtitle, author, date, categories } = post.data;
+---
+
+<article class="article">
+  <header class="article-header">
+    <h1>{title}</h1>
+    {subtitle && <p class="subtitle">{subtitle}</p>}
+    <p class="meta">
+      {author && <span class="author">{author}</span>}
+      {date && <span class="date">{date}</span>}
+      {pdfPath && (
+        <a class="pdf-link" href={pdfPath}>
+          Download PDF
+        </a>
+      )}
+    </p>
+    {categories.length > 0 && (
+      <p class="tags">
+        {categories.map((c) => (
+          <span class="tag">{c}</span>
+        ))}
+      </p>
+    )}
+  </header>
+  <slot />
+</article>
