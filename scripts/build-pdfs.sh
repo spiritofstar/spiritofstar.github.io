@@ -1,7 +1,7 @@
 #!/bin/sh
-# Build the paper PDFs and the Typst demo PDF into dist/.
-# Requires: pandoc, typst. Run after `npm run build` (astro build output
-# must exist at dist/).
+# Build the paper PDFs into dist/.
+# Requires: pandoc (or quarto), typst. Run after `npm run build` (astro
+# build output must exist at dist/).
 #
 # Port of the old _build.sh: markdown -> pandoc -> typst -> PDF, with the
 # classic page setup (Times New Roman 11pt, 2.5cm margins, centered
@@ -93,8 +93,5 @@ build_paper \
   "Assessment over Authority: Methodology, Threat Modeling, and the False Binary in Browser Security" \
   "spiritofstar" \
   "Why security assessment requires threat modeling, not vendor loyalty"
-
-echo "=== Building PDF: demo ==="
-typst compile "src/typst/demo-page.typ" "dist/demo.pdf"
 
 echo "=== Done — PDFs written to dist/ ==="

@@ -689,69 +689,6 @@ footer {
   color: var(--muted-accent);
 }
 
-/* ---- Typst demo page ---- */
-.typst-demo {
-  max-width: 860px;
-  margin: 0 auto;
-}
-.typst-demo .demo-intro {
-  text-align: center;
-  margin-bottom: 1.8em;
-}
-.typst-demo h1 {
-  font-family: "Lora", Georgia, serif;
-  font-size: 1.6em;
-  font-weight: 700;
-  margin-bottom: 0.4em;
-}
-.typst-demo .demo-desc {
-  color: var(--text-soft);
-  font-size: 0.92em;
-  max-width: 560px;
-  margin: 0 auto 0.8em;
-}
-.typst-demo .demo-actions {
-  display: flex;
-  justify-content: center;
-  gap: 0.8em;
-  flex-wrap: wrap;
-}
-.typst-demo .demo-actions a {
-  font-family: "Fraunces", Georgia, serif;
-  font-size: 0.78em;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--accent);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 0.4em 1.1em;
-}
-.typst-demo .demo-actions a:hover {
-  border-color: var(--accent);
-  color: var(--accent-hover);
-}
-.typst-frame {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
-  padding: 1.2em;
-  overflow-x: auto;
-}
-.typst-frame .typst-doc {
-  margin: 0 auto;
-  max-width: 100%;
-}
-.typst-frame .typst-doc svg,
-.typst-frame svg {
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
-  height: auto;
-}
-
 /* ---- 404 ---- */
 .notfound {
   text-align: center;

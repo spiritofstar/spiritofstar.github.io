@@ -179,7 +179,7 @@ async function main() {
     '  <author>\n' +
     `    <name>${AUTHOR}</name>\n` +
     '  </author>\n' +
-    '  <rights>CC BY 4.0</rights>\n\n' +
+    '  <rights>All Rights Reserved</rights>\n\n' +
     entriesAtom +
     '</feed>\n';
 

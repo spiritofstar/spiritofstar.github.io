@@ -6,7 +6,7 @@ independent research on browser security, memory safety, and privacy engineering
 ## Stack
 
 - **Astro 5** — static site generator (`src/pages/`, `src/layouts/`, `src/components/`)
-- **astro-typst** — renders Typst (`.typ`) documents to inline SVG at build time (`src/typst/demo.typ` → `/typst.html`)
+- **astro-typst** — integration for rendering Typst (`.typ`) documents at build time (configured in `astro.config.mjs`)
 - **Decap CMS** — git-based CMS at `/admin/` (`public/admin/config.yml`); saving a post commits to `main` and triggers the Pages workflow
 - **Pandoc + Typst** — builds the article PDFs (`npm run build:pdfs`)
 - Content lives in `src/content/posts/` (Astro content collections)
@@ -17,7 +17,7 @@ independent research on browser security, memory safety, and privacy engineering
 npm install          # install dependencies
 npm run dev          # local dev server
 npm run build        # astro build + feed generation (rss.xml, atom.xml, feed.json)
-npm run build:pdfs   # pandoc → typst → PDF for each paper + demo (pandoc, or quarto which bundles it)
+npm run build:pdfs   # pandoc → typst → PDF for each paper (pandoc, or quarto which bundles it)
 npm run preview      # serve the built dist/ locally
 npm run cms          # local Decap CMS server (optional)
 ```
@@ -26,9 +26,8 @@ npm run cms          # local Decap CMS server (optional)
 
 | Path | Purpose |
 | ---- | ------- |
-| `src/pages/` | `index.astro` (home), `blog.astro` (sandboxing paper, old URL), `assessment-over-authority.astro`, `responding-to-criticism.astro`, `typst.astro`, `404.astro` |
+| `src/pages/` | `index.astro` (home), `blog.astro` (sandboxing paper, old URL), `assessment-over-authority.astro`, `responding-to-criticism.astro`, `404.astro` |
 | `src/content/posts/` | Markdown papers (frontmatter: title, subtitle, author, date, categories) |
-| `src/typst/` | Typst sources: `demo.typ` (rendered on `/typst.html`) and `demo-page.typ` (standalone PDF wrapper) |
 | `scripts/` | `generate-feeds.mjs` (RSS/Atom/JSON feeds), `build-pdfs.sh`, `rehype-citations.mjs` (links `[N]` citations to the references section) |
 | `public/` | Static assets: fonts, favicon, robots.txt, sitemap.xml, `.well-known/ai.txt`, Decap CMS admin |
 
