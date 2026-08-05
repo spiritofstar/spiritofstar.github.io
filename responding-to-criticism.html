@@ -1,955 +1,153 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Browser Security Analysis: New Discoveries and Reaffirmed
-Findings</title>
-                <meta name="author" content="Independent Security
-Research" />
-                <meta name="date" content="July 2026" />
-        <meta name="color-scheme" content="light dark" />
-        <meta name="robots" content="noai, noimageai" />
-        <meta property="og:title" content="Browser Security Analysis:
-New Discoveries and Reaffirmed Findings" />
-        <meta property="og:description" content="A Follow-Up
-Investigation of Mobile Browser Security Architectures" />
-        <meta property="og:type" content="article" />
-        <meta
-            property="og:url"
-            content="https://spiritofstar.github.io/blog.html"
-        />
-        <meta
-            property="og:image"
-            content="https://spiritofstar.github.io/favicon.svg"
-        />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Browser Security Analysis:
-New Discoveries and Reaffirmed Findings" />
-        <meta name="twitter:description" content="A Follow-Up
-Investigation of Mobile Browser Security Architectures" />
-        <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-        <script type="application/ld+json">
-            {
-                "@context": "https://schema.org",
-                "@type": "ScholarlyArticle",
-                "headline": "Browser Security Analysis: New Discoveries
-and Reaffirmed Findings",
-                "author": "Independent Security Research",
-                "datePublished": "July 2026",
-                "description": "A Follow-Up Investigation of Mobile
-Browser Security Architectures"
-                "inLanguage": "en",
-                "isPartOf": {
-                    "@type": "Blog",
-                    "name": "spiritofstar",
-                    "url": "https://spiritofstar.github.io/"
-                },
-                "publisher": {
-                    "@type": "Person",
-                    "name": "spiritofstar",
-                    "url": "https://spiritofstar.github.io/",
-                    "sameAs": [
-                        "https://x.com/SpiritOfStarr",
-                        "https://bsky.app/profile/spiritofstar.bsky.social",
-                        "https://github.com/spiritofstar"
-                    ]
-                }
-            }
-        </script>
-
-        <link
-            rel="alternate"
-            type="application/atom+xml"
-            href="./atom.xml"
-            title="Atom Feed"
-        />
-        <link
-            rel="alternate"
-            type="application/feed+json"
-            href="./feed.json"
-            title="JSON Feed"
-        />
-        <link
-            rel="alternate"
-            type="application/rss+xml"
-            href="./rss.xml"
-            title="RSS Feed"
-        />
-        <style>
-            /* Minimal blog-style CSS for HTML output. Pure CSS, no framework dependencies. */
-
-            /* Self-hosted fonts */
-            @font-face {
-                font-family: "Fraunces";
-                font-style: normal;
-                font-weight: 1 1000;
-                font-display: optional;
-                src: url(fonts/Fraunces-VariableFont_SOFT,WONK,opsz,wght.ttf)
-                    format("truetype");
-            }
-            @font-face {
-                font-family: "Fraunces";
-                font-style: italic;
-                font-weight: 1 1000;
-                font-display: optional;
-                src: url(fonts/Fraunces-Italic-VariableFont_SOFT,WONK,opsz,wght.ttf)
-                    format("truetype");
-            }
-            @font-face {
-                font-family: "Newsreader";
-                font-style: normal;
-                font-weight: 1 1000;
-                font-display: optional;
-                src: url(fonts/Newsreader-VariableFont_opsz,wght.ttf)
-                    format("truetype");
-            }
-            @font-face {
-                font-family: "Newsreader";
-                font-style: italic;
-                font-weight: 1 1000;
-                font-display: optional;
-                src: url(fonts/Newsreader-Italic-VariableFont_opsz,wght.ttf)
-                    format("truetype");
-            }
-            /* ── Color scheme ── */
-            :root {
-                --bg: #fafafa;
-                --surface: #f8f9fa;
-                --text: #1a1a1a;
-                --text-soft: #555;
-                --text-muted: #777;
-                --border: #e0e0e0;
-                --border-light: #ddd;
-                --accent: #2563eb;
-                --accent-soft: #3b82f6;
-                --code-bg: #eee;
-                --pre-bg: #f5f5f5;
-                --pre-border: #e0e0e0;
-                --pre-accent: #2c3e50;
-                --table-header: #2c3e50;
-                --table-stripe: #f5f6f8;
-                --blockquote-bg: #f0f3f5;
-                --blockquote-accent: #2c3e50;
-                --toc-bg: #f8f9fa;
-                --abstract-bg: #f0f3f5;
-                --abstract-accent: #2c3e50;
-            }
-
-            @media (prefers-color-scheme: dark) {
-                :root {
-                    --bg: #1a1d23;
-                    --surface: #22262e;
-                    --text: #e1e3e8;
-                    --text-soft: #a0a4ae;
-                    --text-muted: #888b94;
-                    --border: #2f333c;
-                    --border-light: #383d47;
-                    --accent: #93a0f5;
-                    --accent-soft: #7e8ce8;
-                    --code-bg: #262a33;
-                    --pre-bg: #22262e;
-                    --pre-border: #2f333c;
-                    --pre-accent: #93a0f5;
-                    --table-header: #2f333c;
-                    --table-stripe: #22262e;
-                    --blockquote-bg: #1f232b;
-                    --blockquote-accent: #93a0f5;
-                    --toc-bg: #22262e;
-                    --abstract-bg: #1f232b;
-                    --abstract-accent: #93a0f5;
-                }
-
-                @media print {
-                    body {
-                        background: white;
-                        color: black;
-                    }
-                    section#abstract {
-                        background: #f9f9f9;
-                        border-left: 4px solid #333;
-                        print-color-adjust: exact;
-                        -webkit-print-color-adjust: exact;
-                    }
-                    a {
-                        color: black;
-                    }
-                }
-            }
-
-            /* ── Reset ── */
-            *,
-            *::before,
-            *::after {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-            }
-
-            /* ── Root ── */
-            html {
-                font-size: 18px;
-                -webkit-text-size-adjust: 100%;
-            }
-
-            body {
-                font-family:
-                    "Newsreader", Georgia, "Times New Roman", Times, serif;
-                font-optical-sizing: auto;
-                font-feature-settings:
-                    "kern", "liga", "clig", "calt", "onum", "pnum";
-                font-kerning: normal;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-                text-rendering: optimizeLegibility;
-                hyphens: auto;
-                hyphenate-limit-chars: 6 3 3;
-                hyphenate-limit-lines: 2;
-                hyphenate-limit-zone: 8%;
-                line-height: 1.75;
-                color: var(--text);
-                background: var(--bg);
-                max-width: 720px;
-                margin: 0 auto;
-                padding: 2em 1.5em;
-                orphans: 3;
-                widows: 3;
-            }
-
-            /* ── Body typography ── */
-            p {
-                margin: 0 0 1em 0;
-                text-wrap: pretty;
-            }
-            ul,
-            ol {
-                margin: 0.5em 0 1em 1.5em;
-            }
-            li {
-                margin: 0.3em 0;
-            }
-            strong {
-                font-weight: 600;
-            }
-            em {
-                font-style: italic;
-            }
-
-            /* ── Headings ── */
-            h1,
-            h2,
-            h3,
-            h4 {
-                font-family:
-                    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-                    Arial, sans-serif;
-                color: var(--text);
-                line-height: 1.35;
-                font-weight: 500;
-                font-kerning: normal;
-                text-wrap: balance;
-            }
-
-            h1 {
-                font-size: 1.55em;
-                margin: 1.6em 0 0.4em 0;
-                letter-spacing: -0.018em;
-                font-weight: 600;
-            }
-
-            h2 {
-                font-size: 1.2em;
-                margin: 1.7em 0 0.4em 0;
-                border-bottom: 1px solid var(--border-light);
-                padding-bottom: 0.25em;
-                letter-spacing: 0.02em;
-                font-weight: 550;
-            }
-
-            h3 {
-                font-family:
-                    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-                    Arial, sans-serif;
-                font-size: 0.85em;
-                margin: 1.8em 0 0.5em 0;
-                text-transform: uppercase;
-                letter-spacing: 0.2em;
-                font-weight: 600;
-                color: var(--text-soft);
-            }
-
-            h4 {
-                font-size: 0.92em;
-                margin: 1.2em 0 0.2em 0;
-                letter-spacing: 0.01em;
-                font-weight: 600;
-                text-transform: uppercase;
-            }
-
-            /* ── Links ── */
-            a {
-                color: var(--accent);
-                text-decoration: none;
-            }
-            a:hover {
-                text-decoration: underline;
-            }
-
-            /* ── Code ── */
-            code {
-                background: var(--code-bg);
-                padding: 0.15em 0.35em;
-                border-radius: 3px;
-                font-family:
-                    "SF Mono", "Fira Code", Consolas, "Liberation Mono",
-                    monospace;
-                font-size: 82%;
-            }
-
-            pre {
-                background: var(--pre-bg);
-                border: 1px solid var(--pre-border);
-                border-left: 3px solid var(--pre-accent);
-                padding: 0.8em 1em;
-                overflow-x: auto;
-                margin: 1em 0;
-                font-size: 82%;
-            }
-            pre code {
-                background: none;
-                padding: 0;
-                font-size: inherit;
-            }
-
-            /* ── Tables ── */
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin: 1.2em 0;
-                font-size: 82%;
-                display: block;
-                overflow-x: auto;
-                break-inside: avoid;
-            }
-            th {
-                background: var(--table-header);
-                color: #fff;
-                padding: 0.5em 0.6em;
-                text-align: left;
-                font-weight: 600;
-                font-family:
-                    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-                    Arial, sans-serif;
-                letter-spacing: 0.02em;
-                font-size: 0.9em;
-            }
-            td {
-                padding: 0.4em 0.6em;
-                border-bottom: 1px solid var(--border-light);
-            }
-            tr:nth-child(even) {
-                background: var(--table-stripe);
-            }
-
-            /* ── Blockquote ── */
-            blockquote {
-                border-left: 4px solid var(--blockquote-accent);
-                background: var(--blockquote-bg);
-                padding: 0.5em 1em;
-                margin: 1em 0;
-                color: var(--text-soft);
-                break-inside: avoid;
-            }
-
-            hr {
-                border: none;
-                border-top: 1px solid var(--border);
-                margin: 2.5em 0;
-            }
-
-            /* ── Math display ── */
-            .math.display {
-                display: block;
-                text-align: center;
-                margin: 1.4em auto;
-                overflow-x: auto;
-                overflow-y: hidden;
-            }
-            /* After MathJax renders, center via direct container styling.
-               Note: !important overrides MathJax's own inline styles. */
-            mjx-container[display="true"] {
-                display: block !important;
-                text-align: center !important;
-                margin: 1.2em auto !important;
-                overflow-x: auto;
-                overflow-y: hidden;
-            }
-            .math.inline {
-                font-feature-settings: "kern", "liga";
-            }
-
-            /* ── Header / Title block ── */
-            header {
-                text-align: center;
-                margin: 0 0 1.5em 0;
-            }
-            header h1 {
-                font-size: 1.85em;
-                margin: 0.5em 0 0.2em 0;
-                border: none;
-                letter-spacing: -0.02em;
-            }
-            .subtitle {
-                font-size: 1.05em;
-                color: var(--text-soft);
-                font-style: italic;
-                margin-bottom: 0.3em;
-            }
-            .author,
-            .date {
-                color: var(--text-muted);
-                font-size: 0.85em;
-                margin: 0.15em 0;
-            }
-
-            /* ── Table of contents ── */
-            #TOC {
-                background: var(--toc-bg);
-                border: 1px solid var(--border);
-                border-radius: 4px;
-                padding: 0.8em 1.2em;
-                margin: 1em 0 1.5em 0;
-                font-size: 0.85em;
-            }
-            #TOC ul {
-                list-style: none;
-                margin: 0.3em 0;
-                padding-left: 1.2em;
-            }
-            #TOC > ul {
-                padding-left: 0;
-            }
-            #TOC li {
-                margin: 0.15em 0;
-            }
-            #TOC a {
-                color: var(--accent);
-            }
-
-            /* ── Abstract ── */
-            section#abstract {
-                background: var(--abstract-bg);
-                border-left: 4px solid var(--abstract-accent);
-                padding: 1em 1.2em;
-                margin: 1.5em 0;
-                font-size: 0.93em;
-                border-radius: 2px;
-            }
-
-            /* ── Footnotes ── */
-            .footnote-ref {
-                font-size: 0.8em;
-                vertical-align: super;
-                line-height: 0;
-            }
-            .footnotes {
-                font-size: 0.85em;
-                color: var(--text-soft);
-                border-top: 1px solid var(--border);
-                margin-top: 2em;
-                padding-top: 1em;
-            }
-
-            /* ── Site navigation ── */
-            .site-nav {
-                text-align: center;
-                margin: 0 0 1.5em 0;
-                display: flex;
-                justify-content: center;
-                gap: 1.2em;
-            }
-            .site-nav--footer {
-                margin-top: 3em;
-                padding-top: 1.5em;
-                border-top: 1px solid var(--border);
-            }
-            .site-nav a {
-                font-family: "Fraunces", Georgia, "Times New Roman", serif;
-                font-size: 0.82em;
-                font-weight: 500;
-                letter-spacing: 0.04em;
-                text-transform: uppercase;
-            }
-            .site-nav a:hover {
-                color: var(--accent);
-            }
-
-            /* ── Pre, images, math — avoid breaks ── */
-            pre,
-            img,
-            .math.display {
-                break-inside: avoid;
-            }
-
-            /* ── Drop cap for abstract first paragraph ── */
-            section#abstract > p:first-of-type::first-letter {
-                float: left;
-                font-family:
-                    "Fraunces", Georgia, "Times New Roman", Times, serif;
-                font-size: 3.2em;
-                font-weight: 600;
-                line-height: 0.85;
-                margin: 0.08em 0.12em 0 0;
-                color: var(--text);
-                text-transform: uppercase;
-            }
-
-            @media print {
-                body {
-                    background: white;
-                    color: black;
-                    max-width: none;
-                }
-                .site-nav,
-                #TOC,
-                .site-nav--footer {
-                    display: none;
-                }
-                pre,
-                blockquote,
-                table,
-                img,
-                .math.display {
-                    break-inside: avoid;
-                }
-                a {
-                    color: black;
-                    text-decoration: underline;
-                }
-                a[href^="http"]::after {
-                    content: " (" attr(href) ")";
-                    font-size: 0.8em;
-                    color: #555;
-                }
-                section#abstract {
-                    background: #f9f9f9;
-                    border-left: 4px solid #333;
-                    print-color-adjust: exact;
-                    -webkit-print-color-adjust: exact;
-                }
-                @page {
-                    margin: 2cm;
-                }
-            }
-
-            /* ── Small screens ── */
-            @media (max-width: 600px) {
-                html {
-                    font-size: 16px;
-                }
-                body {
-                    padding: 1em 0.8em;
-                }
-                h1 {
-                    font-size: 1.35em;
-                }
-                h2 {
-                    font-size: 1.1em;
-                }
-                header h1 {
-                    font-size: 1.55em;
-                }
-                table {
-                    font-size: 75%;
-                }
-            }
-        </style>
-        
-    </head>
-    <body>
-        <nav class="site-nav">
-            <a href="./">Home</a>
-            <a href="./blog.html">Papers</a>
-        </nav>
-        <header>
-            <h1>Browser Security Analysis: New Discoveries and
-Reaffirmed Findings</h1>
-                        <p class="subtitle">A Follow-Up Investigation of
-Mobile Browser Security Architectures</p>
-                         <p class="author">Independent Security
-Research</p>
-                        <p class="date">July 2026</p>
-        </header>
-                <nav id="TOC" role="doc-toc"><ul>
-<li><a href="#abstract" id="toc-abstract">Abstract</a></li>
-<li><a href="#introduction" id="toc-introduction">1.
-Introduction</a></li>
-<li><a href="#what-i-still-stand-by" id="toc-what-i-still-stand-by">2.
-What I Still Stand By</a></li>
-<li><a href="#what-i-got-wrong" id="toc-what-i-got-wrong">3. What I Got
-Wrong</a></li>
-<li><a href="#where-we-still-disagree"
-id="toc-where-we-still-disagree">4. Where We Still Disagree</a></li>
-<li><a href="#the-personal-stuff" id="toc-the-personal-stuff">5. The
-Personal Stuff</a></li>
-<li><a href="#bottom-line" id="toc-bottom-line">6. Bottom Line</a></li>
-<li><a href="#references" id="toc-references">References</a></li>
-</ul></nav>
-         <section id="abstract" class="level2">
-<h2>Abstract</h2>
-<p>GrapheneOS responded to my first paper. Some of it was fair. I
-oversold isolatedProcess. Called it “the strongest sandbox” when it’s
-just the standard Android option. Didn’t mention V8 sandbox. Or Oilpan.
-Or CFI. Made the comparison look one-sided.</p>
-<p>The core point still works. Chrome is built for containment.
-Sandboxes, site isolation, MTE, CFI. Firefox is built for prevention.
-Rust rewrites, RLBox, smaller API surface. Different approaches to the
-same problem.</p>
-<p>I also missed things I should have caught. V8 has a memory sandbox
-that locks JIT code into a reserved region. SpiderMonkey has no CFI.</p>
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Browser Security Analysis: New Discoveries and Reaffirmed Findings — spiritofstar</title><meta name="description" content="GrapheneOS responded to my first paper. Some of it was fair. I oversold isolatedProcess. Called it &#34;the strongest sandbox&#34; when it's just the standard Android option. Didn't mention V8 sandbox. Or Oilpan. Or CFI. Made the comparison look one-sided."><meta name="color-scheme" content="light dark"><meta name="robots" content="noai, noimageai"><meta property="og:title" content="Browser Security Analysis: New Discoveries and Reaffirmed Findings — spiritofstar"><meta property="og:description" content="GrapheneOS responded to my first paper. Some of it was fair. I oversold isolatedProcess. Called it &#34;the strongest sandbox&#34; when it's just the standard Android option. Didn't mention V8 sandbox. Or Oilpan. Or CFI. Made the comparison look one-sided."><meta property="og:type" content="website"><meta property="og:url" content="https://spiritofstar.github.io/responding-to-criticism.html"><meta property="og:image" content="https://spiritofstar.github.io/favicon.svg"><meta name="twitter:card" content="summary"><link rel="canonical" href="https://spiritofstar.github.io/responding-to-criticism.html"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS Feed"><link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom Feed"><link rel="alternate" type="application/feed+json" href="/feed.json" title="JSON Feed"><!--
+      Content Security Policy (enforced via meta tag because GitHub Pages
+      does not send server headers). Everything is first-party; the only
+      exceptions are the JSON-LD script below (allowed by its SHA-256 hash)
+      and the Substack newsletter iframe.
+    --><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-HUiY42Fe8a2bmXC5mK8oyOs/uT3mav65WpGQJZq+ZkE='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-src https://spiritofstar.substack.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"><script type="application/ld+json">{jsonLd}</script><link rel="stylesheet" href="/_astro/assessment-over-authority.B9usOoqG.css"></head> <body> <nav class="site-nav" aria-label="Site"> <a href="/">Home</a> <a href="/blog.html">Papers</a> <a href="/typst.html">Typst</a> </nav>  <article class="article"> <header class="article-header"> <h1>Browser Security Analysis: New Discoveries and Reaffirmed Findings</h1> <p class="subtitle">A Follow-Up Investigation of Mobile Browser Security Architectures</p> <p class="meta"> <span class="author">Independent Security Research</span> <span class="date">July 2026</span> <a class="pdf-link" href="/responding-to-criticism.pdf">
+Download PDF
+</a> </p> <p class="tags"> <span class="tag">browser security</span><span class="tag">methodology</span><span class="tag">security discourse</span><span class="tag">Firefox</span><span class="tag">Chromium</span><span class="tag">comparative analysis</span> </p> </header>  <h2 id="abstract">Abstract</h2>
+<p>GrapheneOS responded to my first paper. Some of it was fair. I oversold isolatedProcess. Called it “the strongest sandbox” when it’s just the standard Android option. Didn’t mention V8 sandbox. Or Oilpan. Or CFI. Made the comparison look one-sided.</p>
+<p>The core point still works. Chrome is built for containment. Sandboxes, site isolation, MTE, CFI. Firefox is built for prevention. Rust rewrites, RLBox, smaller API surface. Different approaches to the same problem.</p>
+<p>I also missed things I should have caught. V8 has a memory sandbox that locks JIT code into a reserved region. SpiderMonkey has no CFI.</p>
 <p>Fixed now.</p>
-<hr />
-</section>
-<section id="introduction" class="level2">
-<h2>1. Introduction</h2>
-<p>I wrote the first paper because GrapheneOS commented on desktop
-Firefox. Said Firefox’s sandbox is substantially weaker. On Windows
-Firefox is at sandbox parity with Chrome. That’s verifiable. The Android
-gap is real but it’s not the whole picture.</p>
-<p>GrapheneOS responded on Reddit and Discord. Some criticism was fair.
-I made mistakes. Oversold isolatedProcess. Left out several Chromium
-mitigations. The comparison was incomplete.</p>
-<p>Some of it was less fair. Calling the paper dishonest and unethical
-for getting technical details wrong. Those are different things.</p>
-<p>I’m keeping them separate. Technical corrections in the next
-sections. The personal stuff later.</p>
-<hr />
-</section>
-<section id="what-i-still-stand-by" class="level2">
-<h2>2. What I Still Stand By</h2>
+<hr>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>I wrote the first paper because GrapheneOS commented on desktop Firefox. Said Firefox’s sandbox is substantially weaker. On Windows Firefox is at sandbox parity with Chrome. That’s verifiable. The Android gap is real but it’s not the whole picture.</p>
+<p>GrapheneOS responded on Reddit and Discord. Some criticism was fair. I made mistakes. Oversold isolatedProcess. Left out several Chromium mitigations. The comparison was incomplete.</p>
+<p>Some of it was less fair. Calling the paper dishonest and unethical for getting technical details wrong. Those are different things.</p>
+<p>I’m keeping them separate. Technical corrections in the next sections. The personal stuff later.</p>
+<hr>
+<h2 id="2-what-i-still-stand-by">2. What I Still Stand By</h2>
 <p>Most of the original paper held up. Here’s what survived review.</p>
-<section id="firefoxs-rust-bet-is-paying-off" class="level3">
-<h3>2.1 Firefox’s Rust Bet Is Paying Off</h3>
-<p>Firefox has rewritten major subsystems in Rust. CSS engine (Stylo).
-Renderer (WebRender). Library sandboxing (RLBox). Parts of the
-networking stack. Rust eliminates whole bug classes at compile time.
-Use-after-free. Buffer overflows. Null pointer dereferences. Chromium
-has mitigations for these and they’re good mitigations. But mitigations
-manage symptoms. Rust eliminates the root cause.</p>
-<p>Roughly 70% of Chromium’s critical-severity bugs are memory safety
-issues [14]. Firefox’s Rust components have produced zero such CVEs
-since they shipped [15]. That tracks with what the language
-guarantees.</p>
-<p>The data backs up both approaches. Firefox aims to prevent bugs
-altogether. The Rust rewrite of CSS, rendering, and library sandboxing
-has produced zero memory safety CVEs so far. Chromium takes a different
-path. CFI, PartitionAlloc, V8 sandbox make bugs harder to weaponize even
-when they exist.</p>
-</section>
-<section id="content-blocking-privacy-theater" class="level3">
-<h3>2.2 Content Blocking != Privacy Theater</h3>
-<p>GrapheneOS called extension-based content blocking “privacy theater.”
-Equated it with antivirus scanning. That analogy doesn’t hold.</p>
-<p>Blocking a request at the network layer before the payload reaches
-your device is structurally different from scanning a file after it’s on
-disk. uBlock Origin stops exploits from being delivered before they
-reach the renderer.</p>
-<p>Filter lists can’t block novel zero-days. That’s a real limitation.
-Zero-day delivery in practice relies on known malicious infrastructure.
-Compromised ad networks. C2 domains. Exploit kit landing pages. Filter
-lists block those. The “enumeration is futile” argument assumes
-attackers spin up fresh infrastructure for every target at zero cost.
-Not how mass-market exploitation works.</p>
-</section>
-<section id="monoculture-risk-is-real" class="level3">
-<h3>2.3 Monoculture Risk Is Real</h3>
-<p>Chromium’s mobile market share is overwhelming. When the Chromium
-engine has a critical vuln, billions of devices are affected at once.
-That concentration of value creates attacker incentives that don’t exist
-for Firefox’s minority codebase.</p>
-<p>A Chromium zero-day is worth more to an exploit broker than a Firefox
-zero-day. Purely because of market share. Firefox being ignored by
-attackers is itself a security property. Not a flattering one but it’s
-real.</p>
-<p>The dual-engine criticism keeps coming up. “Firefox adds a second
-engine to your device.” Android mandates a system WebView. On GrapheneOS
-that WebView is Vanadium regardless of your browser choice. Running
-Firefox on top of that adds marginal attack surface. It also reduces
-monoculture risk. Different users weigh that differently.</p>
-</section>
-<section id="pick-your-threat-model" class="level3">
-<h3>2.4 Pick Your Threat Model</h3>
-<p>The original paper’s core claim held up. Browser choice is a
-threat-model alignment. Not a binary “secure vs insecure” judgment.</p>
-<p>Targeted state sponsored attacks. Chrome/Chromium makes sense there.
-Post-compromise containment is the priority and isolatedProcess delivers
-that. Mass surveillance and drive-by exploits targeting the Chromium
-monoculture. Firefox makes more sense there. A renderer that’s harder to
-compromise reduces the probability that any exploit succeeds. Tracking
-and fingerprinting as primary concern. Firefox’s Total Cookie
-Protection, ETP, and container isolation are ahead of anything in the
-Chromium ecosystem.</p>
+<h3 id="21-firefoxs-rust-bet-is-paying-off">2.1 Firefox’s Rust Bet Is Paying Off</h3>
+<p>Firefox has rewritten major subsystems in Rust. CSS engine (Stylo). Renderer (WebRender). Library sandboxing (RLBox). Parts of the networking stack. Rust eliminates whole bug classes at compile time. Use-after-free. Buffer overflows. Null pointer dereferences. Chromium has mitigations for these and they’re good mitigations. But mitigations manage symptoms. Rust eliminates the root cause.</p>
+<p>Roughly 70% of Chromium’s critical-severity bugs are memory safety issues [14]. Firefox’s Rust components have produced zero such CVEs since they shipped [15]. That tracks with what the language guarantees.</p>
+<p>The data backs up both approaches. Firefox aims to prevent bugs altogether. The Rust rewrite of CSS, rendering, and library sandboxing has produced zero memory safety CVEs so far. Chromium takes a different path. CFI, PartitionAlloc, V8 sandbox make bugs harder to weaponize even when they exist.</p>
+<h3 id="22-content-blocking--privacy-theater">2.2 Content Blocking != Privacy Theater</h3>
+<p>GrapheneOS called extension-based content blocking “privacy theater.” Equated it with antivirus scanning. That analogy doesn’t hold.</p>
+<p>Blocking a request at the network layer before the payload reaches your device is structurally different from scanning a file after it’s on disk. uBlock Origin stops exploits from being delivered before they reach the renderer.</p>
+<p>Filter lists can’t block novel zero-days. That’s a real limitation. Zero-day delivery in practice relies on known malicious infrastructure. Compromised ad networks. C2 domains. Exploit kit landing pages. Filter lists block those. The “enumeration is futile” argument assumes attackers spin up fresh infrastructure for every target at zero cost. Not how mass-market exploitation works.</p>
+<h3 id="23-monoculture-risk-is-real">2.3 Monoculture Risk Is Real</h3>
+<p>Chromium’s mobile market share is overwhelming. When the Chromium engine has a critical vuln, billions of devices are affected at once. That concentration of value creates attacker incentives that don’t exist for Firefox’s minority codebase.</p>
+<p>A Chromium zero-day is worth more to an exploit broker than a Firefox zero-day. Purely because of market share. Firefox being ignored by attackers is itself a security property. Not a flattering one but it’s real.</p>
+<p>The dual-engine criticism keeps coming up. “Firefox adds a second engine to your device.” Android mandates a system WebView. On GrapheneOS that WebView is Vanadium regardless of your browser choice. Running Firefox on top of that adds marginal attack surface. It also reduces monoculture risk. Different users weigh that differently.</p>
+<h3 id="24-pick-your-threat-model">2.4 Pick Your Threat Model</h3>
+<p>The original paper’s core claim held up. Browser choice is a threat-model alignment. Not a binary “secure vs insecure” judgment.</p>
+<p>Targeted state sponsored attacks. Chrome/Chromium makes sense there. Post-compromise containment is the priority and isolatedProcess delivers that. Mass surveillance and drive-by exploits targeting the Chromium monoculture. Firefox makes more sense there. A renderer that’s harder to compromise reduces the probability that any exploit succeeds. Tracking and fingerprinting as primary concern. Firefox’s Total Cookie Protection, ETP, and container isolation are ahead of anything in the Chromium ecosystem.</p>
 <p>Depends on what you’re up against.</p>
-</section>
-<section id="android-vs.-desktop-matters" class="level3">
-<h3>2.5 Android vs. Desktop Matters</h3>
-<p>I keep coming back to this because it’s where the debate gets
-muddled. The sandbox gap is almost entirely Android-specific.</p>
-<p>On Windows, Firefox’s sandbox is at parity with Chrome’s. Both use
-AppContainer for kernel-level process isolation [13]. Both restrict
-Win32k syscalls from renderer processes [9]. Both use broker process
-models for privileged operations.</p>
-<p>The isolatedProcess thing is an Android limitation. Android apps
-can’t create namespaces or use seccomp-bpf. The Android Runtime needs
-too many syscalls. isolatedProcess is the only sandboxing option on
-Android and Firefox doesn’t use it.</p>
-<p>Firefox’s critics treat this as a universal Firefox deficiency. I see
-it as a platform-specific gap. If Firefox were categorically less secure
-you’d expect the gap to exist everywhere. On Windows it doesn’t. On
-Android it does. Weighed against Firefox’s advantages that apply on all
-platforms.</p>
-<p>Picking Chrome on Android because you prioritize mobile security is
-rational. Claiming “Firefox has no sandbox” or “Firefox is much more
-vulnerable” without qualifying the platform is overreach.</p>
-<hr />
-</section>
-</section>
-<section id="what-i-got-wrong" class="level2">
-<h2>3. What I Got Wrong</h2>
+<h3 id="25-android-vs-desktop-matters">2.5 Android vs. Desktop Matters</h3>
+<p>I keep coming back to this because it’s where the debate gets muddled. The sandbox gap is almost entirely Android-specific.</p>
+<p>On Windows, Firefox’s sandbox is at parity with Chrome’s. Both use AppContainer for kernel-level process isolation [13]. Both restrict Win32k syscalls from renderer processes [9]. Both use broker process models for privileged operations.</p>
+<p>The isolatedProcess thing is an Android limitation. Android apps can’t create namespaces or use seccomp-bpf. The Android Runtime needs too many syscalls. isolatedProcess is the only sandboxing option on Android and Firefox doesn’t use it.</p>
+<p>Firefox’s critics treat this as a universal Firefox deficiency. I see it as a platform-specific gap. If Firefox were categorically less secure you’d expect the gap to exist everywhere. On Windows it doesn’t. On Android it does. Weighed against Firefox’s advantages that apply on all platforms.</p>
+<p>Picking Chrome on Android because you prioritize mobile security is rational. Claiming “Firefox has no sandbox” or “Firefox is much more vulnerable” without qualifying the platform is overreach.</p>
+<hr>
+<h2 id="3-what-i-got-wrong">3. What I Got Wrong</h2>
 <p>Post-publication review caught several things. Here they are.</p>
-<section id="i-left-out-half-of-chromiums-mitigations" class="level3">
-<h3>3.1 I Left Out Half of Chromium’s Mitigations</h3>
-<p>My first paper spent a lot of time on Firefox’s Rust adoption and
-barely mentioned Chromium’s mitigations. Made the comparison look
-one-sided. Here’s what I missed:</p>
-<table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Mitigation</th>
-<th>What It Does</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>V8 Sandbox</strong></td>
-<td>Locks JIT code to a reserved memory region so a JS exploit can’t
-touch anything outside it</td>
-</tr>
-<tr class="even">
-<td><strong>Oilpan GC</strong></td>
-<td>Garbage collector for DOM objects that eliminates use-after-free in
-rendering code</td>
-</tr>
-<tr class="odd">
-<td><strong>Mojo IPC</strong></td>
-<td>Type-checked message passing between processes so sandbox-escape
-exploits have fewer holes</td>
-</tr>
-<tr class="even">
-<td><strong>PartitionAlloc</strong></td>
-<td>Hardened heap allocator with partition isolation, freelist entropy,
-MiraclePtr</td>
-</tr>
-<tr class="odd">
-<td><strong>Type-based CFI</strong></td>
-<td>Validates indirect function calls at runtime to block control-flow
-hijacking</td>
-</tr>
-<tr class="even">
-<td><strong>MTE</strong></td>
-<td>Memory tagging at the hardware level (integrated into
-PartitionAlloc)</td>
-</tr>
-</tbody>
-</table>
-<p>Chromium doesn’t prevent memory bugs at the source the way Rust does.
-It makes them significantly harder to exploit. I should have included
-that. Ignoring it made my comparison incomplete.</p>
-</section>
-<section id="the-isolatedprocess-thing" class="level3">
-<h3>3.2 The isolatedProcess Thing</h3>
-<p>I categorized GrapheneOS’s “Firefox has no internal sandboxing” claim
-as “partially outdated.” That was wrong. If you define sandboxing as
-kernel-level UID isolation, the claim is fully accurate. GeckoView
-doesn’t use isolatedProcess.</p>
-<p>GrapheneOS defines sandboxing as isolatedProcess at the kernel level.
-I was using a broader definition that includes process-level privilege
-separation. Both definitions are consistent. I should have been clearer
-from the beginning.</p>
-</section>
-<section id="fission-isnt-really-shipping-on-android" class="level3">
-<h3>3.3 Fission Isn’t Really Shipping on Android</h3>
-<p>My first paper mentioned Fission shipping on Android then rolling
-back. But the abstract and conclusion referenced Fission like it was a
-current mitigation. It’s not. Fission is disabled on release and beta
-channels as of Firefox 152. Nightly and developer builds have it at a
-reduced level (ISOLATE_HIGH_VALUE rather than full origin isolation).
-Should have been more careful about this.</p>
-</section>
-<section id="other-things-i-missed" class="level3">
-<h3>3.4 Other Things I Missed</h3>
-<p>SpiderMonkey has no CFI. V8 has Clang’s Cross-DSO Control Flow
-Integrity for indirect call validation [16]. SpiderMonkey doesn’t. JS
-engines are the densest source of critical vulns in both browsers and
-this is a real gap. Combined with V8’s memory sandbox, Chromium’s JS
-engine mitigation layer is genuinely stronger. Rust doesn’t help here
-because JIT-generated code isn’t subject to Rust’s safety
-guarantees.</p>
-<p>I claimed hardware mitigations like MTE, PAC, and BTI are “enforced
-at the OS and hardware level, not by the browser vendor.” That was
-wrong. These features need allocator modifications, compiler support,
-and codebase validation. Chromium has done the work. MTE in
-PartitionAlloc, PAC/BTI validation. Firefox hasn’t.</p>
-<p>The CVE count framing in my first paper was sloppy. Chromium invests
-way more in fuzzing, AI-guided auditing, and security research. Finding
-more bugs is a sign of more testing, not less security [18]. Residual
-risk after mitigation is what matters and that’s not directly measurable
-from public data.</p>
-<p>Extensions break site isolation in both browsers. I implied Firefox’s
-extension model was more contained. It’s not. Extensions in both
-browsers run with cross-origin access that bypasses site isolation [19].
-The trade-off is between extensions and built-in content filtering
-(Brave’s approach). Neither is clearly better.</p>
-<hr />
-</section>
-</section>
-<section id="where-we-still-disagree" class="level2">
-<h2>4. Where We Still Disagree</h2>
-<p>Even after corrections, some disagreements come down to how you weigh
-the evidence rather than the evidence itself.</p>
-<section id="much-more-vulnerable-vs-differently-vulnerable"
-class="level3">
-<h3>4.1 “Much More Vulnerable” vs “Differently Vulnerable”</h3>
-<p>GrapheneOS says Firefox is “much more vulnerable to exploitation.” I
-don’t think the evidence supports that even after accounting for
-everything I got wrong.</p>
-<p>Chrome has stronger post-compromise containment. Firefox has stronger
-pre-compromise prevention. These are different priorities. Calling one
-“much more vulnerable” treats containment as the only metric that
-matters. That’s a value judgment. My position is both are rational
-depending on what you’re protecting against. Nothing I’ve seen changes
-that.</p>
-</section>
-<section id="advisory-latency" class="level3">
-<h3>4.2 Advisory Latency</h3>
-<p>GrapheneOS’s advisory on Firefox hasn’t changed significantly since
-it was written. Firefox’s architecture has evolved. The Fission rollback
-is an example of this working both ways. Needed to correct my own
-framing. The advisory also doesn’t acknowledge that Firefox on Windows
-has reached sandbox parity. Documentation latency is a known problem in
-security engineering [6]. Not unique to any project.</p>
-<hr />
-</section>
-</section>
-<section id="the-personal-stuff" class="level2">
-<h2>5. The Personal Stuff</h2>
-<p>GrapheneOS called my paper “dishonest” and “unethical” in their
-Discord. On Reddit they said it wasn’t “based on real research or
-factual information” and that I was driven by “biases.”</p>
-<p>I’m separating this from the technical corrections because it’s a
-different category. Factual errors and dishonesty are different things.
-An error means peer review worked. Calling someone dishonest for making
-errors raises the cost of doing independent research.</p>
-<p>I don’t have institutional backing. Not affiliated with Mozilla,
-Google, or any vendor. The goal is the same with both papers. Improve
-the quality of publicly available evidence about mobile browser
-security. Made mistakes. Fixed them. Documented everything
-transparently.</p>
-<p>GrapheneOS’s technical contributions to Android security are real.
-Disagreeing with specific claims in their advisory doesn’t change that.
-I can acknowledge my own errors and still think the core argument
-holds.</p>
-<hr />
-</section>
-<section id="bottom-line" class="level2">
-<h2>6. Bottom Line</h2>
-<p>What I got wrong and fixed: - isolatedProcess framing was imprecise -
-Left out Chromium’s V8 sandbox, Oilpan, CFI, MTE - Didn’t catch
-SpiderMonkey’s missing CFI - Wrongly claimed hardware mitigations are
-automatic - Poor CVE count framing - Implied Firefox extensions have
-better site isolation properties</p>
-<p>What still holds: - Firefox’s Rust advantage is real and widening -
-Content blocking at the network layer is genuine pre-delivery prevention
-- Chromium monoculture is a systemic risk - Browser choice is a
-threat-model alignment - The sandbox gap is Android-specific. On
-Windows, Firefox is at parity</p>
-<p>The mistakes made the original paper weaker than it should have been.
-Fixing them makes the argument stronger because now it accounts for the
-best counterarguments.</p>
-<hr />
-</section>
-<section id="references" class="level2">
-<h2>References</h2>
-<p>[1] Independent Security Research, “Comparative Analysis of
-Sandboxing and Mitigation Philosophies in Mobile User-Agent
-Architectures,” Jul. 2026. [Online]. Available: <a
-href="https://spiritofstar.github.io/blog.html">https://spiritofstar.github.io/blog.html</a></p>
-<p>[2] Security researchers, personal communication, Jul. 2026.
-Technical criticisms of [1] raised via public discussion.</p>
-<p>[3] GrapheneOS, “Usage: Web Browsing.” [Online]. Available: <a
-href="https://grapheneos.org/usage#web-browsing">https://grapheneos.org/usage#web-browsing</a>.
-Accessed: Jul. 2026.</p>
-<p>[4] M. Geer et al., “CyberInsecurity: The Cost of Monopoly,” 2003.
-[Online]. Available: <a
-href="https://cryptome.org/cyberinsecurity.htm">https://cryptome.org/cyberinsecurity.htm</a></p>
-<p>[5] B. Schneier, “Schneier on Security,” various entries on security
-theater, security trade-offs, and adversarial thinking. [Online].
-Available: <a
-href="https://www.schneier.com/">https://www.schneier.com/</a></p>
-<p>[6] Google Project Zero, “The State of 0-Day Mitigations,” 2021.
-[Online]. Available: <a
-href="https://googleprojectzero.blogspot.com/2021/02/debunking-myths-about-0-days.html">https://googleprojectzero.blogspot.com/2021/02/debunking-myths-about-0-days.html</a></p>
-<p>[7] Chromium Security, “V8 Sandbox,” Chromium Docs. [Online].
-Available: <a
-href="https://chromium.googlesource.com/chromium/src/+/main/v8/src/sandbox/README.md">https://chromium.googlesource.com/chromium/src/+/main/v8/src/sandbox/README.md</a></p>
-<p>[8] Chromium Security, “Oilpan GC Design.” [Online]. Available: <a
-href="https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/platform/heap/BlinkGCDesign.md">https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/platform/heap/BlinkGCDesign.md</a></p>
-<p>[9] Mozilla, “Firefox Security Sandbox,” Mozilla Wiki. [Online].
-Available: <a
-href="https://wiki.mozilla.org/Security/Sandbox">https://wiki.mozilla.org/Security/Sandbox</a>.
-Accessed: Jul. 2026.</p>
-<p>[10] Mozilla, “Integrating Project Fission (Site Isolation) in
-Firefox,” Mozilla Wiki. [Online]. Available: <a
-href="https://wiki.mozilla.org/Project_Fission">https://wiki.mozilla.org/Project_Fission</a>.
-Accessed: Jul. 2026.</p>
-<p>[11] M. Miller, “Site Isolation: A New Defense-in-Depth Security
-Architecture for the Web,” Chromium Blog, 2018. [Online]. Available: <a
-href="https://blog.chromium.org/2018/07/site-isolation-new-defense-in-depth.html">https://blog.chromium.org/2018/07/site-isolation-new-defense-in-depth.html</a></p>
-<p>[12] Apple, “WebKit Sandboxing.” [Online]. Available: <a
-href="https://webkit.org/blog/14040/webkit-sandboxing/">https://webkit.org/blog/14040/webkit-sandboxing/</a></p>
-<p>[13] V. Nijim, “Building a More Secure Firefox with AppContainer,”
-Mozilla Security Blog, 2019. [Online]. Available: <a
-href="https://blog.mozilla.org/security/2019/05/22/building-a-more-secure-firefox-with-appcontainer/">https://blog.mozilla.org/security/2019/05/22/building-a-more-secure-firefox-with-appcontainer/</a></p>
-<p>[14] Chromium Project, “Memory Safety.” [Online]. Available: <a
-href="https://www.chromium.org/Home/chromium-security/memory-safety/">https://www.chromium.org/Home/chromium-security/memory-safety/</a>.
-Accessed: Jul. 2026.</p>
-<p>[15] Mozilla Security Blog, “Security Advisories.” [Online].
-Available: <a
-href="https://www.mozilla.org/en-US/security/advisories/">https://www.mozilla.org/en-US/security/advisories/</a>.
-Accessed: Jul. 2026.</p>
-<p>[16] Chromium Project, “Control Flow Integrity,” Chromium Docs.
-[Online]. Available: <a
-href="https://chromium.googlesource.com/chromium/src/+/main/docs/security/control-flow-integrity.md">https://chromium.googlesource.com/chromium/src/+/main/docs/security/control-flow-integrity.md</a>.
-Accessed: Jul. 2026.</p>
-<p>[17] Chromium, “PartitionAlloc Design,” Chromium Docs. [Online].
-Available: <a
-href="https://chromium.googlesource.com/chromium/src/+/main/base/allocator/partition_allocator/PA_README.md">https://chromium.googlesource.com/chromium/src/+/main/base/allocator/partition_allocator/PA_README.md</a>.
-Accessed: Jul. 2026.</p>
-<p>[18] Google, “OSS-Fuzz: Continuous Fuzzing for Open Source Software.”
-[Online]. Available: <a
-href="https://google.github.io/oss-fuzz/">https://google.github.io/oss-fuzz/</a>.
-Accessed: Jul. 2026.</p>
-<p>[19] Chrome Developers, “Extension Runtime and Process Model.”
-[Online]. Available: <a
-href="https://developer.chrome.com/docs/extensions/mv3/process_model/">https://developer.chrome.com/docs/extensions/mv3/process_model/</a>.
-Accessed: Jul. 2026.</p>
-</section>
-        <nav class="site-nav site-nav--footer">
-            <a href="./">Back to Home</a>
-        </nav>
-    </body>
-</html>
+<h3 id="31-i-left-out-half-of-chromiums-mitigations">3.1 I Left Out Half of Chromium’s Mitigations</h3>
+<p>My first paper spent a lot of time on Firefox’s Rust adoption and barely mentioned Chromium’s mitigations. Made the comparison look one-sided. Here’s what I missed:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Mitigation</th><th>What It Does</th></tr></thead><tbody><tr><td><strong>V8 Sandbox</strong></td><td>Locks JIT code to a reserved memory region so a JS exploit can’t touch anything outside it</td></tr><tr><td><strong>Oilpan GC</strong></td><td>Garbage collector for DOM objects that eliminates use-after-free in rendering code</td></tr><tr><td><strong>Mojo IPC</strong></td><td>Type-checked message passing between processes so sandbox-escape exploits have fewer holes</td></tr><tr><td><strong>PartitionAlloc</strong></td><td>Hardened heap allocator with partition isolation, freelist entropy, MiraclePtr</td></tr><tr><td><strong>Type-based CFI</strong></td><td>Validates indirect function calls at runtime to block control-flow hijacking</td></tr><tr><td><strong>MTE</strong></td><td>Memory tagging at the hardware level (integrated into PartitionAlloc)</td></tr></tbody></table>
+<p>Chromium doesn’t prevent memory bugs at the source the way Rust does. It makes them significantly harder to exploit. I should have included that. Ignoring it made my comparison incomplete.</p>
+<h3 id="32-the-isolatedprocess-thing">3.2 The isolatedProcess Thing</h3>
+<p>I categorized GrapheneOS’s “Firefox has no internal sandboxing” claim as “partially outdated.” That was wrong. If you define sandboxing as kernel-level UID isolation, the claim is fully accurate. GeckoView doesn’t use isolatedProcess.</p>
+<p>GrapheneOS defines sandboxing as isolatedProcess at the kernel level. I was using a broader definition that includes process-level privilege separation. Both definitions are consistent. I should have been clearer from the beginning.</p>
+<h3 id="33-fission-isnt-really-shipping-on-android">3.3 Fission Isn’t Really Shipping on Android</h3>
+<p>My first paper mentioned Fission shipping on Android then rolling back. But the abstract and conclusion referenced Fission like it was a current mitigation. It’s not. Fission is disabled on release and beta channels as of Firefox 152. Nightly and developer builds have it at a reduced level (ISOLATE_HIGH_VALUE rather than full origin isolation). Should have been more careful about this.</p>
+<h3 id="34-other-things-i-missed">3.4 Other Things I Missed</h3>
+<p>SpiderMonkey has no CFI. V8 has Clang’s Cross-DSO Control Flow Integrity for indirect call validation [16]. SpiderMonkey doesn’t. JS engines are the densest source of critical vulns in both browsers and this is a real gap. Combined with V8’s memory sandbox, Chromium’s JS engine mitigation layer is genuinely stronger. Rust doesn’t help here because JIT-generated code isn’t subject to Rust’s safety guarantees.</p>
+<p>I claimed hardware mitigations like MTE, PAC, and BTI are “enforced at the OS and hardware level, not by the browser vendor.” That was wrong. These features need allocator modifications, compiler support, and codebase validation. Chromium has done the work. MTE in PartitionAlloc, PAC/BTI validation. Firefox hasn’t.</p>
+<p>The CVE count framing in my first paper was sloppy. Chromium invests way more in fuzzing, AI-guided auditing, and security research. Finding more bugs is a sign of more testing, not less security [18]. Residual risk after mitigation is what matters and that’s not directly measurable from public data.</p>
+<p>Extensions break site isolation in both browsers. I implied Firefox’s extension model was more contained. It’s not. Extensions in both browsers run with cross-origin access that bypasses site isolation [19]. The trade-off is between extensions and built-in content filtering (Brave’s approach). Neither is clearly better.</p>
+<hr>
+<h2 id="4-where-we-still-disagree">4. Where We Still Disagree</h2>
+<p>Even after corrections, some disagreements come down to how you weigh the evidence rather than the evidence itself.</p>
+<h3 id="41-much-more-vulnerable-vs-differently-vulnerable">4.1 “Much More Vulnerable” vs “Differently Vulnerable”</h3>
+<p>GrapheneOS says Firefox is “much more vulnerable to exploitation.” I don’t think the evidence supports that even after accounting for everything I got wrong.</p>
+<p>Chrome has stronger post-compromise containment. Firefox has stronger pre-compromise prevention. These are different priorities. Calling one “much more vulnerable” treats containment as the only metric that matters. That’s a value judgment. My position is both are rational depending on what you’re protecting against. Nothing I’ve seen changes that.</p>
+<h3 id="42-advisory-latency">4.2 Advisory Latency</h3>
+<p>GrapheneOS’s advisory on Firefox hasn’t changed significantly since it was written. Firefox’s architecture has evolved. The Fission rollback is an example of this working both ways. Needed to correct my own framing. The advisory also doesn’t acknowledge that Firefox on Windows has reached sandbox parity. Documentation latency is a known problem in security engineering [6]. Not unique to any project.</p>
+<hr>
+<h2 id="5-the-personal-stuff">5. The Personal Stuff</h2>
+<p>GrapheneOS called my paper “dishonest” and “unethical” in their Discord. On Reddit they said it wasn’t “based on real research or factual information” and that I was driven by “biases.”</p>
+<p>I’m separating this from the technical corrections because it’s a different category. Factual errors and dishonesty are different things. An error means peer review worked. Calling someone dishonest for making errors raises the cost of doing independent research.</p>
+<p>I don’t have institutional backing. Not affiliated with Mozilla, Google, or any vendor. The goal is the same with both papers. Improve the quality of publicly available evidence about mobile browser security. Made mistakes. Fixed them. Documented everything transparently.</p>
+<p>GrapheneOS’s technical contributions to Android security are real. Disagreeing with specific claims in their advisory doesn’t change that. I can acknowledge my own errors and still think the core argument holds.</p>
+<hr>
+<h2 id="6-bottom-line">6. Bottom Line</h2>
+<p>What I got wrong and fixed:</p>
+<ul>
+<li>isolatedProcess framing was imprecise</li>
+<li>Left out Chromium’s V8 sandbox, Oilpan, CFI, MTE</li>
+<li>Didn’t catch SpiderMonkey’s missing CFI</li>
+<li>Wrongly claimed hardware mitigations are automatic</li>
+<li>Poor CVE count framing</li>
+<li>Implied Firefox extensions have better site isolation properties</li>
+</ul>
+<p>What still holds:</p>
+<ul>
+<li>Firefox’s Rust advantage is real and widening</li>
+<li>Content blocking at the network layer is genuine pre-delivery prevention</li>
+<li>Chromium monoculture is a systemic risk</li>
+<li>Browser choice is a threat-model alignment</li>
+<li>The sandbox gap is Android-specific. On Windows, Firefox is at parity</li>
+</ul>
+<p>The mistakes made the original paper weaker than it should have been. Fixing them makes the argument stronger because now it accounts for the best counterarguments.</p>
+<hr>
+<h2 id="references">References</h2>
+<p id="ref-1"><a href="#ref-1" class="citation">[1]</a>1 Independent Security Research, “Comparative Analysis of Sandboxing and Mitigation Philosophies in Mobile User-Agent Architectures,” Jul. 2026. [Online]. Available: <a href="https://spiritofstar.github.io/blog.html">https://spiritofstar.github.io/blog.html</a></p>
+<p id="ref-2"><a href="#ref-2" class="citation">[2]</a>2 Security researchers, personal communication, Jul. 2026. Technical criticisms of <a href="#ref-1" class="citation">[1]</a>1 raised via public discussion.</p>
+<p id="ref-3"><a href="#ref-3" class="citation">[3]</a>3 GrapheneOS, “Usage: Web Browsing.” [Online]. Available: <a href="https://grapheneos.org/usage#web-browsing">https://grapheneos.org/usage#web-browsing</a>. Accessed: Jul. 2026.</p>
+<p id="ref-4"><a href="#ref-4" class="citation">[4]</a>4 M. Geer et al., “CyberInsecurity: The Cost of Monopoly,” 2003. [Online]. Available: <a href="https://cryptome.org/cyberinsecurity.htm">https://cryptome.org/cyberinsecurity.htm</a></p>
+<p id="ref-5"><a href="#ref-5" class="citation">[5]</a>5 B. Schneier, “Schneier on Security,” various entries on security theater, security trade-offs, and adversarial thinking. [Online]. Available: <a href="https://www.schneier.com/">https://www.schneier.com/</a></p>
+<p id="ref-6"><a href="#ref-6" class="citation">[6]</a>6 Google Project Zero, “The State of 0-Day Mitigations,” 2021. [Online]. Available: <a href="https://googleprojectzero.blogspot.com/2021/02/debunking-myths-about-0-days.html">https://googleprojectzero.blogspot.com/2021/02/debunking-myths-about-0-days.html</a></p>
+<p id="ref-7"><a href="#ref-7" class="citation">[7]</a>7 Chromium Security, “V8 Sandbox,” Chromium Docs. [Online]. Available: <a href="https://chromium.googlesource.com/chromium/src/+/main/v8/src/sandbox/README.md">https://chromium.googlesource.com/chromium/src/+/main/v8/src/sandbox/README.md</a></p>
+<p id="ref-8"><a href="#ref-8" class="citation">[8]</a>8 Chromium Security, “Oilpan GC Design.” [Online]. Available: <a href="https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/platform/heap/BlinkGCDesign.md">https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/platform/heap/BlinkGCDesign.md</a></p>
+<p id="ref-9"><a href="#ref-9" class="citation">[9]</a>9 Mozilla, “Firefox Security Sandbox,” Mozilla Wiki. [Online]. Available: <a href="https://wiki.mozilla.org/Security/Sandbox">https://wiki.mozilla.org/Security/Sandbox</a>. Accessed: Jul. 2026.</p>
+<p id="ref-10"><a href="#ref-10" class="citation">[10]</a>10 Mozilla, “Integrating Project Fission (Site Isolation) in Firefox,” Mozilla Wiki. [Online]. Available: <a href="https://wiki.mozilla.org/Project_Fission">https://wiki.mozilla.org/Project_Fission</a>. Accessed: Jul. 2026.</p>
+<p id="ref-11"><a href="#ref-11" class="citation">[11]</a>11 M. Miller, “Site Isolation: A New Defense-in-Depth Security Architecture for the Web,” Chromium Blog, 2018. [Online]. Available: <a href="https://blog.chromium.org/2018/07/site-isolation-new-defense-in-depth.html">https://blog.chromium.org/2018/07/site-isolation-new-defense-in-depth.html</a></p>
+<p id="ref-12"><a href="#ref-12" class="citation">[12]</a>12 Apple, “WebKit Sandboxing.” [Online]. Available: <a href="https://webkit.org/blog/14040/webkit-sandboxing/">https://webkit.org/blog/14040/webkit-sandboxing/</a></p>
+<p id="ref-13"><a href="#ref-13" class="citation">[13]</a>13 V. Nijim, “Building a More Secure Firefox with AppContainer,” Mozilla Security Blog, 2019. [Online]. Available: <a href="https://blog.mozilla.org/security/2019/05/22/building-a-more-secure-firefox-with-appcontainer/">https://blog.mozilla.org/security/2019/05/22/building-a-more-secure-firefox-with-appcontainer/</a></p>
+<p id="ref-14"><a href="#ref-14" class="citation">[14]</a>14 Chromium Project, “Memory Safety.” [Online]. Available: <a href="https://www.chromium.org/Home/chromium-security/memory-safety/">https://www.chromium.org/Home/chromium-security/memory-safety/</a>. Accessed: Jul. 2026.</p>
+<p id="ref-15"><a href="#ref-15" class="citation">[15]</a>15 Mozilla Security Blog, “Security Advisories.” [Online]. Available: <a href="https://www.mozilla.org/en-US/security/advisories/">https://www.mozilla.org/en-US/security/advisories/</a>. Accessed: Jul. 2026.</p>
+<p id="ref-16"><a href="#ref-16" class="citation">[16]</a>16 Chromium Project, “Control Flow Integrity,” Chromium Docs. [Online]. Available: <a href="https://chromium.googlesource.com/chromium/src/+/main/docs/security/control-flow-integrity.md">https://chromium.googlesource.com/chromium/src/+/main/docs/security/control-flow-integrity.md</a>. Accessed: Jul. 2026.</p>
+<p id="ref-17"><a href="#ref-17" class="citation">[17]</a>17 Chromium, “PartitionAlloc Design,” Chromium Docs. [Online]. Available: <a href="https://chromium.googlesource.com/chromium/src/+/main/base/allocator/partition_allocator/PA_README.md">https://chromium.googlesource.com/chromium/src/+/main/base/allocator/partition_allocator/PA_README.md</a>. Accessed: Jul. 2026.</p>
+<p id="ref-18"><a href="#ref-18" class="citation">[18]</a>18 Google, “OSS-Fuzz: Continuous Fuzzing for Open Source Software.” [Online]. Available: <a href="https://google.github.io/oss-fuzz/">https://google.github.io/oss-fuzz/</a>. Accessed: Jul. 2026.</p>
+<p id="ref-19"><a href="#ref-19" class="citation">[19]</a>19 Chrome Developers, “Extension Runtime and Process Model.” [Online]. Available: <a href="https://developer.chrome.com/docs/extensions/mv3/process_model/">https://developer.chrome.com/docs/extensions/mv3/process_model/</a>. Accessed: Jul. 2026.</p>  </article>  <footer> <div class="social-links"> <a href="https://x.com/SpiritOfStarr" aria-label="X / Twitter"> <svg viewBox="0 0 24 24" aria-hidden="true"> <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path> </svg> <span>X / Twitter</span> </a> <a href="https://spiritofstar.substack.com" aria-label="Substack"> <svg viewBox="0 0 24 24" aria-hidden="true"> <path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"></path> </svg> <span>Substack</span> </a> <a href="https://bsky.app/profile/spiritofstar.bsky.social" aria-label="Bluesky"> <svg viewBox="0 0 64 57" fill="none" aria-hidden="true"> <path d="M13.873 3.805C21.21 9.332 29.103 20.537 32 26.55v15.882c0-.338-.13.044-.41.867-1.512 4.456-7.418 21.847-20.923 7.944-7.111-7.32-3.819-14.64 9.125-16.85-7.405 1.264-15.73-.825-18.014-9.015C1.12 23.022 0 8.51 0 6.55 0-3.268 8.579-.182 13.873 3.805ZM50.127 3.805C42.79 9.332 34.897 20.537 32 26.55v15.882c0-.338.13.044.41.867 1.512 4.456 7.418 21.847 20.923 7.944 7.111-7.32 3.819-14.64-9.125-16.85 7.405 1.264 15.73-.825 18.014-9.015C62.88 23.022 64 8.51 64 6.55c0-9.818-8.578-6.732-13.873-2.745Z" fill="currentColor"></path> </svg> <span>Bluesky</span> </a> <a href="https://github.com/spiritofstar" aria-label="GitHub"> <svg viewBox="0 0 24 24" aria-hidden="true"> <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"></path> </svg> <span>GitHub</span> </a> </div> <div class="feed-links"> <a href="/rss.xml" aria-label="RSS feed"> <svg viewBox="0 0 24 24" aria-hidden="true"> <path d="M6.18 17.82a2.18 2.18 0 1 1 0 4.36 2.18 2.18 0 0 1 0-4.36zM4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83C19.56 11.35 12.65 4.44 4 4.44zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path> </svg>
+RSS
+</a> <a href="/atom.xml" aria-label="Atom feed">Atom</a> <a href="/feed.json" aria-label="JSON feed">JSON Feed</a> </div> <div class="footer-bottom"> <p class="copyright">
+&copy; 2026 spiritofstar &middot; CC BY 4.0 &middot; Built with Astro
+      + Typst
+</p> </div> </footer> </body></html>

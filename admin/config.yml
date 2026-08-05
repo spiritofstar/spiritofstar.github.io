@@ -1,0 +1,39 @@
+# Decap CMS configuration — https://decapcms.org/docs/
+# The admin UI is served at /admin/ (static files from public/admin/).
+# Saving a post commits to the `main` branch, which triggers the
+# GitHub Pages workflow (see .github/workflows/pages.yml).
+
+backend:
+  name: github
+  repo: spiritofstar/spiritofstar.github.io
+  branch: main
+
+# Media uploads go to the repo (public/media) and are served from /media.
+media_folder: "public/media"
+public_folder: "/media"
+
+publish_mode: editorial_workflow
+
+collections:
+  - name: posts
+    label: "Papers"
+    folder: "src/content/posts"
+    create: true
+    slug: "{{slug}}"
+    path: "{{slug}}"
+    extension: md
+    format: frontmatter
+    preview_path: "{{slug}}.html"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Subtitle", name: "subtitle", widget: "string", required: false }
+      - { label: "Author", name: "author", widget: "string", required: false }
+      - {
+          label: "Date",
+          name: "date",
+          widget: "string",
+          hint: "e.g. July 2026",
+          required: false,
+        }
+      - { label: "Categories", name: "categories", widget: "list", required: false }
+      - { label: "Body", name: "body", widget: "markdown" }

@@ -13,7 +13,7 @@
 
   <entry>
     <title>Assessment over Authority: Methodology, Threat Modeling, and the False Binary in Browser Security</title>
-    <link href="https://spiritofstar.github.io/Assessment over Authority.html" rel="alternate" type="text/html" />
+    <link href="https://spiritofstar.github.io/assessment-over-authority.html" rel="alternate" type="text/html" />
     <published>2026-07-01T00:00:00Z</published>
     <updated>2026-07-01T00:00:00Z</updated>
     <category term="browser security" />
@@ -22,16 +22,11 @@
     <category term="Firefox" />
     <category term="Chromium" />
     <category term="security discourse" />
-    <id>tag:spiritofstar.github.io,2026-07-01:/blog/Assessment over Authority</id>
+    <id>tag:spiritofstar.github.io,2026-07-01:/blog/assessment-over-authority</id>
     <summary type="html"><![CDATA[
-I made my own research blog  about Firefox and Chromium, pulling from low-level source repositories, security documentation, and the actual online available information on the Web.
-research detailed information that up to date and accurate improvements, 
-post accurately detailed how dual-engine attack surface argument (Firefox requires Chromium WebView on Android) is a platform architectural constraint, not a Firefox deficiency, as well
-research also detailed how individual threat model is more integral to overall security than default sandboxing as well as exploit mitigation differences that end up being arbitrary if indeed exploits tend to use social engineering
-Firefox completely outclasses Chromium at network-layer privacy isolation, but it takes a second place when it comes to trapping a weaponized mobile exploit, it is improving, 
-In my blog, i was accused of "LLM-generated biased text", i don't use LLMs for writing my Text(because i did not write in personal style but rather in research standard), I however do use multiple different styles of writing(because of sheer amount of accusations i did rewrite blog in "human language" and outlined it in updates, which was further used to jusitify AI accusations), it being Formal Academic Style(based on APA Standard), as well as my own natural style, which i am forced to write it because of sheer amount of toxic backlash, but i will indeed keep writing a Blog, given a research of how different browsers have different strategies in Sandboxing
+I made my own research blog about Firefox and Chromium, pulling from low-level source repositories, security documentation, and the actual online available information on the Web. research detailed information that up to date and accurate improvements, post accurately detailed how dual-engine attack surface argument (Firefox requires Chromium WebView on Android) is a platform architectural constraint, not a Firefox deficiency, as well research also detailed how individual threat model is more integral to overall security than default sandboxing as well as exploit mitigation differences that end up being arbitrary if indeed exploits tend to use social engineering Firefox completely outclasses Chromium at network-layer privacy isolation, but it takes a second place when it comes to trapping a weaponized mobile exploit, it is improving, In my blog, i was accused of "LLM-generated biased text", i don't use LLMs for writing my Text(because i did not write in personal style but rather in research standard), I however do use multiple different styles of writing(because of sheer amount of accusations i did rewrite blog in "human language" and outlined it in updates, which was further used to jusitify AI accusations), it being Formal Academic Style(based on APA Standard), as well as my own natural style, which i am forced to write it because of sheer amount of toxic backlash, but i will indeed keep writing a Blog, given a research of how different browsers have different strategies in Sandboxing
     ]]></summary>
-    <content type="html" src="https://spiritofstar.github.io/Assessment over Authority.html" />
+    <content type="html" src="https://spiritofstar.github.io/assessment-over-authority.html" />
   </entry>
   <entry>
     <title>Browser Security Analysis: New Discoveries and Reaffirmed Findings</title>
@@ -46,13 +41,7 @@ In my blog, i was accused of "LLM-generated biased text", i don't use LLMs for w
     <category term="comparative analysis" />
     <id>tag:spiritofstar.github.io,2026-07-01:/blog/responding-to-criticism</id>
     <summary type="html"><![CDATA[
-GrapheneOS responded to my first paper. Some of it was fair. I oversold isolatedProcess. Called it "the strongest sandbox" when it's just the standard Android option. Didn't mention V8 sandbox. Or Oilpan. Or CFI. Made the comparison look one-sided.
-
-The core point still works. Chrome is built for containment. Sandboxes, site isolation, MTE, CFI. Firefox is built for prevention. Rust rewrites, RLBox, smaller API surface. Different approaches to the same problem.
-
-I also missed things I should have caught. V8 has a memory sandbox that locks JIT code into a reserved region. SpiderMonkey has no CFI.
-
-Fixed now.
+GrapheneOS responded to my first paper. Some of it was fair. I oversold isolatedProcess. Called it "the strongest sandbox" when it's just the standard Android option. Didn't mention V8 sandbox. Or Oilpan. Or CFI. Made the comparison look one-sided. The core point still works. Chrome is built for containment. Sandboxes, site isolation, MTE, CFI. Firefox is built for prevention. Rust rewrites, RLBox, smaller API surface. Different approaches to the same problem. I also missed things I should have caught. V8 has a memory sandbox that locks JIT code into a reserved region. SpiderMonkey has no CFI. Fixed now.
     ]]></summary>
     <content type="html" src="https://spiritofstar.github.io/responding-to-criticism.html" />
   </entry>
