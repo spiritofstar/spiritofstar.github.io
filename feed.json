@@ -12,6 +12,23 @@
   "language": "en",
   "items": [
     {
+      "id": "tag:spiritofstar.github.io,2026-10-01:/blog/web-markup-and-role-of-documents",
+      "url": "https://spiritofstar.github.io/web-markup-and-role-of-documents.html",
+      "title": "Web Markup and Role of Documents",
+      "summary": "This article explores how the web’s shift toward an app-driven economy sidelined digital reading experience. It examines how modern browsers are slowly trying to catch up with better typography tools, why file formats like PDFs still dominate despite their flaws, and what it would take to rebuild the web as a hub for digital publishing and long-form reading.",
+      "content_html": "<p>This article explores how the web’s shift toward an app-driven economy sidelined digital reading experience. It examines how modern browsers are slowly trying to catch up with better typography tools, why file formats like PDFs still dominate despite their flaws, and what it would take to rebuild the web as a hub for digital publishing and long-form reading.</p><p><a href=\"https://spiritofstar.github.io/web-markup-and-role-of-documents.html\">Read the full paper →</a></p>",
+      "date_published": "2026-10-01T00:00:00Z",
+      "date_modified": "2026-10-01T00:00:00Z",
+      "tags": [
+        "web typography",
+        "digital publishing",
+        "markup languages",
+        "typst",
+        "css paged media",
+        "semantic web"
+      ]
+    },
+    {
       "id": "tag:spiritofstar.github.io,2026-07-01:/blog/assessment-over-authority",
       "url": "https://spiritofstar.github.io/assessment-over-authority.html",
       "title": "Assessment over Authority: Methodology, Threat Modeling, and the False Binary in Browser Security",

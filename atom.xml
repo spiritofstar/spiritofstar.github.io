@@ -4,13 +4,30 @@
   <subtitle>Independent research on browser security, memory safety, and privacy engineering</subtitle>
   <link href="https://spiritofstar.github.io/atom.xml" rel="self" />
   <link href="https://spiritofstar.github.io/" rel="alternate" type="text/html" />
-  <updated>2026-07-01T00:00:00Z</updated>
+  <updated>2026-10-01T00:00:00Z</updated>
   <id>tag:spiritofstar.github.io,2026-07-04:/</id>
   <author>
     <name>spiritofstar</name>
   </author>
   <rights>All Rights Reserved</rights>
 
+  <entry>
+    <title>Web Markup and Role of Documents</title>
+    <link href="https://spiritofstar.github.io/web-markup-and-role-of-documents.html" rel="alternate" type="text/html" />
+    <published>2026-10-01T00:00:00Z</published>
+    <updated>2026-10-01T00:00:00Z</updated>
+    <category term="web typography" />
+    <category term="digital publishing" />
+    <category term="markup languages" />
+    <category term="typst" />
+    <category term="css paged media" />
+    <category term="semantic web" />
+    <id>tag:spiritofstar.github.io,2026-10-01:/blog/web-markup-and-role-of-documents</id>
+    <summary type="html"><![CDATA[
+This article explores how the web’s shift toward an app-driven economy sidelined digital reading experience. It examines how modern browsers are slowly trying to catch up with better typography tools, why file formats like PDFs still dominate despite their flaws, and what it would take to rebuild the web as a hub for digital publishing and long-form reading.
+    ]]></summary>
+    <content type="html" src="https://spiritofstar.github.io/web-markup-and-role-of-documents.html" />
+  </entry>
   <entry>
     <title>Assessment over Authority: Methodology, Threat Modeling, and the False Binary in Browser Security</title>
     <link href="https://spiritofstar.github.io/assessment-over-authority.html" rel="alternate" type="text/html" />
