@@ -59,13 +59,10 @@ build_paper() {
 ])
 #v(6mm)
 #align(center, text(size: 11pt)[$author])
-#align(center, text(size: 11pt)[July 2026])
+#align(center, text(size: 11pt)[October 2026])
 #v(2cm)
 
-#show heading.where(level: 1): it => {
-  pagebreak()
-  heading(level: 1, numbering: it.numbering, it.body)
-}
+#show heading.where(level: 1): it => pagebreak() + it
 TYPEOF
 
   cat "/tmp/$slug-preamble.typ" > "/tmp/$slug-combined.typ"
@@ -93,5 +90,12 @@ build_paper \
   "Assessment over Authority: Methodology, Threat Modeling, and the False Binary in Browser Security" \
   "spiritofstar" \
   "Why security assessment requires threat modeling, not vendor loyalty"
+
+build_paper \
+  "src/content/posts/web-markup-and-role-of-documents.md" \
+  "web-markup-and-role-of-documents" \
+  "Web Markup and Role of Documents" \
+  "spiritofstar" \
+  "How the Web Became an App Platform and Lost Its Document Roots"
 
 echo "=== Done — PDFs written to dist/ ==="
